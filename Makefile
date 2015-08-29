@@ -10,8 +10,8 @@ build: cmd/shorthand/shorthand.go
 	go build -o bin/shorthand cmd/shorthand/shorthand.go
 
 lint:
-	gofmt -w shorthand/shorthand.go && golint shorthand/shorthand.go
-	gofmt -w shorthand/shorthand_test.go && golint shorthand/shorthand_test.go
+	gofmt -w shorthand.go && golint shorthand.go
+	gofmt -w shorthand_test.go && golint shorthand_test.go
 	gofmt -w cmd/shorthand/shorthand.go && golint cmd/shorthand/shorthand.go
 
 test:
