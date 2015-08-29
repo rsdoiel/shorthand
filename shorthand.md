@@ -1,7 +1,7 @@
 
 # shorthand
 
-Shorthand is a simple text substitution pre-processor. It is based on a simple key value substitution.  It only supports three operations
+Shorthand is a simple text label expansion utility. It is based on a simple key value substitution.  It only supports four types of definitions
 
 + assigning a string to a LABEL
 + assigning the contents of a file to a LABEL
