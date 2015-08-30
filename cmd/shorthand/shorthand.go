@@ -40,12 +40,16 @@ var usage = func(exit_code int, msg string) {
 	fmt.Fprintf(fh, `%s
 USAGE %s [options]
 
-%s is a command line utility to process shorthand definitions
-and render output with the transformed text and without the
-shorthand definitions themselves. It reads from standard input
-and writes to standard output. The basic form is
+%s is a command line utility to expand labels based on their
+assigned definitions. The render output is the transformed text 
+and without the shorthand definitions themselves. %s reads 
+from standard input and writes to standard output. The basic 
+definision form is
 
     LABEL := VALUE
+
+When the label is encountered in the text outside of a definition
+the label will be replaced with its value.
 
 To create a shortand for the label "ACME" with the value
 "the point at which someone or something is best"
@@ -117,7 +121,7 @@ into "output.txt" with shorthands converted.
 You can also embed the shorthand definitions directly in your text file.
 
 OPTIONS
-`, msg, cmdName, cmdName, cmdName)
+`, msg, cmdName, cmdName, cmdName, cmdName)
 
 	flag.VisitAll(func(f *flag.Flag) {
 		fmt.Fprintf(fh, "\t-%s\t\t%s\n", f.Name, f.Usage)
