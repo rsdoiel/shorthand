@@ -84,7 +84,7 @@ These are supported types of assignments (followed by their forms).
 
 		LABEL :{ SHORTHAND_EXPRESSION
 
-	+ Read in a shorthand file and add the assignments and assign any expansions to label
+	+ Read a file of shorthand assignments and assign any expansions to the label
 
 		LABEL :={ SHORTHAND_FILENAME
 
