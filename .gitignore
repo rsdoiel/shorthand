@@ -28,6 +28,8 @@ _testmain.go
 #
 testdata/assigned.txt
 testdata/helloworld.txt
+index.shorthand
+shorthand.shorthand
 
 #
 # command line files generated
