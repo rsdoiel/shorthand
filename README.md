@@ -3,6 +3,7 @@ shorthand
 
 A simple label expander. Example use cases
 
+
 + label or abbreviation expansion in Markdown files
 + label expansion in comma or tab delimited files
 + Very lightweight ad-hoc template engine for generating HTML or LaTeX
@@ -13,6 +14,10 @@ options.
 ```shell
     shorthand --help
 ```
+Source code can be found at [github.com/rsdoiel/shorthand](https://github.com/rsdoiel/shorthand)
+
+The project website is [rsdoiel.github.io/shorthand](http://rsdoiel.github.io/shorthand)
+
 
 ## Tutorial
 
