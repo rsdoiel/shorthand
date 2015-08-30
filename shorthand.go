@@ -12,6 +12,7 @@
 package shorthand
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -20,12 +21,16 @@ import (
 	"strings"
 )
 
+// The version nummber of library and utility
+const Version = "v0.0.2"
+
 // Assignment Ops
 const (
 	AssignString         string = " := "
 	AssignInclude        string = " :< "
 	AssignShell          string = " :! "
-	AssignEval           string = " :{ "
+	AssignExpansion      string = " :{ "
+	IncludeAssignments   string = " :={ "
 	OutputAssignedValue  string = " :> "
 	OutputAssignedValues string = " :=> "
 	OutputAssignment     string = " :} "
@@ -36,7 +41,8 @@ var ops = []string{
 	AssignString,
 	AssignInclude,
 	AssignShell,
-	AssignEval,
+	AssignExpansion,
+	IncludeAssignments,
 	OutputAssignedValue,
 	OutputAssignedValues,
 	OutputAssignment,
@@ -104,6 +110,7 @@ func WriteAssignments(fname string, assigned map[string]SourceMap, writeSourceCo
 	}
 	defer fp.Close()
 	for k := range assigned {
+		//FIXME: Probably should not write out the value of _
 		if writeSourceCode == true {
 			fmt.Fprintf(fp, "%s\n", Abbreviations[k].src)
 		} else {
@@ -111,6 +118,30 @@ func WriteAssignments(fname string, assigned map[string]SourceMap, writeSourceCo
 		}
 	}
 	return true
+}
+
+// ReadAssignments read in all of the lines of fname and
+// add any assignment statements found to Abbreviations
+// and expand any assignments and return as a string.
+func ReadAssignments(fname string) (string, error) {
+	var (
+		out []string
+	)
+	buf, err := ioutil.ReadFile(fname)
+	if err != nil {
+		return "", errors.New(fmt.Sprintf("Cannot read %s: %s\n", fname, err))
+	}
+	for i, line := range strings.Split(string(buf), "\n") {
+		if IsAssignment(line) {
+			ok := Assign(line)
+			if ok == false {
+				return "", errors.New(fmt.Sprintf("Error at line %d in %s\n", i+1, fname))
+			}
+		} else {
+			out = append(out, Expand(line))
+		}
+	}
+	return strings.Join(out, "\n"), nil
 }
 
 // Assign stores a shorthand and its expansion or writes and assignment or assignments
@@ -135,8 +166,13 @@ func Assign(s string) bool {
 		return WriteAssignment(value, Abbreviations[key], true)
 	} else if op == OutputAssignments {
 		return WriteAssignments(value, Abbreviations, true)
-	} else if op == AssignEval {
+	} else if op == AssignExpansion {
 		value = Expand(value)
+	} else if op == IncludeAssignments {
+		value, err := ReadAssignments(value)
+		if err != nil {
+			log.Fatalf("Error processing %s: %s\n", value, err)
+		}
 	} else if op == AssignInclude {
 		buf, err := ioutil.ReadFile(value)
 		if err != nil {
@@ -154,6 +190,9 @@ func Assign(s string) bool {
 	if op == "" || key == "" || value == "" {
 		return false
 	}
+	if key == "_" {
+		return true
+	}
 	Abbreviations[key] = SourceMap{src: s, value: value}
 	_, ok := Abbreviations[key]
 	return ok
@@ -165,6 +204,7 @@ func Expand(text string) string {
 	for key, sm := range Abbreviations {
 		text = strings.Replace(text, key, sm.value, -1)
 	}
+	//fmt.Printf("DEBUG Expand(%s)\n", text)
 	return text
 }
 

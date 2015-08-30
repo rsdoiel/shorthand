@@ -17,6 +17,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -24,6 +25,7 @@ type expressionList []string
 
 var (
 	help       bool
+	version    bool
 	expression expressionList
 	prompt     string
 )
@@ -60,7 +62,7 @@ would become
 
     My, the point at which someone or something is best, will come
 
-There are eight support types of assignments (followed by their forms). 
+These are supported types of assignments (followed by their forms). 
 
 	+ Assign a string to a label
 
@@ -78,25 +80,27 @@ There are eight support types of assignments (followed by their forms).
 
 		LABEL :{ SHORTHAND_EXPRESSION
 
+	+ Read in a shorthand file and add the assignments and assign any expansions to label
+
+		LABEL :={ SHORTHAND_FILENAME
+
 	+ Write out the value for a label
 
 		LABEL :> FILENAME
 
 	+ Write out the values for all labels (order is not guaranteed)
 
-		IGNORED_LABEL_NAME :=> FILENAME
+		LABEL :=> FILENAME
 		
-	  The IGNORED_LABEL_NAME is by convention an underscore.
-
 	+ Write out the assignment statement for a label
 
 		LABEL :} FILENAME
 
 	+ Write out all the assignment statements for all labels
 
-		IGNORED_LABEL_NAME :=} FILENAME
+		LABEL :=} FILENAME
 
-	  The IGNORED_LABEL_NAME is by convention an underscore.
+If the label is an underscore then it gets ignored.
 
 You can evaluate shorthand expression in the command line much like you do
 with the Unix command sed.  But you can also easily embed them in the file
@@ -127,6 +131,11 @@ See: http://opensource.org/licenses/BSD-2-Clause
 	os.Exit(exit_code)
 }
 
+func revision() {
+	fmt.Printf("%s %s\n", filepath.Base(os.Args[0]), shorthand.Version)
+	os.Exit(0)
+}
+
 func (e *expressionList) String() string {
 	return fmt.Sprintf("%s", *e)
 }
@@ -140,13 +149,18 @@ func (e *expressionList) Set(value string) error {
 }
 
 func main() {
-	flag.Var(&expression, "e", "The shorthand notation(s) you wish at add.")
-	flag.StringVar(&prompt, "p", "", "Output a prompt for interactive processing.")
-	flag.BoolVar(&help, "h", false, "Display this help document.")
-	flag.BoolVar(&help, "help", false, "Display this help document.")
+	flag.Var(&expression, "e", "The shorthand notation(s) you wish at add")
+	flag.StringVar(&prompt, "p", "", "Output a prompt for interactive processing")
+	flag.BoolVar(&help, "h", false, "Display this help document")
+	flag.BoolVar(&help, "help", false, "Display this help document")
+	flag.BoolVar(&version, "v", false, "Version information")
+	flag.BoolVar(&version, "version", false, "Version information")
 	flag.Parse()
 	if help == true {
 		usage(0, "")
+	}
+	if version == true {
+		revision()
 	}
 
 	reader := bufio.NewReader(os.Stdin)

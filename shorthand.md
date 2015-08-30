@@ -6,7 +6,7 @@ Shorthand is a simple text label expansion utility. It is based on a simple key 
 + assigning a string to a LABEL
 + assigning the contents of a file to a LABEL
 + assigning the output of a Bash shell expression to a LABEL
-+ assigning the output of a shorthand phrase or definition to a LABEL
++ assigning the output of a shorthand expansion to a LABEL
 + Output a LABEL value to a file
 + Output all LABEL values to a file
 + Output a LABEL assignment statement to a file
@@ -27,22 +27,27 @@ Shorthand is a simple text label expansion utility. It is based on a simple key 
     + LABEL :{ SHORTHAND_TO_BE_EXPANDED
     + @content@ :{ @report_name@ @report_date@
         + this would concatenate report name and date
++ Assign shorthand definitions and expansions to a label
+    + LABEL :={ FILE_CONTAINING_SHORTHAND_DEFINISIONS_AND_EXPANSIONS
+      + _ :={ myfile.shorthand
+      + Assignments are added to the abbreviation list in memory and any expansions to LABEL
+      + The underscore used as a LABEL manes the label can be ignored.
 + Render a LABEL value to a file
     + LABEL :> FILENAME
     + @content@ :> page.txt
 + render all LABEL values to a file
     + IGNORE_LABEL :=> FILENAME
     + _ :=> page.txt
-        + By convention IGNORED_LABEL is an underscore
-        + There is no guaranteed order to the values written out
+      + The underscore used as a LABEL manes the label can be ignored.
+      + There is no guaranteed order to the values written out
 + render a LABEL assignment statement to a file
     + LABEL :} FILENAME
     + @content@ :} mydef.shorthand
 + render all LABEL assignment statements to a file
     + IGNORED_LABEL :=} FILENAME 
     + _ :=} mydefs.shorthand
-        + By convention IGNORED_LABEL is an underscore
-        + There is no guaranteed order to the values written out
+      + The underscore used as a LABEL manes the label can be ignored.
+      + There is no guaranteed order to the values written out
 
 
 The spaces surrounding " := ", " :< ", " :! ", " :{ ", " :> ", " :=> ", " :} " and " :=} " are required.

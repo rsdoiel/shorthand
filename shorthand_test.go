@@ -151,6 +151,7 @@ func TestShellAssignment(t *testing.T) {
 }
 
 func TestExpandedAssignment(t *testing.T) {
+	Clear()
 	dateFormat := "2006-01-02"
 	now := time.Now()
 	// Date will generate a LF so the text will also contain it. So we'll test against a Trim later.
@@ -167,6 +168,46 @@ func TestExpandedAssignment(t *testing.T) {
 	l := len(strings.Trim(resultText, "\n"))
 	ok.Ok(t, l == len(expectedText), "Should have expected length for @title")
 	ok.Ok(t, strings.Contains(strings.Trim(resultText, "\n"), expectedText), "Should have matching text for @title")
+
+	// Now test a label that holds multiple lines that need expanding.
+	Clear()
+	text = `
+@one this is a line
+@two this is also a line
+@three this is the last line
+`
+	Assign("@one := 1")
+	Assign("@two := 2")
+	Assign("@three := 3")
+	Assign("@text := " + text)
+	Assign("@expanded :{ @text")
+	resultText = Expand("@expanded")
+	ok.Ok(t, strings.Contains(resultText, "1 this is a line"), "Should have line 1")
+	ok.Ok(t, strings.Contains(resultText, "2 this is also a line"), "Should have line 2")
+	ok.Ok(t, strings.Contains(resultText, "3 this is the last line"), "Should have line 3")
+
+	// Now test evaluating a shorthand file
+	Clear()
+	Assign("_ :={ testdata/test1.shorthand")
+	expected = true
+	results = HasAssignment("@now")
+	ok.Ok(t, results == expected, "Should have @now from :={")
+	results = HasAssignment("@title")
+	ok.Ok(t, results == expected, "Should have @title from :={")
+	results = HasAssignment("@greeting")
+	ok.Ok(t, results == expected, "Should have @greeting")
+	titleExpansion := Expand("@title")
+	nowExpansion := Expand("@now")
+	greetingExpansion := Expand("@greeting")
+
+	shorthandText := `
+@title @now
+@greeting
+`
+	resultText = Expand(shorthandText)
+	ok.Ok(t, strings.Contains(resultText, titleExpansion), "Should have title"+titleExpansion)
+	ok.Ok(t, strings.Contains(resultText, nowExpansion), "Should have name")
+	ok.Ok(t, strings.Contains(resultText, greetingExpansion), "Should have greeting")
 }
 
 func TestExpandingValuesToFile(t *testing.T) {
