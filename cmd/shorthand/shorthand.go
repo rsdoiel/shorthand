@@ -11,12 +11,14 @@
 package main
 
 import (
-	"../../../shorthand"
+	shorthand "../../"
 	"bufio"
 	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"os"
+	"strings"
 )
 
 type expressionList []string
@@ -24,6 +26,7 @@ type expressionList []string
 var (
 	help       bool
 	expression expressionList
+	prompt     string
 )
 
 var usage = func(exit_code int, msg string) {
@@ -39,7 +42,7 @@ USAGE %s [options]
 %s is a command line utility to process shorthand definitions
 and render output with the transformed text and without the
 shorthand definitions themselves. It reads from standard input
-and writes to standard output. The form is
+and writes to standard output. The basic form is
 
     LABEL := VALUE
 
@@ -58,32 +61,57 @@ would become
 
     My, the point at which someone or something is best, will come
 
-Normally you would use shorthands for things like long project names,
-passing dynamic values (like the current time or date) via the command line.
+There are eight support types of assignments (followed by their forms). 
 
-Additionally you can include a file with the colon less than sign.
+	+ Assign a string to a label
 
-    LABEL :< PATH_TO_FILE_TO_INCLUDE
+		LABEL := STRING
 
-This included file, once read, is processed the same as other label assignments.
+	+ Assign the contents of a file to a label
 
-You can also evaluate labels on the right side of the expression and assign those results to a label with 
+		LABEL :< FILENAME
 
-	LABEL :{ SOME SHORT HAND EXPRESSION HERE
+	+ Assign the output of a Bash shell expression to a label
 
-Finally you can pipe the contents of a shell command into a label from within shorthand.
+		LABEL :! BASH_EXPRESSION
 
-	LABEL :! SHELL_COMMANDS
+	+ Assign the contents of a Shorthand expression to a label
 
+		LABEL :{ SHORTHAND_EXPRESSION
+
+	+ Write out the value for a label
+
+		LABEL :> FILENAME
+
+	+ Write out the values for all labels (order is not guaranteed)
+
+		IGNORED_LABEL_NAME :=> FILENAME
+		
+	  The IGNORED_LABEL_NAME is by convention an underscore.
+
+	+ Write out the assignment statement for a label
+
+		LABEL :} FILENAME
+
+	+ Write out all the assignment statements for all labels
+
+		IGNORED_LABEL_NAME :=} FILENAME
+
+	  The IGNORED_LABEL_NAME is by convention an underscore.
+
+You can evaluate shorthand expression in the command line much like you do
+with the Unix command sed.  But you can also easily embed them in the file
+or include from a file.
 
 EXAMPLE
 
 Pass the current date and time as shorthands transform the file "input.txt"
 into "output.txt" with shorthands converted.
 
-    %s -e "@now := $(date +%%H:%%M)" \
-	   -e "@today := $(date +%%Y-%%m-%%d)" < input.txt > output.txt
+    %s -e "@now :! date +%%H:%%M" \
+	   -e "@today :! date +%%Y-%%m-%%d" < input.txt > output.txt
 
+You can also embed the shorthand definitions directly in your text file.
 
 OPTIONS
 `, msg, cmdName, cmdName, cmdName)
@@ -114,6 +142,7 @@ func (e *expressionList) Set(value string) error {
 
 func main() {
 	flag.Var(&expression, "e", "The shorthand notation(s) you wish at add.")
+	flag.StringVar(&prompt, "p", "", "Output a prompt for interactive processing.")
 	flag.BoolVar(&help, "h", false, "Display this help document.")
 	flag.BoolVar(&help, "help", false, "Display this help document.")
 	flag.Parse()
@@ -124,8 +153,14 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
+		if prompt != "" {
+			fmt.Printf("%s ", prompt)
+		}
 		line, err := reader.ReadString('\n')
 		if err != nil {
+			log.Fatalf("%s\n", err)
+		}
+		if strings.TrimSpace(line) == ":exit" || strings.TrimSpace(line) == ":quit" {
 			break
 		}
 		if shorthand.IsAssignment(line) {

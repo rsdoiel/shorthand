@@ -14,6 +14,7 @@ package shorthand
 import (
 	"fmt"
 	"github.com/rsdoiel/ok"
+	"io/ioutil"
 	"strings"
 	"testing"
 	"time"
@@ -73,12 +74,12 @@ func TestAssign(t *testing.T) {
 	}
 
 	for key, value := range expectedMap {
-		expected, OK := Abbreviations[key]
+		sm, OK := Abbreviations[key]
 		if !OK {
 			t.Fatalf("Could not find the shorthand for " + key)
 		}
-		if expected != value {
-			t.Fatalf("[" + expected + "] != [" + value + "]")
+		if value != sm.value {
+			t.Fatalf("[" + value + "] != [" + sm.value + "]")
 		}
 	}
 }
@@ -133,19 +134,19 @@ Did it work?
 	resultText := Expand(text)
 	l := len(text)
 	ok.Ok(t, len(resultText) > l, "Should have more results: "+resultText)
-	ok.Ok(t, strings.Contains(resultText, "A nimble webserver"), "Should have 'A nimble webserver' in "+resultText)
-	ok.Ok(t, strings.Contains(resultText, "JSON"), "Should have 'JSON' in "+resultText)
+	ok.Ok(t, strings.Contains(resultText, "A nimble webserver"), fmt.Sprintf("Should have 'A nimble webserver' in %s", resultText))
+	ok.Ok(t, strings.Contains(resultText, "JSON"), fmt.Sprintf("Should have 'JSON' in %s", resultText))
 }
 
 func TestShellAssignment(t *testing.T) {
-	Assign("@ECHO :! echo 'Hello World!'")
 	expected := true
+	expectedText := "Hello World!"
+	Assign("@ECHO :! echo -n 'Hello World!'")
 	results := HasAssignment("@ECHO")
 	ok.Ok(t, results == expected, "Should have @ECHO assignment")
-	expectedText := "Hello World!"
 	resultText := Expand("@ECHO")
 	l := len(strings.Trim(resultText, "\n"))
-	ok.Ok(t, l == len(expectedText), "Should have expected length for @ECHO")
+	ok.Ok(t, l == len(expectedText), fmt.Sprintf("Expected length %d got %d for @ECHO", len(expectedText), l))
 	ok.Ok(t, strings.Contains(strings.Trim(resultText, "\n"), expectedText), "Should have matching text for @ECHO")
 }
 
@@ -166,4 +167,42 @@ func TestExpandedAssignment(t *testing.T) {
 	l := len(strings.Trim(resultText, "\n"))
 	ok.Ok(t, l == len(expectedText), "Should have expected length for @title")
 	ok.Ok(t, strings.Contains(strings.Trim(resultText, "\n"), expectedText), "Should have matching text for @title")
+}
+
+func TestExpandingValuesToFile(t *testing.T) {
+	a1 := `@hello_world := Hello World`
+	a2 := `@max :! echo -n 'Hello Max'`
+	e1 := "Hello World"
+	e2 := "Hello Max"
+	Assign(a1)
+	Assign(`@hello_world :> testdata/helloworld.txt`)
+	b, err := ioutil.ReadFile("testdata/helloworld.txt")
+	ok.Ok(t, err == nil, "Should beable to read testdata/helloworld.txt")
+	resultText := string(b)
+	ok.Ok(t, resultText == e1, "Shoud have Hello World from file.")
+	Assign(a2)
+	Assign(`@hello_world :=> testdata/helloworld.txt`)
+	b, err = ioutil.ReadFile("testdata/helloworld.txt")
+	ok.Ok(t, err == nil, "Should be able to read testdata/helloworld.txt")
+	resultText = string(b)
+	ok.Ok(t, strings.Contains(resultText, e1), "Should find "+e1)
+	ok.Ok(t, strings.Contains(resultText, e2), "Should find "+e2)
+}
+
+func TestExpandingAssignmentsToFile(t *testing.T) {
+	a1 := `@hello_world := Hello World`
+	a2 := `@max :! echo -n 'Hello Max'`
+	Assign(a1)
+	Assign(`@hello_world :} testdata/assigned.txt`)
+	b, err := ioutil.ReadFile("testdata/assigned.txt")
+	ok.Ok(t, err == nil, "Should beable to read testdata/assigned.txt")
+	resultText := string(b)
+	ok.Ok(t, resultText == a1, "Shoud have @hello_world assignment in file.")
+	Assign(a2)
+	Assign(`@hello_world :=} testdata/assigned.txt`)
+	b, err = ioutil.ReadFile("testdata/assigned.txt")
+	ok.Ok(t, err == nil, "Should have all assigments in file.")
+	resultText = string(b)
+	ok.Ok(t, strings.Contains(resultText, a1), "Should find "+a1)
+	ok.Ok(t, strings.Contains(resultText, a2), "Should find "+a2)
 }

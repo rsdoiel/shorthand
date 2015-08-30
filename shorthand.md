@@ -1,27 +1,40 @@
 
 # shorthand
 
-Shorthand is a simple text label expansion utility. It is based on a simple key value substitution.  It only supports four types of definitions
+Shorthand is a simple text label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions
 
 + assigning a string to a LABEL
 + assigning the contents of a file to a LABEL
-+ assigning the output of a shell phrase to a LABEL
++ assigning the output of a Bash shell expression to a LABEL
 + assigning the output of a shorthand phrase or definition to a LABEL
++ Output a LABEL value to a file
++ Output all LABEL values to a file
++ Output a LABEL assignment statement to a file
++ Output all assignment statements to a file
 
 *shorthand* replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not output by the preprocessor.
 
 
-+ text substitutions defined with LABEL := STRING
-+ file inclusion defined with LABEL :< PATH TO FILE TO INCLUDE
-    + support middle of file extraction negative index refers to lines from end of file
-    + middle 6,-10 would mean the buffer size would be ten lines and when you hit eof the buf will be discarded.
-    + LABEL :< #,# PATH TO FILE FRAGMENT TO INCLUDE
-+ you can include the output of a shell command.
++ Basic string replacement
+    + LABEL := STRING
++ Assign the contents of a file to a label
+    + LABEL :< FILENAME
++ Assign the output of a shell command to a label
     + LABEL :! SHELL_COMMAND
++ Assign shorthand expressions to a LABEL
     + LABEL :{ SHORTHAND_DEFS_OR_MARKUP
++ Render a LABEL value to a file
+    + LABEL :> FILENAME
++ render all LABEL values to a file
+    + LABEL :=> FILENAME
++ render a LABEL assignment statement to a file
+    + LABEL :} FILENAME
++ render all LABEL assignment statements to a file
+    + IGNORED_LABEL :=} FILENAME 
+    + By convention IGNORED_LABEL is an underscore
 
 
-The spaces surrounding " := ", " :< ", " :! ", and " :{ " are required.
+The spaces surrounding " := ", " :< ", " :! ", " :{ ", " :> ", " :=> ", " :} " and " :=} " are required.
 
 ## Example
 

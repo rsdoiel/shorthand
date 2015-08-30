@@ -24,6 +24,12 @@ _testmain.go
 *.prof
 
 #
+# gerated test data
+#
+testdata/assigned.txt
+testdata/helloworld.txt
+
+#
 # command line files generated
 #
 bin/*
