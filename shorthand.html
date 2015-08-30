@@ -2,12 +2,13 @@
 <html>
 <head>
     <title>Shorthand - how it works</title>
+    <link href="css/style.css" rel="stylesheet" />
 <head>
 <body>
     <header>
-        <h1>Shorthand - how it works</title>
+        <h1>Shorthand - how it works</h1>
     </header>
-    <section><h1>shorthand</h1>
+    <section><h1>Assignments and Expansions</h1>
 
 <p>Shorthand is a simple text label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions</p>
 
@@ -72,7 +73,7 @@
 <li>render all LABEL values to a file
 
 <ul>
-<li>IGNORE_LABEL :=&gt; FILENAME</li>
+<li>LABEL :=&gt; FILENAME</li>
 <li>_ :=&gt; page.txt</li>
 </ul></li>
 <li>render a LABEL assignment statement to a file
@@ -84,20 +85,18 @@
 <li>render all LABEL assignment statements to a file
 
 <ul>
-<li>IGNORED_LABEL :=} FILENAME</li>
+<li>LABEL :=} FILENAME</li>
 <li>_ :=} mydefs.shorthand</li>
 </ul></li>
 </ul>
 
-<p>Notes: Using an underscore as a LABEL means the label will be ignored. There are no
-guarantees of order when writing values or assignment statements to a file.</p>
+<p>Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment statements to a file.</p>
 
 <p>The spaces surrounding &ldquo; := &ldquo;, &rdquo; :&lt; &ldquo;, &rdquo; :! &ldquo;, &rdquo; :{ &ldquo;, &rdquo; :&gt; &ldquo;, &rdquo; :=&gt; &ldquo;, &rdquo; :} &ldquo; and &rdquo; :=} &ldquo; are required.</p>
 
 <h2>Example</h2>
 
-<p>In this example a file containing the text of pre-amble is assigned to the
-label @PREAMBLE, the time 3:30 is assigned to the label @NOW.</p>
+<p>In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label @NOW.</p>
 
 <pre><code class="language-text">    @PREAMBLE :&lt; /home/me/preamble.text
     @NOW := 3:30
@@ -105,9 +104,7 @@ label @PREAMBLE, the time 3:30 is assigned to the label @NOW.</p>
     At @NOW I will be reading the @PREAMBLE until everyone falls asleep.
 </code></pre>
 
-<p>If the file preamble.txt contained the phrase &ldquo;Hello World&rdquo; (including
-the quotes but without any carriage return or line feed) the output after
-processing the shorthand would look like -</p>
+<p>If the file preamble.txt contained the phrase &ldquo;Hello World&rdquo; (including the quotes but without any carriage return or line feed) the output after processing the shorthand would look like -</p>
 
 <pre><code class="language-text">
     At 3:30 I will be reading the &quot;Hello World&quot; until everyone falls asleep.

@@ -1,5 +1,5 @@
 
-# shorthand
+# Assignments and Expansions
 
 Shorthand is a simple text label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions
 
@@ -30,32 +30,29 @@ Shorthand is a simple text label expansion utility. It is based on a simple key 
         + this would concatenate report name and date
 + Read a file of shorthand assignments and assign any expansions to the label
     + LABEL :={ FILE_CONTAINING_SHORTHAND_DEFINISIONS_AND_EXPANSIONS
-      + _ :={ myfile.shorthand
-      + Assignments are added to the abbreviation list in memory and any expansions to LABEL
+        + _ :={ myfile.shorthand
+        + Assignments are added to the abbreviation list in memory and any expansions to LABEL
 + Render a LABEL value to a file
     + LABEL :> FILENAME
     + @content@ :> page.txt
 + render all LABEL values to a file
-    + IGNORE_LABEL :=> FILENAME
+    + LABEL :=> FILENAME
     + _ :=> page.txt
 + render a LABEL assignment statement to a file
     + LABEL :} FILENAME
     + @content@ :} mydef.shorthand
 + render all LABEL assignment statements to a file
-    + IGNORED_LABEL :=} FILENAME 
+    + LABEL :=} FILENAME 
     + _ :=} mydefs.shorthand
 
-Notes: Using an underscore as a LABEL means the label will be ignored. There are no
-guarantees of order when writing values or assignment statements to a file.
+Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment statements to a file.
 
 The spaces surrounding " := ", " :< ", " :! ", " :{ ", " :> ", " :=> ", " :} " and " :=} " are required.
 
 
 ## Example
 
-In this example a file containing the text of pre-amble is assigned to the
-label @PREAMBLE, the time 3:30 is assigned to the label @NOW.
-
+In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label @NOW.  
 ```text
     @PREAMBLE :< /home/me/preamble.text
     @NOW := 3:30
@@ -63,9 +60,7 @@ label @PREAMBLE, the time 3:30 is assigned to the label @NOW.
     At @NOW I will be reading the @PREAMBLE until everyone falls asleep.
 ```
 
-If the file preamble.txt contained the phrase "Hello World" (including
-the quotes but without any carriage return or line feed) the output after
-processing the shorthand would look like -
+If the file preamble.txt contained the phrase "Hello World" (including the quotes but without any carriage return or line feed) the output after processing the shorthand would look like -
 
 ```text
 
