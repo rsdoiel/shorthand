@@ -3,11 +3,11 @@
 
 Shorthand is a simple text label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions
 
-+ assigning a string to a LABEL
-+ assigning the contents of a file to a LABEL
-+ assigning the output of a Bash shell expression to a LABEL
-+ assigning the output of a shorthand expansion to a LABEL
-+ assigning the output of a file of shorthand definisions and expansions to a LABEL
++ Assign a string to a LABEL
++ Assign the contents of a file to a LABEL
++ Assign the output of a Bash shell expression to a LABEL
++ Assign the output of a shorthand expansion to a LABEL
++ Read a file of shorthand assignments and assign any expansions to the LABEL
 + Output a LABEL value to a file
 + Output all LABEL values to a file
 + Output a LABEL assignment statement to a file
@@ -28,7 +28,7 @@ Shorthand is a simple text label expansion utility. It is based on a simple key 
     + LABEL :{ SHORTHAND_TO_BE_EXPANDED
     + @content@ :{ @report_name@ @report_date@
         + this would concatenate report name and date
-+ Assign shorthand definitions and expansions to a label
++ Read a file of shorthand assignments and assign any expansions to the label
     + LABEL :={ FILE_CONTAINING_SHORTHAND_DEFINISIONS_AND_EXPANSIONS
       + _ :={ myfile.shorthand
       + Assignments are added to the abbreviation list in memory and any expansions to LABEL
