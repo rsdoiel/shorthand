@@ -7,6 +7,7 @@ Shorthand is a simple text label expansion utility. It is based on a simple key 
 + assigning the contents of a file to a LABEL
 + assigning the output of a Bash shell expression to a LABEL
 + assigning the output of a shorthand expansion to a LABEL
++ assigning the output of a file of shorthand definisions and expansions to a LABEL
 + Output a LABEL value to a file
 + Output all LABEL values to a file
 + Output a LABEL assignment statement to a file
@@ -31,29 +32,26 @@ Shorthand is a simple text label expansion utility. It is based on a simple key 
     + LABEL :={ FILE_CONTAINING_SHORTHAND_DEFINISIONS_AND_EXPANSIONS
       + _ :={ myfile.shorthand
       + Assignments are added to the abbreviation list in memory and any expansions to LABEL
-      + The underscore used as a LABEL manes the label can be ignored.
 + Render a LABEL value to a file
     + LABEL :> FILENAME
     + @content@ :> page.txt
 + render all LABEL values to a file
     + IGNORE_LABEL :=> FILENAME
     + _ :=> page.txt
-      + The underscore used as a LABEL manes the label can be ignored.
-      + There is no guaranteed order to the values written out
 + render a LABEL assignment statement to a file
     + LABEL :} FILENAME
     + @content@ :} mydef.shorthand
 + render all LABEL assignment statements to a file
     + IGNORED_LABEL :=} FILENAME 
     + _ :=} mydefs.shorthand
-      + The underscore used as a LABEL manes the label can be ignored.
-      + There is no guaranteed order to the values written out
 
+Notes: Using an underscore as a LABEL means the label will be ignored. There are no
+guarantees of order when writing values or assignment statements to a file.
 
 The spaces surrounding " := ", " :< ", " :! ", " :{ ", " :> ", " :=> ", " :} " and " :=} " are required.
 
-## Example
 
+## Example
 
 In this example a file containing the text of pre-amble is assigned to the
 label @PREAMBLE, the time 3:30 is assigned to the label @NOW.
