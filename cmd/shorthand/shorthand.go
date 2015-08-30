@@ -176,6 +176,7 @@ func main() {
 		revision()
 	}
 
+	//FIXME: If a filename is provided on the command line use it instead of standard input.
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -186,10 +187,13 @@ func main() {
 		if err != nil {
 			break
 		}
+
+		// Process the input plus some repl commands.
 		if strings.TrimSpace(line) == ":exit" || strings.TrimSpace(line) == ":quit" {
 			break
-		}
-		if shorthand.IsAssignment(line) {
+		} else if strings.TrimSpace(line) == ":clear" {
+			shorthand.Clear()
+		} else if shorthand.IsAssignment(line) {
 			shorthand.Assign(line)
 		} else {
 			fmt.Print(shorthand.Expand(line))
