@@ -182,9 +182,9 @@ func TestExpandedAssignment(t *testing.T) {
 	Assign("@text := " + text)
 	Assign("@expanded :{ @text")
 	resultText = Expand("@expanded")
-	ok.Ok(t, strings.Contains(resultText, "1 this is a line"), "Should have line 1")
-	ok.Ok(t, strings.Contains(resultText, "2 this is also a line"), "Should have line 2")
-	ok.Ok(t, strings.Contains(resultText, "3 this is the last line"), "Should have line 3")
+	ok.Ok(t, strings.Contains(resultText, "1 this is a line"), "Should have line 1 "+resultText)
+	ok.Ok(t, strings.Contains(resultText, "2 this is also a line"), "Should have line 2 "+resultText)
+	ok.Ok(t, strings.Contains(resultText, "3 this is the last line"), "Should have line 3 "+resultText)
 
 	// Now test evaluating a shorthand file
 	Clear()
@@ -246,4 +246,13 @@ func TestExpandingAssignmentsToFile(t *testing.T) {
 	resultText = string(b)
 	ok.Ok(t, strings.Contains(resultText, a1), "Should find "+a1)
 	ok.Ok(t, strings.Contains(resultText, a2), "Should find "+a2)
+}
+
+func TestMarkdownSupport(t *testing.T) {
+	s1 := "[my link](http://example.org)"
+	Assign(fmt.Sprintf("@link :[ %s", s1))
+	ok.Ok(t, HasAssignment("@link"), "Should have @link assignment")
+	e1 := `<p><a href="http://example.org">my link</a></p>`
+	r1 := Expand("@link")
+	ok.Ok(t, r1 == e1, fmt.Sprintf("@link shourl render as %s, got %s", e1, r1))
 }

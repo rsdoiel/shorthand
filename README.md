@@ -1,12 +1,13 @@
 shorthand
 =========
 
-A simple label expander. Example use cases
+A simple label expander and markdown utility
 
+Example use cases:
 
 + label or abbreviation expansion in Markdown files
-+ label expansion in comma or tab delimited files
-+ Very lightweight ad-hoc template engine for generating HTML or LaTeX
++ build very html templates straight from markdown files
++ compose pages from multiple markdown files
 
 The supported command line options can be listed using the _--help_
 options.
@@ -40,7 +41,11 @@ If the content of the markdown file _testdata/report.md_ was
 From the command line you can do something like this
 
 ```shell
-    shorthand -e "@now :! date" <  testdata/report.md | markdown > testdata/report.html
+    shorthand -e "@now :! date" \
+        -e "@report :< testdata/report.md" \
+        -@ "@html :[ @report" \
+        -e "@html" 
+        -e "_ :exit" > testdata/report.html
 ```
 
 What this command does is launch the _shorthand_ interpreter and it

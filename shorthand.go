@@ -14,6 +14,7 @@ package shorthand
 import (
 	"errors"
 	"fmt"
+	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"log"
 	"os"
@@ -22,7 +23,7 @@ import (
 )
 
 // The version nummber of library and utility
-const Version = "v0.0.2"
+const Version = "v0.0.3"
 
 // Assignment Ops
 const (
@@ -31,6 +32,8 @@ const (
 	AssignShell          string = " :! "
 	AssignExpansion      string = " :{ "
 	IncludeAssignments   string = " :={ "
+	AssignMarkdown       string = " :[ "
+	IncludeMarkdown      string = " :=[ "
 	OutputAssignedValue  string = " :> "
 	OutputAssignedValues string = " :=> "
 	OutputAssignment     string = " :} "
@@ -43,6 +46,8 @@ var ops = []string{
 	AssignShell,
 	AssignExpansion,
 	IncludeAssignments,
+	AssignMarkdown,
+	IncludeMarkdown,
 	OutputAssignedValue,
 	OutputAssignedValues,
 	OutputAssignment,
@@ -144,6 +149,15 @@ func ReadAssignments(fname string) (string, error) {
 	return strings.Join(out, "\n"), nil
 }
 
+// ReadMarkdown reads in a file and processes it with Blackfriday MarkdownCommon
+func ReadMarkdown(fname string) string {
+	buf, err := ioutil.ReadFile(fname)
+	if err != nil {
+		log.Fatalf(fmt.Sprintf("Cannot read %s: %s\n", fname, err))
+	}
+	return string(blackfriday.MarkdownCommon(buf))
+}
+
 // Assign stores a shorthand and its expansion or writes and assignment or assignments
 func Assign(s string) bool {
 	var (
@@ -185,6 +199,10 @@ func Assign(s string) bool {
 			log.Fatalf("Shell command returned error: %s\n", err)
 		}
 		value = string(buf)
+	} else if op == AssignMarkdown {
+		value = strings.TrimSpace(string(blackfriday.MarkdownCommon([]byte(value))))
+	} else if op == IncludeMarkdown {
+		value = ReadMarkdown(value)
 	}
 
 	if op == "" || key == "" || value == "" {

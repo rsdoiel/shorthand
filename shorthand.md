@@ -44,6 +44,10 @@ Shorthand is a simple text label expansion utility. It is based on a simple key 
 + render all LABEL assignment statements to a file
     + LABEL :=} FILENAME 
     + _ :=} mydefs.shorthand
++ rendered markdown to a label
+    + LABEL :[ MARKDOWN_EXPRESSION
++ render markdown file to a label
+    + LABEL :=[ FILENAME
 
 Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment statements to a file.
 
@@ -68,5 +72,64 @@ If the file preamble.txt contained the phrase "Hello World" (including the quote
 ```
 
 Notice the lines containing the assignments are not included in the output and that no carriage returns or line feeds are added the the substituted labels.
+
+### Processing Markdown pages
+
+_shorthand_ also provides a markdown processor. It uses the [blackfriday](https://github.com/russross/blackfriday) markdown library. This is both a convience and also allows you to treat markdown with shorthand assignments as a template that renders HTML or HTML with shorthand ready for expansion. It can effectivly be a poorman's rendering engine.
+
+In this example we'll build a HTML page with shorthand labels from markdown text. Then
+we will use the render HTML as a template for a blog page entry.
+
+Our markdown file serving as a template will be call "post-template.md". It should contain
+the outline of the structure of the page plus some shorthand labels we'll expand later.
+
+```markdown
+
+    # @blogTitle
+
+    ## @pageTitle
+
+    ### @dateString
+
+    @contentBlocks
+
+```
+
+For the purposes of this exercise we'll use _shorthand_ as a repl and just enter the
+assignments sequencly.  Also rather than use the output of shorthand directly we'll
+build up the content for the page in a label and use shorthand itself to write the final
+page out.
+
+The steps we'll follow will be to 
+
+1. Read in our markdown file page.md and turn it into an HTML with embedded shorthand labels
+2. Assign some values to the labels
+3. Expand the labels in the HTML and assign to a new label
+4. Write the new label out to are page call "page.html"
+
+Start the repl with this version of the shorthand command:
+
+```shell
+    shorthand -p "? "
+```
+
+The _-p_ option tells _shorthand_ to use the value "? " as the prompt. When _shorthand_ starts
+it will display "? " to indicate it is ready for an assignment or expansion.
+
+The following assumes you are in the _shorthand_ repl.
+
+Load the mardkown file and transform it into HTML with embedded shorthand labels
+
+```shell
+    @doctype :! echo "<!DOCTYPE html>"
+    @headBlock := <head><title>@pageTitle</title>
+    @pageTemplate :=[ post-template.md
+    @dateString :! date
+    @blogTitle :=  My Blog
+    @pageTitle := A Post
+    @contentBlock :< a-post.md
+    @output :{ @doctype<html>@headBlock<body>@pageTemplate</body></html>
+    @output :> post.html
+```
 
 

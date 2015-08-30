@@ -104,6 +104,15 @@ These are supported types of assignments (followed by their forms).
 
 		LABEL :=} FILENAME
 
+	+ Render markdown to a label
+
+		LABEL :[ MARKDOWN_EXPRESSION
+
+	+ Render markdown file to a label
+
+		LABEL :=[ FILENAME
+
+
 If the label is an underscore then it gets ignored.
 
 You can evaluate shorthand expression in the command line much like you do
