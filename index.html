@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shorthand - a simple label expander</title>
+<head>
+<body>
+    <header>
+        <h1>Shorthand - a simple label expander</title>
+    </header>
+    <section><h1>shorthand</h1>
+
+<p>A simple label expander. Example use cases</p>
+
+<ul>
+<li>label or abbreviation expansion in Markdown files</li>
+<li>label expansion in comma or tab delimited files</li>
+<li>Very lightweight ad-hoc template engine for generating HTML or LaTeX</li>
+</ul>
+
+<p>The supported command line options can be listed using the <em>&ndash;help</em>
+options.</p>
+
+<pre><code class="language-shell">    shorthand --help
+</code></pre>
+
+<h2>Tutorial</h2>
+
+<h3>Timestamp in Markdown file</h3>
+
+<p>If the content of the markdown file <em>testdata/report.md</em> was</p>
+
+<pre><code class="language-markdown">
+    Report Date: @now
+
+    # Topic: The current local time.
+
+    This report highlights the current local time of rendering this document
+
+    The current local time is @now
+
+</code></pre>
+
+<p>From the command line you can do something like this</p>
+
+<pre><code class="language-shell">    shorthand -e &quot;@now :! date&quot; &lt;  testdata/report.md | markdown &gt; testdata/report.html
+</code></pre>
+
+<p>What this command does is launch the <em>shorthand</em> interpreter and it
+replaces all occurrences of &ldquo;@now&rdquo; in the markdown document with the
+output from the Unix program <em>date</em>.</p>
+
+<p>The output would look something like</p>
+
+<pre><code class="language-html">    &lt;p&gt;Report Date: Sat Aug 29 11:25:48 PDT 2015&lt;/p&gt;
+
+    &lt;h1&gt;Topic: The current local time.&lt;/h1&gt;
+
+    &lt;p&gt;This report highlights the current local time of rendering this document&lt;/p&gt;
+
+    &lt;p&gt;The current local time is Sat Aug 29 11:25:48 PDT 2015&lt;/p&gt;
+</code></pre>
+
+<p>Notice that both &ldquo;@now&rdquo; are replace with the same date information.</p>
+
+<h3>embedding shorthand definitions</h3>
+
+<p>You could also embed the shorthand definitions command straight in the
+markdown itself. with something like</p>
+
+<pre><code class="language-markdown">    @now :! date
+
+    Report Date: @now
+
+    # Topic: The current local time.
+
+    This report highlights the current local time of rendering this document
+
+    The current local time is @now
+
+</code></pre>
+
+<p>That makes the command line a little shorter</p>
+
+<pre><code class="language-shell">    shorthand &lt; testdata/report.md | markdown &gt; testdata/report.html
+</code></pre>
+
+<p>For all types of label assignments support see <a href="shorthand.html">shorthand.html</a></p>
+</section>
+    <footer><p>copyright &copy; 2015 all rights reserved.
+Released under the BSD 2-Clause license
+See: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a></p>
+</footer>
+</body>
+</html>

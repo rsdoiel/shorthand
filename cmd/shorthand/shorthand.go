@@ -16,7 +16,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 )
@@ -158,7 +157,7 @@ func main() {
 		}
 		line, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatalf("%s\n", err)
+			break
 		}
 		if strings.TrimSpace(line) == ":exit" || strings.TrimSpace(line) == ":quit" {
 			break

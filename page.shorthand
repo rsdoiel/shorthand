@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@page_title</title>
+<head>
+<body>
+    <header>
+        <h1>@page_title</title>
+    </header>
+    <section>@content</section>
+    <footer>@copyright</footer>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shorthand - how it works</title>
+<head>
+<body>
+    <header>
+        <h1>Shorthand - how it works</title>
+    </header>
+    <section><h1>shorthand</h1>
+
+<p>Shorthand is a simple text label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions</p>
+
+<ul>
+<li>assigning a string to a LABEL</li>
+<li>assigning the contents of a file to a LABEL</li>
+<li>assigning the output of a Bash shell expression to a LABEL</li>
+<li>assigning the output of a shorthand phrase or definition to a LABEL</li>
+<li>Output a LABEL value to a file</li>
+<li>Output all LABEL values to a file</li>
+<li>Output a LABEL assignment statement to a file</li>
+<li>Output all assignment statements to a file</li>
+</ul>
+
+<p><em>shorthand</em> replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not output by the preprocessor.</p>
+
+<ul>
+<li>Basic string replacement
+
+<ul>
+<li>LABEL := STRING</li>
+</ul></li>
+<li>Assign the contents of a file to a label
+
+<ul>
+<li>LABEL :&lt; FILENAME</li>
+</ul></li>
+<li>Assign the output of a shell command to a label
+
+<ul>
+<li>LABEL :! SHELL_COMMAND</li>
+</ul></li>
+<li>Assign shorthand expressions to a LABEL
+
+<ul>
+<li>LABEL :{ SHORTHAND_DEFS_OR_MARKUP</li>
+</ul></li>
+<li>Render a LABEL value to a file
+
+<ul>
+<li>LABEL :&gt; FILENAME</li>
+</ul></li>
+<li>render all LABEL values to a file
+
+<ul>
+<li>LABEL :=&gt; FILENAME</li>
+</ul></li>
+<li>render a LABEL assignment statement to a file
+
+<ul>
+<li>LABEL :} FILENAME</li>
+</ul></li>
+<li>render all LABEL assignment statements to a file
+
+<ul>
+<li>IGNORED_LABEL :=} FILENAME</li>
+<li>By convention IGNORED_LABEL is an underscore</li>
+</ul></li>
+</ul>
+
+<p>The spaces surrounding &ldquo; := &ldquo;, &rdquo; :&lt; &ldquo;, &rdquo; :! &ldquo;, &rdquo; :{ &ldquo;, &rdquo; :&gt; &ldquo;, &rdquo; :=&gt; &ldquo;, &rdquo; :} &ldquo; and &rdquo; :=} &ldquo; are required.</p>
+
+<h2>Example</h2>
+
+<p>In this example a file containing the text of pre-amble is assigned to the
+label @PREAMBLE, the time 3:30 is assigned to the label @NOW.</p>
+
+<pre><code class="language-text">    @PREAMBLE :&lt; /home/me/preamble.text
+    @NOW := 3:30
+
+    At @NOW I will be reading the @PREAMBLE until everyone falls asleep.
+</code></pre>
+
+<p>If the file preamble.txt contained the phrase &ldquo;Hello World&rdquo; (including
+the quotes but without any carriage return or line feed) the output after
+processing the shorthand would look like -</p>
+
+<pre><code class="language-text">
+    At 3:30 I will be reading the &quot;Hello World&quot; until everyone falls asleep.
+</code></pre>
+
+<p>Notice the lines containing the assignments are not included in the output and that no carriage returns or line feeds are added the the substituted labels.</p>
+</section>
+    <footer><p>copyright &copy; 2015 all rights reserved.
+Released under the BSD 2-Clause license
+See: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a></p>
+</footer>
+</body>
+</html>
