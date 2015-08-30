@@ -15,23 +15,34 @@ Shorthand is a simple text label expansion utility. It is based on a simple key 
 *shorthand* replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not output by the preprocessor.
 
 
-+ Basic string replacement
++ Assign a string to a label
     + LABEL := STRING
 + Assign the contents of a file to a label
     + LABEL :< FILENAME
+    + @content@ :< README.md
 + Assign the output of a shell command to a label
     + LABEL :! SHELL_COMMAND
-+ Assign shorthand expressions to a LABEL
-    + LABEL :{ SHORTHAND_DEFS_OR_MARKUP
+    + @content@ :! cat README.md | markdown
++ Assign shorthand expansions to a LABEL
+    + LABEL :{ SHORTHAND_TO_BE_EXPANDED
+    + @content@ :{ @report_name@ @report_date@
+        + this would concatenate report name and date
 + Render a LABEL value to a file
     + LABEL :> FILENAME
+    + @content@ :> page.txt
 + render all LABEL values to a file
-    + LABEL :=> FILENAME
+    + IGNORE_LABEL :=> FILENAME
+    + _ :=> page.txt
+        + By convention IGNORED_LABEL is an underscore
+        + There is no guaranteed order to the values written out
 + render a LABEL assignment statement to a file
     + LABEL :} FILENAME
+    + @content@ :} mydef.shorthand
 + render all LABEL assignment statements to a file
     + IGNORED_LABEL :=} FILENAME 
-    + By convention IGNORED_LABEL is an underscore
+    + _ :=} mydefs.shorthand
+        + By convention IGNORED_LABEL is an underscore
+        + There is no guaranteed order to the values written out
 
 
 The spaces surrounding " := ", " :< ", " :! ", " :{ ", " :> ", " :=> ", " :} " and " :=} " are required.

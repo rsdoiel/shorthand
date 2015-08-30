@@ -25,7 +25,7 @@
 <p><em>shorthand</em> replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not output by the preprocessor.</p>
 
 <ul>
-<li>Basic string replacement
+<li>Assign a string to a label
 
 <ul>
 <li>LABEL := STRING</li>
@@ -34,37 +34,51 @@
 
 <ul>
 <li>LABEL :&lt; FILENAME</li>
+<li>@content@ :&lt; README.md</li>
 </ul></li>
 <li>Assign the output of a shell command to a label
 
 <ul>
 <li>LABEL :! SHELL_COMMAND</li>
+<li>@content@ :! cat README.md | markdown</li>
 </ul></li>
-<li>Assign shorthand expressions to a LABEL
+<li>Assign shorthand expansions to a LABEL
 
 <ul>
-<li>LABEL :{ SHORTHAND_DEFS_OR_MARKUP</li>
+<li>LABEL :{ SHORTHAND_TO_BE_EXPANDED</li>
+<li>@content@ :{ @report_name@ @report_date@</li>
 </ul></li>
 <li>Render a LABEL value to a file
 
 <ul>
 <li>LABEL :&gt; FILENAME</li>
+<li>@content@ :&gt; page.txt</li>
 </ul></li>
 <li>render all LABEL values to a file
 
 <ul>
 <li>LABEL :=&gt; FILENAME</li>
+<li>_ :=&gt; page.txt
+
+<ul>
+<li>By convention IGNORED_LABEL is an underscore</li>
+</ul></li>
 </ul></li>
 <li>render a LABEL assignment statement to a file
 
 <ul>
 <li>LABEL :} FILENAME</li>
+<li>@content@ :} mydef.shorthand</li>
 </ul></li>
 <li>render all LABEL assignment statements to a file
 
 <ul>
 <li>IGNORED_LABEL :=} FILENAME</li>
+<li>_ :=} mydefs.shorthand
+
+<ul>
 <li>By convention IGNORED_LABEL is an underscore</li>
+</ul></li>
 </ul></li>
 </ul>
 
