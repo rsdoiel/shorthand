@@ -15,7 +15,7 @@
 <li>assigning a string to a LABEL</li>
 <li>assigning the contents of a file to a LABEL</li>
 <li>assigning the output of a Bash shell expression to a LABEL</li>
-<li>assigning the output of a shorthand phrase or definition to a LABEL</li>
+<li>assigning the output of a shorthand expansion to a LABEL</li>
 <li>Output a LABEL value to a file</li>
 <li>Output all LABEL values to a file</li>
 <li>Output a LABEL assignment statement to a file</li>
@@ -46,7 +46,22 @@
 
 <ul>
 <li>LABEL :{ SHORTHAND_TO_BE_EXPANDED</li>
-<li>@content@ :{ @report_name@ @report_date@</li>
+<li>@content@ :{ @report_name@ @report_date@
+
+<ul>
+<li>this would concatenate report name and date</li>
+</ul></li>
+</ul></li>
+<li>Assign shorthand definitions and expansions to a label
+
+<ul>
+<li>LABEL :={ FILE_CONTAINING_SHORTHAND_DEFINISIONS_AND_EXPANSIONS
+
+<ul>
+<li>_ :={ myfile.shorthand</li>
+<li>Assignments are added to the abbreviation list in memory and any expansions to LABEL</li>
+<li>The underscore used as a LABEL manes the label can be ignored.</li>
+</ul></li>
 </ul></li>
 <li>Render a LABEL value to a file
 
@@ -57,11 +72,12 @@
 <li>render all LABEL values to a file
 
 <ul>
-<li>LABEL :=&gt; FILENAME</li>
+<li>IGNORE_LABEL :=&gt; FILENAME</li>
 <li>_ :=&gt; page.txt
 
 <ul>
-<li>By convention IGNORED_LABEL is an underscore</li>
+<li>The underscore used as a LABEL manes the label can be ignored.</li>
+<li>There is no guaranteed order to the values written out</li>
 </ul></li>
 </ul></li>
 <li>render a LABEL assignment statement to a file
@@ -77,7 +93,8 @@
 <li>_ :=} mydefs.shorthand
 
 <ul>
-<li>By convention IGNORED_LABEL is an underscore</li>
+<li>The underscore used as a LABEL manes the label can be ignored.</li>
+<li>There is no guaranteed order to the values written out</li>
 </ul></li>
 </ul></li>
 </ul>
