@@ -24,10 +24,10 @@ _testmain.go
 *.prof
 
 #
-# gerated test data
+# generated test data
 #
-testdata/assigned.txt
-testdata/helloworld.txt
+testdata/assigned?.txt
+testdata/helloworld?.txt
 index.shorthand
 shorthand.shorthand
 
