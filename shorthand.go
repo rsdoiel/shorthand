@@ -14,7 +14,6 @@ package shorthand
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -25,31 +24,50 @@ import (
 // The version nummber of library and utility
 const Version = "v0.0.3"
 
+//
+// An Op is built from a multi character glyph
+// Each element in the glyph has meaning
+// " :" is the start of a glyb and the end is a trailing space
+// = the source value is next, this is basic assignment of a string value to a symbol
+// < is input from a file
+// { expand (resolved label values)
+// } assign a statement (i.e. label, op, value)
+// ! input from a shell expression
+// [ is a markdown expansion
+// > is to output an to a file
+// * operate on symbol table
+
 // Assignment Ops
 const (
-	AssignString         string = " := "
-	AssignInclude        string = " :< "
-	AssignShell          string = " :! "
-	AssignExpansion      string = " :{ "
-	IncludeAssignments   string = " :={ "
-	AssignMarkdown       string = " :[ "
-	IncludeMarkdown      string = " :=[ "
-	OutputAssignedValue  string = " :> "
-	OutputAssignedValues string = " :=> "
-	OutputAssignment     string = " :} "
-	OutputAssignments    string = " :=} "
+	AssignString             string = " := "
+	AssignInclude            string = " :=< "
+	IncludeAssignments       string = " :}< "
+	AssignExpansion          string = " :{ "
+	AssignExpandExpansion    string = " :{{ "
+	IncludeExpansion         string = " :{< "
+	AssignShell              string = " :! "
+	AssignExpandShell        string = " :{! "
+	AssignMarkdown           string = " :[ "
+	IncludeMarkdown          string = " :[< "
+	OutputAssignedExpansion  string = " :> "
+	OutputAssignedExpansions string = " :*> "
+	OutputAssignment         string = " :}> "
+	OutputAssignments        string = " :*}> "
 )
 
 var ops = []string{
 	AssignString,
 	AssignInclude,
-	AssignShell,
-	AssignExpansion,
 	IncludeAssignments,
+	AssignExpansion,
+	AssignExpandExpansion,
+	IncludeExpansion,
+	AssignShell,
+	AssignExpandShell,
 	AssignMarkdown,
 	IncludeMarkdown,
-	OutputAssignedValue,
-	OutputAssignedValues,
+	OutputAssignedExpansion,
+	OutputAssignedExpansions,
 	OutputAssignment,
 	OutputAssignments,
 }
@@ -66,6 +84,11 @@ type SourceMap struct {
 // SymbolTable holds the exressions, values and other errata of parsing assignments making expansions
 type SymbolTable struct {
 	entries []SourceMap
+}
+
+// warning writes a message to stderr
+func warning(msg string) {
+	fmt.Fprintf(os.Stderr, "%s\n", msg)
 }
 
 // IsAssignment checks to see if a string contains an assignment (e.g. has a ' := ' in the string.)
@@ -103,7 +126,8 @@ func Parse(s string, lineNo int) (SourceMap, bool) {
 func WriteAssignment(fname string, label string, table *SymbolTable, writeSourceCode bool) bool {
 	fp, err := os.Create(fname)
 	if err != nil {
-		log.Fatal(err)
+		warning(fmt.Sprintf("%s", err))
+		return false
 	}
 	defer fp.Close()
 
@@ -125,7 +149,7 @@ func WriteAssignment(fname string, label string, table *SymbolTable, writeSource
 func WriteAssignments(fname string, table *SymbolTable, writeSourceCode bool) bool {
 	fp, err := os.Create(fname)
 	if err != nil {
-		log.Printf("Cannot write to %s, error: %s\n", fname, err)
+		warning(fmt.Sprintf("Cannot write to %s, error: %s\n", fname, err))
 		return false
 	}
 	defer fp.Close()
@@ -162,7 +186,8 @@ func ReadAssignments(fname string, table *SymbolTable) error {
 func ReadMarkdown(fname string) string {
 	buf, err := ioutil.ReadFile(fname)
 	if err != nil {
-		log.Fatalf(fmt.Sprintf("Cannot read %s: %s\n", fname, err))
+		warning(fmt.Sprintf("Cannot read %s: %s\n", fname, err))
+		return ""
 	}
 	return string(blackfriday.MarkdownCommon(buf))
 }
@@ -184,11 +209,11 @@ func Assign(table *SymbolTable, s string, lineNo int) bool {
 	}
 
 	// These functions do not change the symbol table
-	if sm.Op == OutputAssignedValue {
+	if sm.Op == OutputAssignedExpansion {
 		return WriteAssignment(sm.Value, sm.Label, table, false)
 	}
 
-	if sm.Op == OutputAssignedValues {
+	if sm.Op == OutputAssignedExpansions {
 		return WriteAssignments(sm.Value, table, false)
 	}
 
@@ -200,27 +225,45 @@ func Assign(table *SymbolTable, s string, lineNo int) bool {
 		return WriteAssignments(sm.Value, table, true)
 	}
 
+	// Enforce symbol immutability
+	if sm.Label != "_" && HasAssignment(table, sm.Label) == true {
+		warning(fmt.Sprintf("Error line %d: %s previously defined\n", lineNo, sm.Label))
+		return false
+	}
+
 	// These functions change the symbol table
 	if sm.Op == AssignString {
 		sm.Expanded = sm.Value
 	} else if sm.Op == AssignInclude {
 		buf, err := ioutil.ReadFile(sm.Value)
 		if err != nil {
-			log.Fatalf("Cannot read %s: %s\n", sm.Value, err)
+			warning(fmt.Sprintf("Cannot read %s: %s\n", sm.Value, err))
+			return false
 		}
 		sm.Expanded = string(buf)
 	} else if sm.Op == AssignShell {
 		buf, err := exec.Command("bash", "-c", sm.Value).Output()
 		if err != nil {
-			log.Fatalf("Shell command returned error: %s\n", err)
+			warning(fmt.Sprintf("Shell command returned error: %s\n", err))
+			return false
+		}
+		sm.Expanded = string(buf)
+	} else if sm.Op == AssignExpandShell {
+		buf, err := exec.Command("bash", "-c", Expand(table, sm.Value)).Output()
+		if err != nil {
+			warning(fmt.Sprintf("Shell command returned error: %s\n", err))
+			return false
 		}
 		sm.Expanded = string(buf)
 	} else if sm.Op == AssignExpansion {
 		sm.Expanded = Expand(table, sm.Value)
+	} else if sm.Op == AssignExpandExpansion {
+		sm.Expanded = Expand(table, Expand(table, sm.Value))
 	} else if sm.Op == IncludeAssignments {
 		err := ReadAssignments(sm.Value, table)
 		if err != nil {
-			log.Fatalf("Error processing %s: %s\n", sm.Value, err)
+			warning(fmt.Sprintf("Error processing %s: %s\n", sm.Value, err))
+			return false
 		}
 	} else if sm.Op == AssignMarkdown {
 		sm.Expanded = strings.TrimSpace(string(blackfriday.MarkdownCommon([]byte(sm.Value))))

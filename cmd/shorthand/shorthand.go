@@ -24,10 +24,12 @@ import (
 type expressionList []string
 
 var (
-	help       bool
-	version    bool
-	expression expressionList
-	prompt     string
+	help        bool
+	version     bool
+	expression  expressionList
+	prompt      string
+	symbolTable *shorthand.SymbolTable
+	lineNo      int
 )
 
 var usage = func(exit_code int, msg string) {
@@ -157,8 +159,12 @@ func (e *expressionList) Set(value string) error {
 	if shorthand.IsAssignment(value) == false {
 		return errors.New("Shorthand is not valid (LABEL := VALUE)")
 	}
-	shorthand.Assign(value)
+	shorthand.Assign(symbolTable, value, lineNo)
 	return nil
+}
+
+func init() {
+	symbolTable = new(shorthand.SymbolTable)
 }
 
 func main() {
@@ -187,16 +193,15 @@ func main() {
 		if err != nil {
 			break
 		}
+		lineNo += 1
 
 		// Process the input plus some repl commands.
 		if strings.TrimSpace(line) == ":exit" || strings.TrimSpace(line) == ":quit" {
 			break
-		} else if strings.TrimSpace(line) == ":clear" {
-			shorthand.Clear()
 		} else if shorthand.IsAssignment(line) {
-			shorthand.Assign(line)
+			shorthand.Assign(symbolTable, line, lineNo)
 		} else {
-			fmt.Print(shorthand.Expand(line))
+			fmt.Print(shorthand.Expand(symbolTable, line))
 		}
 	}
 }
