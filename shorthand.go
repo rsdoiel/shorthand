@@ -48,6 +48,7 @@ const (
 	AssignShell              string = " :! "
 	AssignExpandShell        string = " :{! "
 	AssignMarkdown           string = " :[ "
+	AssignExpandMarkdown     string = " :{[ "
 	IncludeMarkdown          string = " :[< "
 	OutputAssignedExpansion  string = " :> "
 	OutputAssignedExpansions string = " :*> "
@@ -65,6 +66,7 @@ var ops = []string{
 	AssignShell,
 	AssignExpandShell,
 	AssignMarkdown,
+	AssignExpandMarkdown,
 	IncludeMarkdown,
 	OutputAssignedExpansion,
 	OutputAssignedExpansions,
@@ -274,6 +276,8 @@ func Assign(table *SymbolTable, s string, lineNo int) bool {
 		}
 	} else if sm.Op == AssignMarkdown {
 		sm.Expanded = strings.TrimSpace(string(blackfriday.MarkdownCommon([]byte(sm.Value))))
+	} else if sm.Op == AssignExpandMarkdown {
+		sm.Expanded = strings.TrimSpace(string(blackfriday.MarkdownCommon([]byte(Expand(table, sm.Value)))))
 	} else if sm.Op == IncludeMarkdown {
 		sm.Expanded = ReadMarkdown(sm.Value)
 	}

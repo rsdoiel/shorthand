@@ -384,4 +384,16 @@ func TestMarkdownSupport(t *testing.T) {
 	e1 := `<p><a href="http://example.org">my link</a></p>`
 	r1 := Expand(st, "@link")
 	ok.Ok(t, r1 == e1, fmt.Sprintf("@link shourl render as %s, got %s", e1, r1))
+
+	st2 := new(SymbolTable)
+	s2 := "[@link](@url) is a shorthand link in Markdown."
+	a2 := "@link := My Link"
+	Assign(st2, a2, 1)
+	a3 := "@url := http://www.example.org"
+	Assign(st2, a3, 2)
+	e2 := `<p><a href="http://www.example.org">My Link</a> is a shorthand link in Markdown.</p>`
+	a4 := `@html :{[ ` + s2
+	Assign(st2, a4, 3)
+	r2 := Expand(st2, "@html")
+	ok.Ok(t, r2 == e2, "Expected ["+e2+"] found ["+r2+"]")
 }
