@@ -13,11 +13,13 @@ package shorthand
 
 import (
 	"fmt"
-	"github.com/rsdoiel/ok"
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/rsdoiel/ok"
 )
 
 // Test IsAssignment
@@ -49,65 +51,158 @@ func TestIsAssignment(t *testing.T) {
 	}
 }
 
-// Test Assign
-func TestAssign(t *testing.T) {
-	Clear()
-	validAssignments := []string{
-		"@now := $(date)",
-		"this := a valid assignment",
-		"this; := is a valid assignment",
-		"now; := $(date +\"%H:%M\");",
-		"@new := Fred\n",
-	}
-	expectedMap := map[string]string{
-		"@now":  "$(date)",
-		"this":  "a valid assignment",
-		"this;": "is a valid assignment",
-		"now;":  "$(date +\"%H:%M\");",
-		"@new":  "Fred",
+// Test Parse
+func TestParse(t *testing.T) {
+	validData := map[string]SourceMap{
+		"@now1 := $(date)": SourceMap{
+			Label: "@now1",
+			Op:    AssignString,
+			Value: "$(date)",
+		},
+		"this := a valid assignment": SourceMap{
+			Label: "this",
+			Op:    AssignString,
+			Value: "a valid assignment",
+		},
+		"this; := a valid assignment": SourceMap{
+			Label: "this;",
+			Op:    AssignString,
+			Value: "a valid assignment",
+		},
+		`now; := $(date +%H:%M);`: SourceMap{
+			Label: "now;",
+			Op:    AssignString,
+			Value: `$(date +%H:%M);`,
+		},
+		"@now2 := Fred\n": SourceMap{
+			Label: "@now2",
+			Op:    AssignString,
+			Value: "Fred",
+		},
+		"@file :< file.txt": SourceMap{
+			Label: "@file",
+			Op:    AssignInclude,
+			Value: "file.txt",
+		},
+		"@now3 :! date": SourceMap{
+			Label: "@now3",
+			Op:    AssignShell,
+			Value: "date",
+		},
+		"@now4 :{ @one @two": SourceMap{
+			Label: "@now4",
+			Op:    AssignExpansion,
+			Value: "@one @two",
+		},
+		"@now5 :={ test.shorthand": SourceMap{
+			Label: "@now5",
+			Op:    IncludeAssignments,
+			Value: "test.shorthand",
+		},
+		"@now6 :[ **strong words**": SourceMap{
+			Label: "@now6",
+			Op:    AssignMarkdown,
+			Value: "**strong words**",
+		},
+		"@now6 :=[ test.md": SourceMap{
+			Label: "@now6",
+			Op:    IncludeMarkdown,
+			Value: "test.md",
+		},
+		"@label0 :> label0.txt": SourceMap{
+			Label: "@label0",
+			Op:    OutputAssignedValue,
+			Value: "label0.txt",
+		},
+		"@label1 :=> label1.txt": SourceMap{
+			Label: "@label1",
+			Op:    OutputAssignedValues,
+			Value: "label1.txt",
+		},
+		"@label2 :} label2.txt": SourceMap{
+			Label: "@label2",
+			Op:    OutputAssignment,
+			Value: "label2.txt",
+		},
+		"@label3 :=} label3.txt": SourceMap{
+			Label: "@label3",
+			Op:    OutputAssignments,
+			Value: "label3.txt",
+		},
 	}
 
-	for i := range validAssignments {
-		if Assign(validAssignments[i]) == false {
-			t.Fatalf(validAssignments[i] + " should be assigned.")
-		}
+	for s, ex := range validData {
+		sm, r := Parse(s, 1)
+		ok.Ok(t, r == true, "Parse OK "+s)
+		ok.Ok(t, sm.Label == ex.Label, "Label should match "+sm.Label+" ? "+ex.Label)
+		ok.Ok(t, sm.Op == ex.Op, "Op should match "+sm.Op+" ? "+ex.Op)
+		ok.Ok(t, sm.Value == ex.Value, "Value should match "+sm.Value+" ? "+ex.Value)
 	}
 
-	for key, value := range expectedMap {
-		sm, OK := Abbreviations[key]
-		if !OK {
-			t.Fatalf("Could not find the shorthand for " + key)
-		}
-		if value != sm.value {
-			t.Fatalf("[" + value + "] != [" + sm.value + "]")
-		}
-	}
+	// Check an invalid assignment
+	s := `@label4 :++ something`
+	sm, r := Parse(s, 1)
+	ok.Ok(t, r == false, "Should not parse "+s)
+	ok.Ok(t, sm.Label == "", "Should not have a label "+sm.Label)
+	ok.Ok(t, sm.Op == "", "Should not have an op "+sm.Op)
+	ok.Ok(t, sm.Value == "", "Should have an empty value "+sm.Value)
+	ok.Ok(t, sm.Expanded == s, "Expanded should have original s "+s)
+
+	// Check an expansion
+	s = "This should have @label4 and other things."
+	sm, r = Parse(s, 1)
+	ok.Ok(t, r == false, "Should not parse "+s)
+	ok.Ok(t, sm.Label == "", "Should not have a label "+sm.Label)
+	ok.Ok(t, sm.Op == "", "Should not have an op "+sm.Op)
+	ok.Ok(t, sm.Value == "", "Should not have a value "+sm.Value)
+	ok.Ok(t, sm.Expanded == s, "Expanded should have original s "+s)
+}
+
+func TestSymbolTable(t *testing.T) {
+	st := new(SymbolTable)
+
+	ok.Ok(t, len(st.entries) == 0, "st.entries should be zero")
+
+	r := HasAssignment(st, "@missing")
+	ok.Ok(t, r == false, "Should fail with an empty symbol table")
+
+	ok.Ok(t, Assign(st, "@now := This is now.", 1), "Should have a successful assignment ")
+	r = HasAssignment(st, "@now")
+	ok.Ok(t, r == true, "Should have a @now symbol")
+
+	s := "This is '@now'"
+	r = HasAssignment(st, s)
+	ok.Ok(t, r == false, "s is an expansion "+s)
+
+	resultText := Expand(st, s)
+	ok.Ok(t, resultText == "This is 'This is now.'", "Should have an expansion. ["+resultText+"]")
 }
 
 // Test Expand
 func TestExpand(t *testing.T) {
-	Clear()
+	st := new(SymbolTable)
+
 	text := `
-@me
+	   @me
 
-This is some line that should not change.
+	   This is some line that should not change.
 
-8:00 - @now; some stuff
+	   8:00 - @now; some stuff
 
-This "now" should not change. This "me" should not change.`
+	   This "now" should not change. This "me" should not change.`
 
 	expected := `
-Fred
+	   Fred
 
-This is some line that should not change.
+	   This is some line that should not change.
 
-8:00 - 9:00; some stuff
+	   8:00 - 9:00; some stuff
 
-This "now" should not change. This "me" should not change.`
+	   This "now" should not change. This "me" should not change.`
 
-	Assign("@me := Fred\n")
-	Assign("@now := 9:00")
-	result := Expand(text)
+	Assign(st, "@me := Fred\n", 1)
+	Assign(st, "@now := 9:00", 2)
+	result := Expand(st, text)
 	if result != expected {
 		t.Fatalf("Expected:\n\n" + expected + "\n\nReceived:\n\n" + result)
 	}
@@ -115,6 +210,7 @@ This "now" should not change. This "me" should not change.`
 
 // Test include file
 func TestInclude(t *testing.T) {
+	st := new(SymbolTable)
 	text := `
 Today is @NOW.
 
@@ -124,14 +220,15 @@ Now add the testme.md to this.
 -------------------------------
 Did it work?
 `
-	Assign("@NOW := 2015-07-04")
+
+	Assign(st, "@NOW := 2015-07-04", 1)
 	expected := true
-	results := HasAssignment("@NOW")
+	results := HasAssignment(st, "@NOW")
 	ok.Ok(t, results == expected, "Should have @NOW assignment")
-	Assign("@TESTME :< testdata/testme.md")
-	results = HasAssignment("@TESTME")
+	Assign(st, "@TESTME :< testdata/testme.md", 2)
+	results = HasAssignment(st, "@TESTME")
 	ok.Ok(t, results == expected, "Should have @TESTME assignment")
-	resultText := Expand(text)
+	resultText := Expand(st, text)
 	l := len(text)
 	ok.Ok(t, len(resultText) > l, "Should have more results: "+resultText)
 	ok.Ok(t, strings.Contains(resultText, "A nimble webserver"), fmt.Sprintf("Should have 'A nimble webserver' in %s", resultText))
@@ -139,109 +236,133 @@ Did it work?
 }
 
 func TestShellAssignment(t *testing.T) {
+	st := new(SymbolTable)
 	expected := true
 	expectedText := "Hello World!"
-	Assign("@ECHO :! echo -n 'Hello World!'")
-	results := HasAssignment("@ECHO")
+	Assign(st, "@ECHO :! echo -n 'Hello World!'", 1)
+	results := HasAssignment(st, "@ECHO")
 	ok.Ok(t, results == expected, "Should have @ECHO assignment")
-	resultText := Expand("@ECHO")
+	resultText := Expand(st, "@ECHO")
 	l := len(strings.Trim(resultText, "\n"))
 	ok.Ok(t, l == len(expectedText), fmt.Sprintf("Expected length %d got %d for @ECHO", len(expectedText), l))
 	ok.Ok(t, strings.Contains(strings.Trim(resultText, "\n"), expectedText), "Should have matching text for @ECHO")
 }
 
 func TestExpandedAssignment(t *testing.T) {
-	Clear()
+	st := new(SymbolTable)
 	dateFormat := "2006-01-02"
 	now := time.Now()
 	// Date will generate a LF so the text will also contain it. So we'll test against a Trim later.
-	Assign(`@now :! date +%Y-%m-%d`)
-	Assign("@title :{ This is a title with date: @now")
+	Assign(st, `@now :! date +%Y-%m-%d`, 1)
+	Assign(st, "@title :{ This is a title with date: @now", 2)
 	text := `@title`
 	expected := true
-	results := HasAssignment("@now")
+	results := HasAssignment(st, "@now")
 	ok.Ok(t, results == expected, "Should have @now")
-	results = HasAssignment("@title")
+	results = HasAssignment(st, "@title")
 	ok.Ok(t, results == expected, "Should have @title")
 	expectedText := fmt.Sprintf("This is a title with date: %s", now.Format(dateFormat))
-	resultText := Expand(text)
+	resultText := Expand(st, text)
 	l := len(strings.Trim(resultText, "\n"))
 	ok.Ok(t, l == len(expectedText), "Should have expected length for @title")
 	ok.Ok(t, strings.Contains(strings.Trim(resultText, "\n"), expectedText), "Should have matching text for @title")
 
 	// Now test a label that holds multiple lines that need expanding.
-	Clear()
+	st2 := new(SymbolTable)
 	text = `
 @one this is a line
 @two this is also a line
 @three this is the last line
 `
-	Assign("@one := 1")
-	Assign("@two := 2")
-	Assign("@three := 3")
-	Assign("@text := " + text)
-	Assign("@out :{ @text")
-	resultText = Expand("@out")
+
+	Assign(st2, "@one := 1", 1)
+	Assign(st2, "@two := 2", 2)
+	Assign(st2, "@three := 3", 3)
+	Assign(st2, "@text := "+text, 4)
+	resultText = Expand(st2, "@text")
+
+	ok.Ok(t, strings.Contains(resultText, "@one this is a line"), "Should have line @one "+resultText)
+	ok.Ok(t, strings.Contains(resultText, "@two this is also a line"), "Should have line @two "+resultText)
+	ok.Ok(t, strings.Contains(resultText, "@three this is the last line"), "Should have line @three "+resultText)
+
+	Assign(st2, "@out :{ "+text, 5)
+	resultText = Expand(st2, "@out")
+
 	ok.Ok(t, strings.Contains(resultText, "1 this is a line"), "Should have line 1 "+resultText)
 	ok.Ok(t, strings.Contains(resultText, "2 this is also a line"), "Should have line 2 "+resultText)
 	ok.Ok(t, strings.Contains(resultText, "3 this is the last line"), "Should have line 3 "+resultText)
 
 	// Now test evaluating a shorthand file
-	Clear()
-	Assign("_ :={ testdata/test1.shorthand")
+	st3 := new(SymbolTable)
+	Assign(st3, "_ :={ testdata/test1.shorthand", 1)
 	expected = true
-	results = HasAssignment("@now")
+	results = HasAssignment(st3, "@now")
 	ok.Ok(t, results == expected, "Should have @now from :={")
-	results = HasAssignment("@title")
+	results = HasAssignment(st3, "@title")
 	ok.Ok(t, results == expected, "Should have @title from :={")
-	results = HasAssignment("@greeting")
+	results = HasAssignment(st3, "@greeting")
 	ok.Ok(t, results == expected, "Should have @greeting")
-	titleExpansion := Expand("@title")
-	nowExpansion := Expand("@now")
-	greetingExpansion := Expand("@greeting")
+	titleExpansion := Expand(st3, "@title")
+	nowExpansion := Expand(st3, "@now")
+	greetingExpansion := Expand(st3, "@greeting")
 
 	shorthandText := `
 @title @now
 @greeting
 `
-	resultText = Expand(shorthandText)
-	ok.Ok(t, strings.Contains(resultText, titleExpansion), "Should have title"+titleExpansion)
-	ok.Ok(t, strings.Contains(resultText, nowExpansion), "Should have name")
-	ok.Ok(t, strings.Contains(resultText, greetingExpansion), "Should have greeting")
+
+	resultText = Expand(st3, shorthandText)
+	ok.Ok(t, strings.Contains(resultText, titleExpansion), "Should have title: "+titleExpansion)
+	ok.Ok(t, strings.Contains(resultText, nowExpansion), "Should have name: "+nowExpansion)
+	ok.Ok(t, strings.Contains(resultText, greetingExpansion), "Should have greeting: "+greetingExpansion)
 }
 
 func TestExpandingValuesToFile(t *testing.T) {
+	if _, err := os.Stat("testdata/helloworld1.txt"); err != nil {
+		os.Remove("testdata/helloworld1.txt")
+	}
+	if _, err := os.Stat("testdata/helloworld2.txt"); err != nil {
+		os.Remove("testdata/helloworld2.txt")
+	}
+	st := new(SymbolTable)
 	a1 := `@hello_world := Hello World`
 	a2 := `@max :! echo -n 'Hello Max'`
 	e1 := "Hello World"
 	e2 := "Hello Max"
-	Assign(a1)
-	Assign(`@hello_world :> testdata/helloworld.txt`)
-	b, err := ioutil.ReadFile("testdata/helloworld.txt")
-	ok.Ok(t, err == nil, "Should beable to read testdata/helloworld.txt")
+	Assign(st, a1, 1)
+	Assign(st, `@hello_world :> testdata/helloworld1.txt`, 2)
+	b, err := ioutil.ReadFile("testdata/helloworld1.txt")
+	ok.Ok(t, err == nil, "Should beable to read testdata/helloworld1.txt")
 	resultText := string(b)
-	ok.Ok(t, resultText == e1, "Shoud have Hello World from file.")
-	Assign(a2)
-	Assign(`@hello_world :=> testdata/helloworld.txt`)
-	b, err = ioutil.ReadFile("testdata/helloworld.txt")
-	ok.Ok(t, err == nil, "Should be able to read testdata/helloworld.txt")
+	ok.Ok(t, strings.Contains(resultText, e1), "Should find "+e1+" in "+resultText)
+	Assign(st, a2, 3)
+	Assign(st, `@hello_world :=> testdata/helloworld2.txt`, 4)
+	b, err = ioutil.ReadFile("testdata/helloworld2.txt")
+	ok.Ok(t, err == nil, "Should be able to read testdata/helloworld2.txt")
 	resultText = string(b)
-	ok.Ok(t, strings.Contains(resultText, e1), "Should find "+e1)
-	ok.Ok(t, strings.Contains(resultText, e2), "Should find "+e2)
+	ok.Ok(t, strings.Contains(resultText, e1), "Should find "+e1+" in "+resultText)
+	ok.Ok(t, strings.Contains(resultText, e2), "Should find "+e2+" in "+resultText)
 }
 
 func TestExpandingAssignmentsToFile(t *testing.T) {
+	if _, err := os.Stat("testdata/assigned1txt"); err != nil {
+		os.Remove("testdata/assigned1.txt")
+	}
+	if _, err := os.Stat("testdata/assigned2.txt"); err != nil {
+		os.Remove("testdata/assigned2.txt")
+	}
+	st := new(SymbolTable)
 	a1 := `@hello_world := Hello World`
 	a2 := `@max :! echo -n 'Hello Max'`
-	Assign(a1)
-	Assign(`@hello_world :} testdata/assigned.txt`)
-	b, err := ioutil.ReadFile("testdata/assigned.txt")
-	ok.Ok(t, err == nil, "Should beable to read testdata/assigned.txt")
+	Assign(st, a1, 1)
+	Assign(st, `@hello_world :} testdata/assigned1.txt`, 2)
+	b, err := ioutil.ReadFile("testdata/assigned1.txt")
+	ok.Ok(t, err == nil, "Should beable to read testdata/assigned1.txt")
 	resultText := string(b)
-	ok.Ok(t, resultText == a1, "Shoud have @hello_world assignment in file.")
-	Assign(a2)
-	Assign(`@hello_world :=} testdata/assigned.txt`)
-	b, err = ioutil.ReadFile("testdata/assigned.txt")
+	ok.Ok(t, strings.Contains(resultText, a1), "Should have @hello_world assignment in file.")
+	Assign(st, a2, 3)
+	Assign(st, `@hello_world :=} testdata/assigned2.txt`, 4)
+	b, err = ioutil.ReadFile("testdata/assigned2.txt")
 	ok.Ok(t, err == nil, "Should have all assigments in file.")
 	resultText = string(b)
 	ok.Ok(t, strings.Contains(resultText, a1), "Should find "+a1)
@@ -249,10 +370,11 @@ func TestExpandingAssignmentsToFile(t *testing.T) {
 }
 
 func TestMarkdownSupport(t *testing.T) {
+	st := new(SymbolTable)
 	s1 := "[my link](http://example.org)"
-	Assign(fmt.Sprintf("@link :[ %s", s1))
-	ok.Ok(t, HasAssignment("@link"), "Should have @link assignment")
+	Assign(st, fmt.Sprintf("@link :[ %s", s1), 1)
+	ok.Ok(t, HasAssignment(st, "@link"), "Should have @link assignment")
 	e1 := `<p><a href="http://example.org">my link</a></p>`
-	r1 := Expand("@link")
+	r1 := Expand(st, "@link")
 	ok.Ok(t, r1 == e1, fmt.Sprintf("@link shourl render as %s, got %s", e1, r1))
 }

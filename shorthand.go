@@ -79,12 +79,11 @@ func IsAssignment(text string) bool {
 }
 
 // HasAssignment checks to see if a shortcut has already been assigned.
-func HasAssignment(table SymbolTable, label string) bool {
+func HasAssignment(table *SymbolTable, label string) bool {
 	for _, sm := range table.entries {
 		if sm.Label == label {
 			return true
 		}
-
 	}
 	return false
 }
@@ -101,23 +100,29 @@ func Parse(s string, lineNo int) (SourceMap, bool) {
 }
 
 // WriteAssignment writes a single assignment statement to filename
-func WriteAssignment(fname string, sm SourceMap, writeSourceCode bool) bool {
+func WriteAssignment(fname string, label string, table *SymbolTable, writeSourceCode bool) bool {
 	fp, err := os.Create(fname)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer fp.Close()
 
-	if writeSourceCode == true {
-		fmt.Fprintf(fp, "%s%s%s", sm.Label, sm.Op, sm.Value)
-	} else {
-		fmt.Fprintf(fp, "%s", sm.Expanded)
+	for _, sm := range table.entries {
+		if label == sm.Label {
+			if writeSourceCode == true {
+				fmt.Fprintf(fp, "%s%s%s", sm.Label, sm.Op, sm.Value)
+			} else {
+				fmt.Fprintf(fp, "%s", sm.Expanded)
+			}
+			return true
+		}
+
 	}
-	return true
+	return false
 }
 
 // WriteAssignments write all assignment statements to filename
-func WriteAssignments(fname string, table SymbolTable, writeSourceCode bool) bool {
+func WriteAssignments(fname string, table *SymbolTable, writeSourceCode bool) bool {
 	fp, err := os.Create(fname)
 	if err != nil {
 		log.Printf("Cannot write to %s, error: %s\n", fname, err)
@@ -137,7 +142,7 @@ func WriteAssignments(fname string, table SymbolTable, writeSourceCode bool) boo
 // ReadAssignments read in all of the lines of fname and
 // add any assignment statements found to Abbreviations
 // and expand any assignments and return as a string.
-func ReadAssignments(fname string, table SymbolTable) error {
+func ReadAssignments(fname string, table *SymbolTable) error {
 	buf, err := ioutil.ReadFile(fname)
 	if err != nil {
 		return fmt.Errorf("Cannot read %s: %s\n", fname, err)
@@ -163,7 +168,7 @@ func ReadMarkdown(fname string) string {
 }
 
 // Expand takes some text and expands all labels to their values
-func Expand(table SymbolTable, text string) string {
+func Expand(table *SymbolTable, text string) string {
 	// Iterate through the list of key/SourceMaps in abbreviations
 	for _, sm := range table.entries {
 		text = strings.Replace(text, sm.Label, sm.Expanded, -1)
@@ -172,7 +177,7 @@ func Expand(table SymbolTable, text string) string {
 }
 
 // Assign stores a shorthand and its expansion or writes and assignment or assignments
-func Assign(table SymbolTable, s string, lineNo int) bool {
+func Assign(table *SymbolTable, s string, lineNo int) bool {
 	sm, ok := Parse(s, lineNo)
 	if ok == false {
 		return ok
@@ -180,7 +185,7 @@ func Assign(table SymbolTable, s string, lineNo int) bool {
 
 	// These functions do not change the symbol table
 	if sm.Op == OutputAssignedValue {
-		return WriteAssignment(sm.Value, sm, false)
+		return WriteAssignment(sm.Value, sm.Label, table, false)
 	}
 
 	if sm.Op == OutputAssignedValues {
@@ -188,7 +193,7 @@ func Assign(table SymbolTable, s string, lineNo int) bool {
 	}
 
 	if sm.Op == OutputAssignment {
-		return WriteAssignment(sm.Value, sm, true)
+		return WriteAssignment(sm.Value, sm.Label, table, true)
 	}
 
 	if sm.Op == OutputAssignments {
@@ -196,13 +201,8 @@ func Assign(table SymbolTable, s string, lineNo int) bool {
 	}
 
 	// These functions change the symbol table
-	if sm.Op == AssignExpansion {
-		sm.Expanded = Expand(table, sm.Value)
-	} else if sm.Op == IncludeAssignments {
-		err := ReadAssignments(sm.Value, table)
-		if err != nil {
-			log.Fatalf("Error processing %s: %s\n", sm.Value, err)
-		}
+	if sm.Op == AssignString {
+		sm.Expanded = sm.Value
 	} else if sm.Op == AssignInclude {
 		buf, err := ioutil.ReadFile(sm.Value)
 		if err != nil {
@@ -215,6 +215,13 @@ func Assign(table SymbolTable, s string, lineNo int) bool {
 			log.Fatalf("Shell command returned error: %s\n", err)
 		}
 		sm.Expanded = string(buf)
+	} else if sm.Op == AssignExpansion {
+		sm.Expanded = Expand(table, sm.Value)
+	} else if sm.Op == IncludeAssignments {
+		err := ReadAssignments(sm.Value, table)
+		if err != nil {
+			log.Fatalf("Error processing %s: %s\n", sm.Value, err)
+		}
 	} else if sm.Op == AssignMarkdown {
 		sm.Expanded = strings.TrimSpace(string(blackfriday.MarkdownCommon([]byte(sm.Value))))
 	} else if sm.Op == IncludeMarkdown {
