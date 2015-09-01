@@ -241,6 +241,13 @@ func Assign(table *SymbolTable, s string, lineNo int) bool {
 			return false
 		}
 		sm.Expanded = string(buf)
+	} else if sm.Op == IncludeExpansion {
+		buf, err := ioutil.ReadFile(sm.Value)
+		if err != nil {
+			warning(fmt.Sprintf("Cannot read %s: %s\n", sm.Value, err))
+			return false
+		}
+		sm.Expanded = Expand(table, string(buf))
 	} else if sm.Op == AssignShell {
 		buf, err := exec.Command("bash", "-c", sm.Value).Output()
 		if err != nil {

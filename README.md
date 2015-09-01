@@ -42,7 +42,7 @@ From the command line you can do something like this
 
 ```shell
     shorthand -e "@now :! date" \
-        -e "@report :< testdata/report.md" \
+        -e "@report :=< testdata/report.md" \
         -@ "@html :[ @report" \
         -e "@html" 
         -e "_ :exit" > testdata/report.html
