@@ -1,0 +1,24 @@
+This uses shorthand to build the HTML pages used in the shorthand project site.
+
+@start :!: date
+
+Building index.html
+
+{{pageTitle}} :=: Shorthand - a simple label expander and markdown processor
+{{pageContent}} :[<: README.md
+HTML :{<: page.shorthand
+HTML :>: index.html
+
+Building shorthand.html
+
+{{pageTitle}} :=: Shorthand - the gory details
+{{pageContent}} :[<: shorthand.md
+HTML :{<: page.shorthand
+HTML :>: shorthand.html
+
+@finished :!: date
+
+Started: @start
+Finished: @finished
+Done!
+

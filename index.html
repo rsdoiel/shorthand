@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shorthand - a simple label expander</title>
+    <title>Shorthand - a simple label expander and markdown processor/title>
     <link href="css/style.css" rel="stylesheet" />
 <head>
 <body>
     <header>
-        <h1>Shorthand - a simple label expander</h1>
+        <h1>Shorthand - a simple label expander and markdown processor</h1>
     </header>
     <section><h1>shorthand</h1>
 
-<p>A simple label expander. Example use cases</p>
+<p>A simple label expander and markdown utility</p>
+
+<p>Example use cases:</p>
 
 <ul>
 <li>label or abbreviation expansion in Markdown files</li>
-<li>label expansion in comma or tab delimited files</li>
-<li>Very lightweight ad-hoc template engine for generating HTML or LaTeX</li>
+<li>build very html templates straight from markdown files</li>
+<li>compose pages from multiple markdown files</li>
 </ul>
 
 <p>The supported command line options can be listed using the <em>&ndash;help</em>
@@ -47,7 +49,10 @@ options.</p>
 
 <p>From the command line you can do something like this</p>
 
-<pre><code class="language-shell">    shorthand -e &quot;@now :! date&quot; &lt;  testdata/report.md | markdown &gt; testdata/report.html
+<pre><code class="language-shell">    shorthand -e &quot;@now :!: date&quot; \
+        -e &quot;@report :=&lt;: testdata/report.md&quot; \
+        -@ &quot;@html :[: @report&quot; \
+        -e &quot;@html&quot; &gt; testdata/report.html
 </code></pre>
 
 <p>What this command does is launch the <em>shorthand</em> interpreter and it
@@ -72,7 +77,7 @@ output from the Unix program <em>date</em>.</p>
 <p>You could also embed the shorthand definitions command straight in the
 markdown itself. with something like</p>
 
-<pre><code class="language-markdown">    @now :! date
+<pre><code class="language-markdown">    @now :!: date
 
     Report Date: @now
 
@@ -89,7 +94,7 @@ markdown itself. with something like</p>
 <pre><code class="language-shell">    shorthand &lt; testdata/report.md | markdown &gt; testdata/report.html
 </code></pre>
 
-<p>For all types of label assignments support see <a href="shorthand.html">shorthand.html</a></p>
+<p>For all types of label assignments support see <a href="shorthand.md">shorthand.md</a></p>
 </section>
     <footer><p>copyright &copy; 2015 all rights reserved.
 Released under the BSD 2-Clause license

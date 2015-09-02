@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>@page_title</title>
+    <title>{{pageTitle}}/title>
     <link href="css/style.css" rel="stylesheet" />
 <head>
 <body>
     <header>
-        <h1>@page_title</h1>
+        <h1>{{pageTitle}}</h1>
     </header>
-    <section>@content</section>
-    <footer>@copyright</footer>
+    <section>{{pageContent}}</section>
+    <footer><p>copyright &copy; 2015 all rights reserved.
+Released under the BSD 2-Clause license
+See: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a></p>
+</footer>
 </body>
 </html>

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shorthand - how it works</title>
+    <title>Shorthand - the gory details/title>
     <link href="css/style.css" rel="stylesheet" />
 <head>
 <body>
     <header>
-        <h1>Shorthand - how it works</h1>
+        <h1>Shorthand - the gory details</h1>
     </header>
     <section><h1>Assignments and Expansions</h1>
 
-<p>Shorthand is a simple text label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions</p>
+<p>Shorthand is a simple label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions</p>
 
 <ul>
 <li>Assign a string to a LABEL</li>
@@ -24,82 +24,54 @@
 <li>Output all assignment statements to a file</li>
 </ul>
 
-<p><em>shorthand</em> replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not output by the preprocessor.</p>
+<p><em>shorthand</em> replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not written to stdout output.</p>
 
-<ul>
-<li>Assign a string to a label
+<h2>operator | meaning | example</h2>
 
-<ul>
-<li>LABEL := STRING</li>
-</ul></li>
-<li>Assign the contents of a file to a label
+<h2>:=: | Assign String | @name :=: Freda</h2>
 
-<ul>
-<li>LABEL :&lt; FILENAME</li>
-<li>@content@ :&lt; README.md</li>
-</ul></li>
-<li>Assign the output of a shell command to a label
+<h2>:&lt;: | Assign the contents of a file | @content :&lt;: myfile.txt</h2>
 
-<ul>
-<li>LABEL :! SHELL_COMMAND</li>
-<li>@content@ :! cat README.md | markdown</li>
-</ul></li>
-<li>Assign shorthand expansions to a LABEL
+<h2>:}&lt;: | Get assignments from a file | _ :}&lt;: myfile.shorthand</h2>
 
-<ul>
-<li>LABEL :{ SHORTHAND_TO_BE_EXPANDED</li>
-<li>@content@ :{ @report_name@ @report_date@
+<h2>:{: | Assign an expansion | @reportTitle :{: Report: @title for @date</h2>
 
-<ul>
-<li>this would concatenate report name and date</li>
-</ul></li>
-</ul></li>
-<li>Read a file of shorthand assignments and assign any expansions to the label
+<h2>:{{: | Assign expanded expansion | @reportHeading :{{: @reportTitle</h2>
 
-<ul>
-<li>LABEL :={ FILE_CONTAINING_SHORTHAND_DEFINISIONS_AND_EXPANSIONS
+<h2>:{&lt;: | Include Expansion | @nav :{&lt;: mynav.html</h2>
 
-<ul>
-<li>_ :={ myfile.shorthand</li>
-<li>Assignments are added to the abbreviation list in memory and any expansions to LABEL</li>
-</ul></li>
-</ul></li>
-<li>Render a LABEL value to a file
+<h2>:!: | Assign Shell output | @date :!: date +%Y-%m-%d</h2>
 
-<ul>
-<li>LABEL :&gt; FILENAME</li>
-<li>@content@ :&gt; page.txt</li>
-</ul></li>
-<li>render all LABEL values to a file
+<h2>:{!: | Assign Expand then gete Shell output | @entry :{!: cat header.txt @filename footer.txt</h2>
 
-<ul>
-<li>LABEL :=&gt; FILENAME</li>
-<li>_ :=&gt; page.txt</li>
-</ul></li>
-<li>render a LABEL assignment statement to a file
+<h2>:[: | Assign Markdown processed text | @div :[: # My h1 for a Div</h2>
 
-<ul>
-<li>LABEL :} FILENAME</li>
-<li>@content@ :} mydef.shorthand</li>
-</ul></li>
-<li>render all LABEL assignment statements to a file
+<h2>:{[: | Assign Expanded Markdown | @div :{[: Greetings <strong>@name</strong></h2>
 
-<ul>
-<li>LABEL :=} FILENAME</li>
-<li>_ :=} mydefs.shorthand</li>
-</ul></li>
-</ul>
+<h2>:[&lt;: | Include Markdown processed text | @nav :[&lt;: mynav.md</h2>
+
+<h2>:{[&lt;: | Include Expanded Markdown processed text | @nav :[&lt;: mynav.md</h2>
+
+<h2>:&gt;: | Output Assigned Expansion | @content :&gt;: content.txt</h2>
+
+<h2>:<em>&gt;: | Output all assigned Expansions | _ :</em>&gt;: contents.txt</h2>
+
+<h2>:}&gt;: | Output Assignment | @content :}&gt;: content.shorthand</h2>
+
+<h2>:<em>}&gt;: | Output all Assignments | _ :</em>}&gt;: contents.shorthand</h2>
+
+<h2>:exit: | Exit the shorthand repl | :exit:</h2>
 
 <p>Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment statements to a file.</p>
 
-<p>The spaces surrounding &ldquo; := &ldquo;, &rdquo; :&lt; &ldquo;, &rdquo; :! &ldquo;, &rdquo; :{ &ldquo;, &rdquo; :&gt; &ldquo;, &rdquo; :=&gt; &ldquo;, &rdquo; :} &ldquo; and &rdquo; :=} &ldquo; are required.</p>
+<p>The spaces surrounding &ldquo; :=: &ldquo;, &rdquo; :=&lt;: &ldquo;, &rdquo; :!: &ldquo;, &rdquo; :{: &ldquo;, &rdquo; :&gt;: &ldquo;, &rdquo; :*&gt;: &ldquo;, &rdquo; :}: &ldquo;, &rdquo; :}&gt;: &ldquo;, etc. are required.</p>
 
 <h2>Example</h2>
 
 <p>In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label @NOW.</p>
 
-<pre><code class="language-text">    @PREAMBLE :&lt; /home/me/preamble.text
-    @NOW := 3:30
+<pre><code class="language-text">    @PREAMBLE :=&lt;: /home/me/preamble.text
+    @NOW :=: 3:30
 
     At @NOW I will be reading the @PREAMBLE until everyone falls asleep.
 </code></pre>
@@ -110,7 +82,69 @@
     At 3:30 I will be reading the &quot;Hello World&quot; until everyone falls asleep.
 </code></pre>
 
-<p>Notice the lines containing the assignments are not included in the output and that no carriage returns or line feeds are added the the substituted labels.</p>
+<p>Notice the lines containing the assignments are not included in the output and that no carriage returns or line feeds are added the the substituted labels.
++ Assign shorthand expansions to a LABEL
+    + LABEL :{: SHORTHAND_TO_BE_EXPANDED
+    + @content@ :{: @report_name@ @report_date@
+        + this would concatenate report name and date</p>
+
+<h3>Processing Markdown pages</h3>
+
+<p><em>shorthand</em> also provides a markdown processor. It uses the <a href="https://github.com/russross/blackfriday">blackfriday</a> markdown library. This is both a convience and also allows you to treat markdown with shorthand assignments as a template that renders HTML or HTML with shorthand ready for expansion. It can effectivly be a poorman&rsquo;s rendering engine.</p>
+
+<p>In this example we&rsquo;ll build a HTML page with shorthand labels from markdown text. Then
+we will use the render HTML as a template for a blog page entry.</p>
+
+<p>Our markdown file serving as a template will be call &ldquo;post-template.md&rdquo;. It should contain
+the outline of the structure of the page plus some shorthand labels we&rsquo;ll expand later.</p>
+
+<pre><code class="language-markdown">
+    # @blogTitle
+
+    ## @pageTitle
+
+    ### @dateString
+
+    @contentBlocks
+
+</code></pre>
+
+<p>For the purposes of this exercise we&rsquo;ll use <em>shorthand</em> as a repl and just enter the
+assignments sequencly.  Also rather than use the output of shorthand directly we&rsquo;ll
+build up the content for the page in a label and use shorthand itself to write the final
+page out.</p>
+
+<p>The steps we&rsquo;ll follow will be to</p>
+
+<ol>
+<li>Read in our markdown file page.md and turn it into an HTML with embedded shorthand labels</li>
+<li>Assign some values to the labels</li>
+<li>Expand the labels in the HTML and assign to a new label</li>
+<li>Write the new label out to are page call &ldquo;page.html&rdquo;</li>
+</ol>
+
+<p>Start the repl with this version of the shorthand command:</p>
+
+<pre><code class="language-shell">    shorthand -p &quot;? &quot;
+</code></pre>
+
+<p>The <em>-p</em> option tells <em>shorthand</em> to use the value &ldquo;? &rdquo; as the prompt. When <em>shorthand</em> starts
+it will display &ldquo;? &rdquo; to indicate it is ready for an assignment or expansion.</p>
+
+<p>The following assumes you are in the <em>shorthand</em> repl.</p>
+
+<p>Load the mardkown file and transform it into HTML with embedded shorthand labels</p>
+
+<pre><code class="language-shell">    @doctype :!: echo &quot;&lt;!DOCTYPE html&gt;&quot;
+    @headBlock :=: &lt;head&gt;&lt;title&gt;@pageTitle&lt;/title&gt;
+    @pageTemplate :[&lt;: post-template.md
+    @dateString :!: date
+    @blogTitle :=:  My Blog
+    @pageTitle :=: A Post
+    @contentBlock :[&lt;: a-post.md
+    @output :{{: @doctype&lt;html&gt;@headBlock&lt;body&gt;@pageTemplate&lt;/body&gt;&lt;/html&gt;
+    @output :&gt;: post.html
+</code></pre>
 </section>
     <footer><p>copyright &copy; 2015 all rights reserved.
 Released under the BSD 2-Clause license
