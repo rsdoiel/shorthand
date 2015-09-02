@@ -86,6 +86,7 @@ type SourceMap struct {
 // SymbolTable holds the exressions, values and other errata of parsing assignments making expansions
 type SymbolTable struct {
 	entries []SourceMap
+	labels  map[string]int
 }
 
 // warning writes a message to stderr
@@ -105,10 +106,9 @@ func IsAssignment(text string) bool {
 
 // HasAssignment checks to see if a shortcut has already been assigned.
 func HasAssignment(table *SymbolTable, label string) bool {
-	for _, sm := range table.entries {
-		if sm.Label == label {
-			return true
-		}
+	_, ok := table.labels[label]
+	if ok == true {
+		return true
 	}
 	return false
 }
@@ -133,16 +133,15 @@ func WriteAssignment(fname string, label string, table *SymbolTable, writeSource
 	}
 	defer fp.Close()
 
-	for _, sm := range table.entries {
-		if label == sm.Label {
-			if writeSourceCode == true {
-				fmt.Fprintf(fp, "%s%s%s", sm.Label, sm.Op, sm.Value)
-			} else {
-				fmt.Fprintf(fp, "%s", sm.Expanded)
-			}
-			return true
+	i, ok := table.labels[label]
+	if ok == true {
+		sm := table.entries[i]
+		if writeSourceCode == true {
+			fmt.Fprintf(fp, "%s%s%s", sm.Label, sm.Op, sm.Value)
+		} else {
+			fmt.Fprintf(fp, "%s", sm.Expanded)
 		}
-
+		return true
 	}
 	return false
 }
@@ -196,11 +195,17 @@ func ReadMarkdown(fname string) string {
 
 // Expand takes some text and expands all labels to their values
 func Expand(table *SymbolTable, text string) string {
-	// Iterate through the list of key/SourceMaps in abbreviations
-	for _, sm := range table.entries {
-		text = strings.Replace(text, sm.Label, sm.Expanded, -1)
+	// labels hash should also point at the last known state of
+	// the label
+	result := text
+	for _, i := range table.labels {
+		sm := table.entries[i]
+		if strings.Contains(text, sm.Label) {
+			tmp := strings.Replace(result, sm.Label, sm.Expanded, -1)
+			result = tmp
+		}
 	}
-	return text
+	return result
 }
 
 // Assign stores a shorthand and its expansion or writes and assignment or assignments
@@ -225,12 +230,6 @@ func Assign(table *SymbolTable, s string, lineNo int) bool {
 
 	if sm.Op == OutputAssignments {
 		return WriteAssignments(sm.Value, table, true)
-	}
-
-	// Enforce symbol immutability
-	if sm.Label != "_" && HasAssignment(table, sm.Label) == true {
-		warning(fmt.Sprintf("Error line %d: %s previously defined\n", lineNo, sm.Label))
-		return false
 	}
 
 	// These functions change the symbol table
@@ -267,7 +266,8 @@ func Assign(table *SymbolTable, s string, lineNo int) bool {
 	} else if sm.Op == AssignExpansion {
 		sm.Expanded = Expand(table, sm.Value)
 	} else if sm.Op == AssignExpandExpansion {
-		sm.Expanded = Expand(table, Expand(table, sm.Value))
+		tmp := Expand(table, sm.Value)
+		sm.Expanded = Expand(table, tmp)
 	} else if sm.Op == IncludeAssignments {
 		err := ReadAssignments(sm.Value, table)
 		if err != nil {
@@ -283,6 +283,10 @@ func Assign(table *SymbolTable, s string, lineNo int) bool {
 	}
 	if sm.Label != "" {
 		table.entries = append(table.entries, sm)
+		if table.labels == nil {
+			table.labels = make(map[string]int)
+		}
+		table.labels[sm.Label] = len(table.entries) - 1
 	}
 	return ok
 }

@@ -160,8 +160,8 @@ func TestParse(t *testing.T) {
 
 func TestSymbolTable(t *testing.T) {
 	st := new(SymbolTable)
-
 	ok.Ok(t, len(st.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st.labels) == 0, "st.labels should be zero too")
 
 	r := HasAssignment(st, "@missing")
 	ok.Ok(t, r == false, "Should fail with an empty symbol table")
@@ -181,6 +181,8 @@ func TestSymbolTable(t *testing.T) {
 // Test Expand
 func TestExpand(t *testing.T) {
 	st := new(SymbolTable)
+	ok.Ok(t, len(st.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st.labels) == 0, "st.labels should be zero too")
 
 	text := `
 	   @me
@@ -211,6 +213,9 @@ func TestExpand(t *testing.T) {
 // Test include file
 func TestInclude(t *testing.T) {
 	st := new(SymbolTable)
+	ok.Ok(t, len(st.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st.labels) == 0, "st.labels should be zero too")
+
 	text := `
 Today is @NOW.
 
@@ -237,6 +242,9 @@ Did it work?
 
 func TestShellAssignment(t *testing.T) {
 	st := new(SymbolTable)
+	ok.Ok(t, len(st.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st.labels) == 0, "st.labels should be zero too")
+
 	expected := true
 	expectedText := "Hello World!"
 	Assign(st, "@ECHO :! echo -n 'Hello World!'", 1)
@@ -250,6 +258,9 @@ func TestShellAssignment(t *testing.T) {
 
 func TestExpandedAssignment(t *testing.T) {
 	st := new(SymbolTable)
+	ok.Ok(t, len(st.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st.labels) == 0, "st.labels should be zero too")
+
 	dateFormat := "2006-01-02"
 	now := time.Now()
 	// Date will generate a LF so the text will also contain it. So we'll test against a Trim later.
@@ -269,6 +280,9 @@ func TestExpandedAssignment(t *testing.T) {
 
 	// Now test a label that holds multiple lines that need expanding.
 	st2 := new(SymbolTable)
+	ok.Ok(t, len(st2.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st2.labels) == 0, "st.labels should be zero too")
+
 	text = `
 @one this is a line
 @two this is also a line
@@ -281,19 +295,12 @@ func TestExpandedAssignment(t *testing.T) {
 	Assign(st2, "@text := "+text, 4)
 	resultText = Expand(st2, "@text")
 
-	ok.Ok(t, strings.Contains(resultText, "@one this is a line"), "Should have line @one "+resultText)
-	ok.Ok(t, strings.Contains(resultText, "@two this is also a line"), "Should have line @two "+resultText)
-	ok.Ok(t, strings.Contains(resultText, "@three this is the last line"), "Should have line @three "+resultText)
+	ok.Ok(t, strings.Contains(resultText, "@one this is a line"), "Should have line @one ["+resultText+"]")
+	ok.Ok(t, strings.Contains(resultText, "@two this is also a line"), "Should have line @two "+resultText+"]")
+	ok.Ok(t, strings.Contains(resultText, "@three this is the last line"), "Should have line @three "+resultText+"]")
 
-	Assign(st2, "@out1 :{ @text", 5)
-	resultText = Expand(st2, "@out1")
-
-	ok.Ok(t, strings.Contains(resultText, "@one this is a line"), "Should have line @one "+resultText)
-	ok.Ok(t, strings.Contains(resultText, "@two this is also a line"), "Should have line @two "+resultText)
-	ok.Ok(t, strings.Contains(resultText, "@three this is the last line"), "Should have line @three "+resultText)
-
-	Assign(st2, "@out2 :{{ @out1", 6)
-	resultText = Expand(st2, "@out2")
+	Assign(st2, "@out :{{ @text", 5)
+	resultText = Expand(st2, "@out")
 
 	ok.Ok(t, strings.Contains(resultText, "1 this is a line"), "Should have line 1 "+resultText)
 	ok.Ok(t, strings.Contains(resultText, "2 this is also a line"), "Should have line 2 "+resultText)
@@ -301,6 +308,9 @@ func TestExpandedAssignment(t *testing.T) {
 
 	// Now test evaluating a shorthand file
 	st3 := new(SymbolTable)
+	ok.Ok(t, len(st3.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st3.labels) == 0, "st.labels should be zero too")
+
 	Assign(st3, "_ :}< testdata/test1.shorthand", 1)
 	expected = true
 	results = HasAssignment(st3, "@now")
@@ -332,6 +342,9 @@ func TestExpandingValuesToFile(t *testing.T) {
 		os.Remove("testdata/helloworld2.txt")
 	}
 	st := new(SymbolTable)
+	ok.Ok(t, len(st.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st.labels) == 0, "st.labels should be zero too")
+
 	a1 := `@hello_world := Hello World`
 	a2 := `@max :! echo -n 'Hello Max'`
 	e1 := "Hello World"
@@ -359,6 +372,9 @@ func TestExpandingAssignmentsToFile(t *testing.T) {
 		os.Remove("testdata/assigned2.txt")
 	}
 	st := new(SymbolTable)
+	ok.Ok(t, len(st.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st.labels) == 0, "st.labels should be zero too")
+
 	a1 := `@hello_world := Hello World`
 	a2 := `@max :! echo -n 'Hello Max'`
 	Assign(st, a1, 1)
@@ -378,6 +394,9 @@ func TestExpandingAssignmentsToFile(t *testing.T) {
 
 func TestMarkdownSupport(t *testing.T) {
 	st := new(SymbolTable)
+	ok.Ok(t, len(st.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st.labels) == 0, "st.labels should be zero too")
+
 	s1 := "[my link](http://example.org)"
 	Assign(st, fmt.Sprintf("@link :[ %s", s1), 1)
 	ok.Ok(t, HasAssignment(st, "@link"), "Should have @link assignment")
@@ -386,6 +405,9 @@ func TestMarkdownSupport(t *testing.T) {
 	ok.Ok(t, r1 == e1, fmt.Sprintf("@link shourl render as %s, got %s", e1, r1))
 
 	st2 := new(SymbolTable)
+	ok.Ok(t, len(st2.entries) == 0, "st.entries should be zero")
+	ok.Ok(t, len(st2.labels) == 0, "st.labels should be zero too")
+
 	s2 := "[@link](@url) is a shorthand link in Markdown."
 	a2 := "@link := My Link"
 	Assign(st2, a2, 1)
