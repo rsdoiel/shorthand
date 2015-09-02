@@ -25,9 +25,9 @@ import (
 const Version = "v0.0.3"
 
 //
-// An Op is built from a multi character glyph
-// Each element in the glyph has meaning
-// " :" is the start of a glyb and the end is a trailing space
+// An Op is built from a multi character symbol
+// Each element in the symbol has meaning
+// " :" is the start of a glyph band the end ": " is a colon and trailing space
 // = the source value is next, this is basic assignment of a string value to a symbol
 // < is input from a file
 // { expand (resolved label values)
@@ -35,7 +35,8 @@ const Version = "v0.0.3"
 // ! input from a shell expression
 // [ is a markdown expansion
 // > is to output an to a file
-// * operate on symbol table
+// @ operate on whole symbol table
+//
 
 // Assignment Ops
 const (
@@ -52,9 +53,9 @@ const (
 	IncludeMarkdown          string = " :[<: "
 	IncludeExpandMarkdown    string = " :{[<: "
 	OutputAssignedExpansion  string = " :>: "
-	OutputAssignedExpansions string = " :*>: "
+	OutputAssignedExpansions string = " :@>: "
 	OutputAssignment         string = " :}>: "
-	OutputAssignments        string = " :*}>: "
+	OutputAssignments        string = " :@}>: "
 )
 
 var ops = []string{

@@ -119,7 +119,7 @@ func TestParse(t *testing.T) {
 			Op:    OutputAssignedExpansion,
 			Value: "label0.txt",
 		},
-		"@label1 :*>: label1.txt": SourceMap{
+		"@label1 :@>: label1.txt": SourceMap{
 			Label: "@label1",
 			Op:    OutputAssignedExpansions,
 			Value: "label1.txt",
@@ -129,7 +129,7 @@ func TestParse(t *testing.T) {
 			Op:    OutputAssignment,
 			Value: "label2.txt",
 		},
-		"@label3 :*}>: label3.txt": SourceMap{
+		"@label3 :@}>: label3.txt": SourceMap{
 			Label: "@label3",
 			Op:    OutputAssignments,
 			Value: "label3.txt",
@@ -361,7 +361,7 @@ func TestExpandingValuesToFile(t *testing.T) {
 	resultText := string(b)
 	ok.Ok(t, strings.Contains(resultText, e1), "Should find "+e1+" in "+resultText)
 	Assign(st, a2, 3)
-	Assign(st, `@hello_world :*>: testdata/helloworld2.txt`, 4)
+	Assign(st, `@hello_world :@>: testdata/helloworld2.txt`, 4)
 	b, err = ioutil.ReadFile("testdata/helloworld2.txt")
 	ok.Ok(t, err == nil, "Should be able to read testdata/helloworld2.txt")
 	resultText = string(b)
@@ -389,7 +389,7 @@ func TestExpandingAssignmentsToFile(t *testing.T) {
 	resultText := string(b)
 	ok.Ok(t, strings.Contains(resultText, a1), "Should have @hello_world assignment in file.")
 	Assign(st, a2, 3)
-	Assign(st, `_ :*}>: testdata/assigned2.txt`, 4)
+	Assign(st, `_ :@}>: testdata/assigned2.txt`, 4)
 	b, err = ioutil.ReadFile("testdata/assigned2.txt")
 	ok.Ok(t, err == nil, "Should have all assigments in file.")
 	resultText = string(b)
