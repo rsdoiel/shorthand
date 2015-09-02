@@ -49,6 +49,8 @@ operator | meaning | example
 ----------------------------------------
  :*}>: | Output all Assignments | _ :*}>: contents.shorthand
 ----------------------------------------
+ :exit: | Exit the shorthand repl | :exit:
+----------------------------------------
 
 
 
