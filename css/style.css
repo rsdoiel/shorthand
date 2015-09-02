@@ -3,6 +3,8 @@ body {
     font-family: sans;
     padding: 0.24em;
     padding: 0.12em;
+    color: black;
+    background-color: white;
 }
 
 header {
