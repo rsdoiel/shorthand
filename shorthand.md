@@ -13,41 +13,44 @@ Shorthand is a simple label expansion utility. It is based on a simple key value
 + Output a LABEL assignment statement to a file
 + Output all assignment statements to a file
 
-*shorthand* replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not output by the preprocessor.
+*shorthand* replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not written to stdout output.
+
+operator | meaning | example
+----------------------------------------
+ :=: | Assign String | @name :=: Freda
+----------------------------------------
+ :<: | Assign the contents of a file | @content :<: myfile.txt
+----------------------------------------
+ :}<: | Get assignments from a file | _ :}<: myfile.shorthand
+----------------------------------------
+ :{: | Assign an expansion | @reportTitle :{: Report: @title for @date
+----------------------------------------
+ :{{: | Assign expanded expansion | @reportHeading :{{: @reportTitle
+----------------------------------------
+ :{<: | Include Expansion | @nav :{<: mynav.html
+----------------------------------------
+ :!: | Assign Shell output | @date :!: date +%Y-%m-%d
+----------------------------------------
+ :{!: | Assign Expand then gete Shell output | @entry :{!: cat header.txt @filename footer.txt
+----------------------------------------
+ :[: | Assign Markdown processed text | @div :[: # My h1 for a Div
+----------------------------------------
+ :{[: | Assign Expanded Markdown | @div :{[: Greetings **@name**
+----------------------------------------
+ :[<: | Include Markdown processed text | @nav :[<: mynav.md
+----------------------------------------
+ :{[<: | Include Expanded Markdown processed text | @nav :[<: mynav.md
+----------------------------------------
+ :>: | Output Assigned Expansion | @content :>: content.txt
+----------------------------------------
+ :*>: | Output all assigned Expansions | _ :*>: contents.txt
+----------------------------------------
+ :}>: | Output Assignment | @content :}>: content.shorthand
+----------------------------------------
+ :*}>: | Output all Assignments | _ :*}>: contents.shorthand
+----------------------------------------
 
 
-+ Assign a string to a label
-    + LABEL :=: STRING
-+ Assign the contents of a file to a label
-    + LABEL :=<: FILENAME
-    + @content@ :=<: README.md
-+ Assign the output of a shell command to a label
-    + LABEL :!: SHELL_COMMAND
-    + @content@ :!: cat README.md | markdown
-+ Assign shorthand expansions to a LABEL
-    + LABEL :{: SHORTHAND_TO_BE_EXPANDED
-    + @content@ :{: @report_name@ @report_date@
-        + this would concatenate report name and date
-+ Read a file of shorthand assignments and assign any expansions to the label
-    + LABEL :{<: FILE_CONTAINING_SHORTHAND_DEFINISIONS_AND_EXPANSIONS
-        + _ :{<: myfile.shorthand
-        + Assignments are added to the abbreviation list in memory and any expansions to LABEL
-+ Render a LABEL value to a file
-    + LABEL :>: FILENAME
-    + @content@ :>: page.txt
-+ render all LABEL values to a file
-    + LABEL :*>: FILENAME
-    + _ :=>: page.txt
-+ render a LABEL assignment statement to a file
-    + LABEL :}>: FILENAME
-    + @content@ :}>: mydef.shorthand
-+ render all LABEL assignment statements to a file
-    + LABEL :*}>: FILENAME 
-    + _ :*}>: mydefs.shorthand
-+ rendered markdown to a label
-    + LABEL :[: MARKDOWN_EXPRESSION
-+ render markdown file to a label
-    + LABEL :[<: FILENAME
 
 Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment statements to a file.
 
@@ -72,6 +75,10 @@ If the file preamble.txt contained the phrase "Hello World" (including the quote
 ```
 
 Notice the lines containing the assignments are not included in the output and that no carriage returns or line feeds are added the the substituted labels.
++ Assign shorthand expansions to a LABEL
+    + LABEL :{: SHORTHAND_TO_BE_EXPANDED
+    + @content@ :{: @report_name@ @report_date@
+        + this would concatenate report name and date
 
 ### Processing Markdown pages
 
