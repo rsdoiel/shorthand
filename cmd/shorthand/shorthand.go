@@ -196,7 +196,7 @@ func main() {
 		lineNo += 1
 
 		// Process the input plus some repl commands.
-		if strings.TrimSpace(line) == ":exit" || strings.TrimSpace(line) == ":quit" {
+		if strings.TrimSpace(line) == ":exit:" || strings.TrimSpace(line) == ":quit:" {
 			break
 		} else if shorthand.IsAssignment(line) {
 			shorthand.Assign(symbolTable, line, lineNo)
