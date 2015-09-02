@@ -45,6 +45,7 @@ nav ul {
 }
 
 footer {
+    padding-top: 1em;
     border-top: 1px solid red;
     min-width: 100%;
 }

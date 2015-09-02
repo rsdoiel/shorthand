@@ -84,7 +84,7 @@ Notice the lines containing the assignments are not included in the output and t
 
 ### Processing Markdown pages
 
-_shorthand_ also provides a markdown processor. It uses the [blackfriday](https://github.com/russross/blackfriday) markdown library. This is both a convience and also allows you to treat markdown with shorthand assignments as a template that renders HTML or HTML with shorthand ready for expansion. It can effectivly be a poorman's rendering engine.
+_shorthand_ also provides a markdown processor. It uses the [blackfriday](https://github.com/russross/blackfriday) markdown library. This is both a convience and also allows you to treat markdown with shorthand assignments as a template that renders HTML or HTML with shorthand ready for expansion. It is a poorman's text rendering engine.
 
 In this example we'll build a HTML page with shorthand labels from markdown text. Then
 we will use the render HTML as a template for a blog page entry.
