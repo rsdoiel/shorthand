@@ -1,17 +1,19 @@
 This uses shorthand to build the HTML pages used in the shorthand project site.
 
 @start :!: date
+@version :!: shorthand --version
 {{nav}} :[<: nav.md
 {{copyright}} :[<: copyright.md
+{{sitebuilt}} :{: @version, @start
 
-Building index.html
+Building index.html...
 
 {{pageTitle}} :=: Shorthand - a simple label expander and markdown processor
 {{pageContent}} :{[<: README.md
 HTML :{<: page.shorthand
 HTML :>: index.html
 
-Building shorthand.html
+Building shorthand.html...
 
 {{pageTitle}} :=: Shorthand - the gory details
 {{pageContent}} :[<: shorthand.md
@@ -19,7 +21,7 @@ Building shorthand.html
 HTML :{<: page.shorthand
 HTML :>: shorthand.html
 
-Building ideas.html
+Building ideas.html...
 
 {{pageTitle}} :=: Shorthand - ideas and background
 {{pageContent}} :[<: ideas.md
@@ -27,9 +29,7 @@ Building ideas.html
 HTML :{<: page.shorthand
 HTML :>: ideas.html
 
-
 @finished :!: date
-
 Started: @start
 Finished: @finished
 Done!

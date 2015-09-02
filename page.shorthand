@@ -10,6 +10,8 @@
     </header>
     <section>{{pageContent}}</section>
     <nav>{{nav}}</nav>
-    <footer>{{copyright}}</footer>
+    <footer>
+    {{sitebuilt}}<p>{{copyright}}
+    </footer>
 </body>
 </html>
