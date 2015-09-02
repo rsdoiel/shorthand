@@ -1,7 +1,7 @@
 This uses shorthand to build the HTML pages used in the shorthand project site.
 
 @start :!: date
-@version :!: shorthand --version
+@version :!: echo -n "$(shorthand --version)"
 {{nav}} :[<: nav.md
 {{copyright}} :[<: copyright.md
 {{sitebuilt}} :{: @version, @start
