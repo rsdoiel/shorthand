@@ -1,3 +1,3 @@
-@now :! date +%Y-%m%d
-@title := Today's date report.
-@greeting := Hello World
+@now :!: date +%Y-%m%d
+@title :=: Today's date report.
+@greeting :=: Hello World

@@ -41,11 +41,10 @@ If the content of the markdown file _testdata/report.md_ was
 From the command line you can do something like this
 
 ```shell
-    shorthand -e "@now :! date" \
-        -e "@report :=< testdata/report.md" \
-        -@ "@html :[ @report" \
-        -e "@html" 
-        -e "_ :exit" > testdata/report.html
+    shorthand -e "@now :!: date" \
+        -e "@report :=<: testdata/report.md" \
+        -@ "@html :[: @report" \
+        -e "@html" > testdata/report.html
 ```
 
 What this command does is launch the _shorthand_ interpreter and it
@@ -72,7 +71,7 @@ You could also embed the shorthand definitions command straight in the
 markdown itself. with something like
 
 ```markdown
-    @now :! date
+    @now :!: date
 
     Report Date: @now
 

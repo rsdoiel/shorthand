@@ -1,7 +1,7 @@
 
 # Assignments and Expansions
 
-Shorthand is a simple text label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions
+Shorthand is a simple label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions
 
 + Assign a string to a LABEL
 + Assign the contents of a file to a LABEL
@@ -17,49 +17,49 @@ Shorthand is a simple text label expansion utility. It is based on a simple key 
 
 
 + Assign a string to a label
-    + LABEL := STRING
+    + LABEL :=: STRING
 + Assign the contents of a file to a label
-    + LABEL :=< FILENAME
-    + @content@ :=< README.md
+    + LABEL :=<: FILENAME
+    + @content@ :=<: README.md
 + Assign the output of a shell command to a label
-    + LABEL :! SHELL_COMMAND
-    + @content@ :! cat README.md | markdown
+    + LABEL :!: SHELL_COMMAND
+    + @content@ :!: cat README.md | markdown
 + Assign shorthand expansions to a LABEL
-    + LABEL :{ SHORTHAND_TO_BE_EXPANDED
-    + @content@ :{ @report_name@ @report_date@
+    + LABEL :{: SHORTHAND_TO_BE_EXPANDED
+    + @content@ :{: @report_name@ @report_date@
         + this would concatenate report name and date
 + Read a file of shorthand assignments and assign any expansions to the label
-    + LABEL :{< FILE_CONTAINING_SHORTHAND_DEFINISIONS_AND_EXPANSIONS
-        + _ :{< myfile.shorthand
+    + LABEL :{<: FILE_CONTAINING_SHORTHAND_DEFINISIONS_AND_EXPANSIONS
+        + _ :{<: myfile.shorthand
         + Assignments are added to the abbreviation list in memory and any expansions to LABEL
 + Render a LABEL value to a file
-    + LABEL :> FILENAME
-    + @content@ :> page.txt
+    + LABEL :>: FILENAME
+    + @content@ :>: page.txt
 + render all LABEL values to a file
-    + LABEL :*> FILENAME
-    + _ :=> page.txt
+    + LABEL :*>: FILENAME
+    + _ :=>: page.txt
 + render a LABEL assignment statement to a file
-    + LABEL :}> FILENAME
-    + @content@ :}> mydef.shorthand
+    + LABEL :}>: FILENAME
+    + @content@ :}>: mydef.shorthand
 + render all LABEL assignment statements to a file
-    + LABEL :*}> FILENAME 
-    + _ :*}> mydefs.shorthand
+    + LABEL :*}>: FILENAME 
+    + _ :*}>: mydefs.shorthand
 + rendered markdown to a label
-    + LABEL :[ MARKDOWN_EXPRESSION
+    + LABEL :[: MARKDOWN_EXPRESSION
 + render markdown file to a label
-    + LABEL :[< FILENAME
+    + LABEL :[<: FILENAME
 
 Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment statements to a file.
 
-The spaces surrounding " := ", " :=< ", " :! ", " :{ ", " :> ", " :*> ", " :} ", " :}> ", etc. are required.
+The spaces surrounding " :=: ", " :=<: ", " :!: ", " :{: ", " :>: ", " :*>: ", " :}: ", " :}>: ", etc. are required.
 
 
 ## Example
 
 In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label @NOW.  
 ```text
-    @PREAMBLE :=< /home/me/preamble.text
-    @NOW := 3:30
+    @PREAMBLE :=<: /home/me/preamble.text
+    @NOW :=: 3:30
 
     At @NOW I will be reading the @PREAMBLE until everyone falls asleep.
 ```
@@ -121,15 +121,15 @@ The following assumes you are in the _shorthand_ repl.
 Load the mardkown file and transform it into HTML with embedded shorthand labels
 
 ```shell
-    @doctype :! echo "<!DOCTYPE html>"
-    @headBlock := <head><title>@pageTitle</title>
-    @pageTemplate :[< post-template.md
-    @dateString :! date
-    @blogTitle :=  My Blog
-    @pageTitle := A Post
-    @contentBlock :[< a-post.md
-    @output :{{ @doctype<html>@headBlock<body>@pageTemplate</body></html>
-    @output :> post.html
+    @doctype :!: echo "<!DOCTYPE html>"
+    @headBlock :=: <head><title>@pageTitle</title>
+    @pageTemplate :[<: post-template.md
+    @dateString :!: date
+    @blogTitle :=:  My Blog
+    @pageTitle :=: A Post
+    @contentBlock :[<: a-post.md
+    @output :{{: @doctype<html>@headBlock<body>@pageTemplate</body></html>
+    @output :>: post.html
 ```
 
 
