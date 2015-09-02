@@ -26,41 +26,221 @@
 
 <p><em>shorthand</em> replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not written to stdout output.</p>
 
-<h2>operator | meaning | example</h2>
+<table>
+<thead>
+<tr>
+<th>operator</th>
+<th>meaning</th>
+<th>example</th>
+</tr>
+</thead>
 
-<h2>:=: | Assign String | @name :=: Freda</h2>
+<tbody>
+<tr>
+<td>:=:</td>
+<td>Assign String</td>
+<td>@name :=: Freda</td>
+</tr>
 
-<h2>:&lt;: | Assign the contents of a file | @content :&lt;: myfile.txt</h2>
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
 
-<h2>:}&lt;: | Get assignments from a file | _ :}&lt;: myfile.shorthand</h2>
+<tr>
+<td>:&lt;:</td>
+<td>Assign the contents of a file</td>
+<td>@content :&lt;: myfile.txt</td>
+</tr>
 
-<h2>:{: | Assign an expansion | @reportTitle :{: Report: @title for @date</h2>
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
 
-<h2>:{{: | Assign expanded expansion | @reportHeading :{{: @reportTitle</h2>
+<tr>
+<td>:}&lt;:</td>
+<td>Get assignments from a file</td>
+<td>_ :}&lt;: myfile.shorthand</td>
+</tr>
 
-<h2>:{&lt;: | Include Expansion | @nav :{&lt;: mynav.html</h2>
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
 
-<h2>:!: | Assign Shell output | @date :!: date +%Y-%m-%d</h2>
+<tr>
+<td>:{:</td>
+<td>Assign an expansion</td>
+<td>@reportTitle :{: Report: @title for @date</td>
+</tr>
 
-<h2>:{!: | Assign Expand then gete Shell output | @entry :{!: cat header.txt @filename footer.txt</h2>
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
 
-<h2>:[: | Assign Markdown processed text | @div :[: # My h1 for a Div</h2>
+<tr>
+<td>:{{:</td>
+<td>Assign expanded expansion</td>
+<td>@reportHeading :{{: @reportTitle</td>
+</tr>
 
-<h2>:{[: | Assign Expanded Markdown | @div :{[: Greetings <strong>@name</strong></h2>
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
 
-<h2>:[&lt;: | Include Markdown processed text | @nav :[&lt;: mynav.md</h2>
+<tr>
+<td>:{&lt;:</td>
+<td>Include Expansion</td>
+<td>@nav :{&lt;: mynav.html</td>
+</tr>
 
-<h2>:{[&lt;: | Include Expanded Markdown processed text | @nav :[&lt;: mynav.md</h2>
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
 
-<h2>:&gt;: | Output Assigned Expansion | @content :&gt;: content.txt</h2>
+<tr>
+<td>:!:</td>
+<td>Assign Shell output</td>
+<td>@date :!: date +%Y-%m-%d</td>
+</tr>
 
-<h2>:<em>&gt;: | Output all assigned Expansions | _ :</em>&gt;: contents.txt</h2>
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
 
-<h2>:}&gt;: | Output Assignment | @content :}&gt;: content.shorthand</h2>
+<tr>
+<td>:{!:</td>
+<td>Assign Expand then gete Shell output</td>
+<td>@entry :{!: cat header.txt @filename footer.txt</td>
+</tr>
 
-<h2>:<em>}&gt;: | Output all Assignments | _ :</em>}&gt;: contents.shorthand</h2>
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
 
-<h2>:exit: | Exit the shorthand repl | :exit:</h2>
+<tr>
+<td>:[:</td>
+<td>Assign Markdown processed text</td>
+<td>@div :[: # My h1 for a Div</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
+
+<tr>
+<td>:{[:</td>
+<td>Assign Expanded Markdown</td>
+<td>@div :{[: Greetings <strong>@name</strong></td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
+
+<tr>
+<td>:[&lt;:</td>
+<td>Include Markdown processed text</td>
+<td>@nav :[&lt;: mynav.md</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
+
+<tr>
+<td>:{[&lt;:</td>
+<td>Include Expanded Markdown processed text</td>
+<td>@nav :[&lt;: mynav.md</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
+
+<tr>
+<td>:&gt;:</td>
+<td>Output Assigned Expansion</td>
+<td>@content :&gt;: content.txt</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
+
+<tr>
+<td>:@&gt;:</td>
+<td>Output all assigned Expansions</td>
+<td>_ :@&gt;: contents.txt</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
+
+<tr>
+<td>:}&gt;:</td>
+<td>Output Assignment</td>
+<td>@content :}&gt;: content.shorthand</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
+
+<tr>
+<td>:@}&gt;:</td>
+<td>Output all Assignments</td>
+<td>_ :@}&gt;: contents.shorthand</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
+
+<tr>
+<td>:exit:</td>
+<td>Exit the shorthand repl</td>
+<td>:exit:</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+</tr>
+</tbody>
+</table>
 
 <p>Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment statements to a file.</p>
 
