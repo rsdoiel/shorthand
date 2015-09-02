@@ -20,6 +20,15 @@ Building shorthand.html
 HTML :{<: page.shorthand
 HTML :>: shorthand.html
 
+Building ideas.html
+
+{{pageTitle}} :=: Shorthand - ideas and background
+{{pageContent}} :{[<: ideas.md
+
+HTML :{<: page.shorthand
+HTML :>: ideas.html
+
+
 @finished :!: date
 
 Started: @start
