@@ -6,7 +6,6 @@ This uses shorthand to build the HTML pages used in the shorthand project site.
 
 Building index.html
 
-shorthand.md :=: shorthand.html
 {{pageTitle}} :=: Shorthand - a simple label expander and markdown processor
 {{pageContent}} :{[<: README.md
 HTML :{<: page.shorthand
@@ -15,7 +14,7 @@ HTML :>: index.html
 Building shorthand.html
 
 {{pageTitle}} :=: Shorthand - the gory details
-{{pageContent}} :{[<: shorthand.md
+{{pageContent}} :[<: shorthand.md
 
 HTML :{<: page.shorthand
 HTML :>: shorthand.html
@@ -23,7 +22,7 @@ HTML :>: shorthand.html
 Building ideas.html
 
 {{pageTitle}} :=: Shorthand - ideas and background
-{{pageContent}} :{[<: ideas.md
+{{pageContent}} :[<: ideas.md
 
 HTML :{<: page.shorthand
 HTML :>: ideas.html

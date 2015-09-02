@@ -89,5 +89,4 @@ That makes the command line a little shorter
     shorthand < testdata/report.md | markdown > testdata/report.html
 ```
 
-For all types of label assignments support see [shorthand.md](shorthand.md)
 
