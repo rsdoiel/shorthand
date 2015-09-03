@@ -1,4 +1,10 @@
 
+# Next
+
++ need a RegisterOp function that takes a string and a function and stores the result in a function table
++ need an EvalString function that takes a function table, symbol table and input string and either writes a string to stdout, make a new assignment or emits an error message with line number
+
+
 # Bugs/Ideas
 
 + make a decision about labels being immutable or not.
