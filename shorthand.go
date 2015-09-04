@@ -23,7 +23,7 @@ import (
 )
 
 // The version nummber of library and utility
-const Version = "v0.0.4"
+const Version = "v0.0.4-next"
 
 //
 // An Op is built from a multi character symbol
