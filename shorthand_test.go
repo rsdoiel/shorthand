@@ -432,7 +432,28 @@ func TestVM(t *testing.T) {
 		t.Error("vm was not created by New()")
 	}
 	ops := vm.Ops
-	ok.Ok(t, len(ops) == 18, "Should have sixteen ops defined.")
+	ok.Ok(t, len(ops) == 0, "Should have zero ops defined.")
+	vm.RegisterOp(" :=: ", AssignStringCallback)
+	vm.RegisterOp(" :=<: ", AssignIncludeCallback)
+	vm.RegisterOp(" :}<: ", IncludeAssignmentsCallback)
+	vm.RegisterOp(" :{: ", AssignExpansionCallback)
+	vm.RegisterOp(" :{{: ", AssignExpandExpansionCallback)
+	vm.RegisterOp(" :{<: ", IncludeExpansionCallback)
+	vm.RegisterOp(" :!: ", AssignShellCallback)
+	vm.RegisterOp(" :{!: ", AssignExpandShellCallback)
+	vm.RegisterOp(" :[: ", AssignMarkdownCallback)
+	vm.RegisterOp(" :{[: ", AssignExpandMarkdownCallback)
+	vm.RegisterOp(" :[<: ", IncludeMarkdownCallback)
+	vm.RegisterOp(" :{[<: ", IncludeExpandMarkdownCallback)
+	vm.RegisterOp(" :>: ", OutputAssignedExpansionCallback)
+	vm.RegisterOp(" :@>: ", OutputAssignedExpansionsCallback)
+	vm.RegisterOp(" :}>: ", OutputAssignmentCallback)
+	vm.RegisterOp(" :@}>: ", OutputAssignmentsCallback)
+	vm.RegisterOp(" :exit: ", ExitShorthand)
+	vm.RegisterOp(" :quit: ", ExitShorthand)
+	ops = vm.Ops
+
+	ok.Ok(t, len(ops) == 18, "Should have eighteen ops defined.")
 	foundExit := false
 	foundQuit := false
 	for _, op := range ops {
@@ -448,9 +469,11 @@ func TestVM(t *testing.T) {
 	buf, err := ioutil.ReadFile(`testdata/helloworld.txt`)
 	ok.Ok(t, err == nil, `should be able to read testdata/helloworld.txt`)
 	helloWorldTxT := string(buf)
+	ok.Ok(t, len(helloWorldTxT) >= 12, "Should have 'hello world' from file.")
 	buf, err = ioutil.ReadFile(`testdata/test.md`)
 	ok.Ok(t, err == nil, `should be able to read testdata/test.md`)
 	testMd := string(buf)
+	ok.Ok(t, len(testMd) > 0, "Should have a test.md file contents")
 
 	// Start testing Eval and available ops.
 	ok.Ok(t, foundExit, "Should have found :exit: in ops")
@@ -463,18 +486,20 @@ func TestVM(t *testing.T) {
 		"{{pageTitle}}":                    "Hello World",
 		"{{year}} :!: echo -n $(date +%Y)": "",
 		"{{year}}":                         yearString,
-		"{helloWorldTxT} :=<: testdata/helloworld.txt": "",
-		"{helloWorldTxT}":                              helloWorldTxT,
-		"{fred} :=: Fred":                              "",
-		"{fred}":                                       "Fred",
-		"{one} :=: 1":                                  "",
-		"{two} :=: 2":                                  "",
-		"{it} :{: {one} {two}":                         "",
-		"{it}":                                         "1 2",
+		"{fred} :=: Fred":                  "",
+		"{fred}":                           "Fred",
 		"{{strong}} :[: **strong words**": "",
-		"{{strong}}":                      "<p><strong>strong words</strong></p>",
-		"{{html}} :[<: testdata/test.md":  "",
-		"{{html}}":                        string(blackfriday.MarkdownCommon([]byte(testMd))),
+		"{{strong}}":                      string(blackfriday.MarkdownCommon([]byte("**strong words**"))),
+		/*
+			"{one} :=: 1":                      "",
+			"{two} :=: 2":                      "",
+			"{it} :{: {one} {two}":             "",
+			"{it}":                             "1 2",
+			"{{html}} :[<: testdata/test.md":  "",
+			"{{html}}":                        string(blackfriday.MarkdownCommon([]byte(testMd))),
+			"{helloWorldTxT} :=<: testdata/helloworld.txt": "",
+			"{helloWorldTxT}":                              helloWorldTxT,
+		*/
 	}
 
 	i := 1
