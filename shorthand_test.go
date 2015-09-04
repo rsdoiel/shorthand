@@ -504,12 +504,18 @@ func TestVM(t *testing.T) {
 
 	i := 1
 	for source, expected := range testData {
+		sm, _ := Parse(source, i)
 		result, err := vm.Eval(source, i)
-
 		ok.Ok(t, err == nil, fmt.Sprintf("Eval error: %s\n", err))
+
+		vmSM := vm.Symbols.GetSymbol(sm.Label)
+		ok.Ok(t, strings.Compare(sm.Label, vmSM.Label) == 0, "Labels should match: "+source)
+		ok.Ok(t, strings.Compare(sm.Op, vmSM.Op) == 0, "Ops should match: "+source)
+		ok.Ok(t, strings.Compare(sm.Source, vmSM.Source) == 0, "Source should match "+source)
+		ok.Ok(t, strings.Compare(sm.Expanded, vmSM.Expanded) == 0, "Expanded should match "+source+" --> "+vmSM.Expanded)
+
 		ok.Ok(t, strings.Compare(expected, result) == 0, fmt.Sprintf("expected: [%s] result: [%s]", expected, result))
 		i++
 	}
-
 	ok.Ok(t, false, "TestVM() not fully implemented.")
 }
