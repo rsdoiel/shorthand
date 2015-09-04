@@ -6,11 +6,12 @@ package shorthand
 
 import (
 	"fmt"
-	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/russross/blackfriday"
 )
 
 //ExitShorthand - call os.Exit() with appropriate value and exit the repl
@@ -95,6 +96,7 @@ var AssignShellCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, err
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
 }
 
+// AssignExpandShellCallback expand Source, pass to Bash and assign output to Expanded
 var AssignExpandShellCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	buf, err := exec.Command("bash", "-c", Expand(vm.Symbols, sm.Source)).Output()
 	if err != nil {
@@ -104,6 +106,7 @@ var AssignExpandShellCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMa
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
 }
 
+// AssignMarkdownCallback process Source with Blackfriday and copy
 var AssignMarkdownCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	expanded := string(blackfriday.MarkdownCommon([]byte(sm.Source)))
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
