@@ -99,6 +99,32 @@ func warning(msgs string) {
 	fmt.Fprintln(os.Stderr, msgs)
 }
 
+func (st *SymbolTable) GetSymbol(sym string) SourceMap {
+	i, ok := st.labels[sym]
+	if ok == true {
+		return st.entries[i]
+	}
+	return SourceMap{Label: "", Op: "", Source: "", Expanded: "", LineNo: -1}
+}
+
+func (st *SymbolTable) GetSymbols() []SourceMap {
+	var symbols []SourceMap
+
+	for _, i := range st.labels {
+		symbols = append(symbols, st.entries[i])
+	}
+	return symbols
+}
+
+func (st *SymbolTable) SetSymbol(sm SourceMap) int {
+	st.entries = append(st.entries, sm)
+	if st.labels == nil {
+		st.labels = make(map[string]int)
+	}
+	st.labels[sm.Label] = len(st.entries) - 1
+	return st.labels[sm.Label]
+}
+
 // IsAssignment checks to see if a string contains an assignment (e.g. has a ' := ' in the string.)
 func IsAssignment(text string) bool {
 	for _, op := range ops {
@@ -134,8 +160,8 @@ func Expand(table *SymbolTable, text string) string {
 	// labels hash should also point at the last known state of
 	// the label
 	result := text
-	for _, i := range table.labels {
-		sm := table.entries[i]
+	symbols := table.GetSymbols()
+	for _, sm := range symbols {
 		if strings.Contains(text, sm.Label) {
 			tmp := strings.Replace(result, sm.Label, sm.Expanded, -1)
 			result = tmp
@@ -225,11 +251,7 @@ func Assign(table *SymbolTable, s string, lineNo int) bool {
 		sm.Expanded = strings.TrimSpace(string(blackfriday.MarkdownCommon([]byte(Expand(table, string(buf))))))
 	}
 	if sm.Label != "" {
-		table.entries = append(table.entries, sm)
-		if table.labels == nil {
-			table.labels = make(map[string]int)
-		}
-		table.labels[sm.Label] = len(table.entries) - 1
+		table.SetSymbol(sm)
 	}
 	return ok
 }
@@ -243,15 +265,11 @@ func WriteAssignment(fname string, label string, table *SymbolTable, writeSource
 	}
 	defer fp.Close()
 
-	i, ok := table.labels[label]
-	if ok == true {
-		sm := table.entries[i]
-		if writeSourceCode == true {
-			fmt.Fprintf(fp, "%s%s%s", sm.Label, sm.Op, sm.Source)
-		} else {
-			fmt.Fprintf(fp, "%s", sm.Expanded)
-		}
-		return true
+	sm := table.GetSymbol(label)
+	if writeSourceCode == true {
+		fmt.Fprintf(fp, "%s%s%s", sm.Label, sm.Op, sm.Source)
+	} else {
+		fmt.Fprintf(fp, "%s", sm.Expanded)
 	}
 	return false
 }
@@ -264,7 +282,8 @@ func WriteAssignments(fname string, table *SymbolTable, writeSourceCode bool) bo
 		return false
 	}
 	defer fp.Close()
-	for _, sm := range table.entries {
+	symbols := table.GetSymbols()
+	for _, sm := range symbols {
 		if writeSourceCode == true {
 			fmt.Fprintf(fp, "%s%s%s\n", sm.Label, sm.Op, sm.Source)
 		} else {
@@ -329,24 +348,26 @@ func New() *VirtualMachine {
 	vm.Symbols = new(SymbolTable)
 	vm.Operators = make(OperatorMap)
 	// Now register the built-in operators
-	vm.RegisterOp(" :=: ", AssignStringCallback)
-	vm.RegisterOp(" :=<: ", AssignIncludeCallback)
-	vm.RegisterOp(" :}<: ", IncludeAssignmentsCallback)
-	vm.RegisterOp(" :{: ", AssignExpansionCallback)
-	vm.RegisterOp(" :{{: ", AssignExpandExpansionCallback)
-	vm.RegisterOp(" :{<: ", IncludeExpansionCallback)
-	vm.RegisterOp(" :!: ", AssignShellCallback)
-	vm.RegisterOp(" :{!: ", AssignExpandShellCallback)
-	vm.RegisterOp(" :[: ", AssignMarkdownCallback)
-	vm.RegisterOp(" :{[: ", AssignExpandMarkdownCallback)
-	vm.RegisterOp(" :[<: ", IncludeMarkdownCallback)
-	vm.RegisterOp(" :{[<: ", IncludeExpandMarkdownCallback)
-	vm.RegisterOp(" :>: ", OutputAssignedExpansionCallback)
-	vm.RegisterOp(" :@>: ", OutputAssignedExpansionsCallback)
-	vm.RegisterOp(" :}>: ", OutputAssignmentCallback)
-	vm.RegisterOp(" :@}>: ", OutputAssignmentsCallback)
-	vm.RegisterOp(" :exit: ", ExitShorthand)
-	vm.RegisterOp(" :quit: ", ExitShorthand)
+	/*
+		vm.RegisterOp(" :=: ", AssignStringCallback)
+		vm.RegisterOp(" :=<: ", AssignIncludeCallback)
+		vm.RegisterOp(" :}<: ", IncludeAssignmentsCallback)
+		vm.RegisterOp(" :{: ", AssignExpansionCallback)
+		vm.RegisterOp(" :{{: ", AssignExpandExpansionCallback)
+		vm.RegisterOp(" :{<: ", IncludeExpansionCallback)
+		vm.RegisterOp(" :!: ", AssignShellCallback)
+		vm.RegisterOp(" :{!: ", AssignExpandShellCallback)
+		vm.RegisterOp(" :[: ", AssignMarkdownCallback)
+		vm.RegisterOp(" :{[: ", AssignExpandMarkdownCallback)
+		vm.RegisterOp(" :[<: ", IncludeMarkdownCallback)
+		vm.RegisterOp(" :{[<: ", IncludeExpandMarkdownCallback)
+		vm.RegisterOp(" :>: ", OutputAssignedExpansionCallback)
+		vm.RegisterOp(" :@>: ", OutputAssignedExpansionsCallback)
+		vm.RegisterOp(" :}>: ", OutputAssignmentCallback)
+		vm.RegisterOp(" :@}>: ", OutputAssignmentsCallback)
+		vm.RegisterOp(" :exit: ", ExitShorthand)
+		vm.RegisterOp(" :quit: ", ExitShorthand)
+	*/
 	return vm
 }
 
@@ -391,11 +412,7 @@ func (vm *VirtualMachine) Eval(s string, lineNo int) (string, error) {
 	}
 
 	if newSM.Label != "" {
-		vm.Symbols.entries = append(vm.Symbols.entries, newSM)
-		if vm.Symbols.labels == nil {
-			vm.Symbols.labels = make(map[string]int)
-		}
-		vm.Symbols.labels[newSM.Label] = len(vm.Symbols.entries) - 1
+		vm.Symbols.SetSymbol(newSM)
 	}
 	return "", nil
 }
