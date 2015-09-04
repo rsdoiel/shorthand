@@ -1,78 +1,83 @@
+//
+// Shorthand package operators - assign a function with the func(sm SourceMap) (SourceMap, error) signature
+// and use RegisterOp (e.g. in the New() function) to add support to Shourthand.
+//
 package shorthand
 
 import (
 	"fmt"
-	"github.com/russross/blackfriday"
-	"io/ioutil"
 	"os"
-	"strings"
 )
 
-// WriteAssignment writes a single assignment statement to filename
-func WriteAssignment(fname string, label string, table *SymbolTable, writeSourceCode bool) bool {
-	fp, err := os.Create(fname)
-	if err != nil {
-		warning(fmt.Sprintf("%s", err))
-		return false
+var ExitShorthand = func(sm SourceMap) (SourceMap, error) {
+	if sm.Source == "" {
+		os.Exit(0)
 	}
-	defer fp.Close()
-
-	i, ok := table.labels[label]
-	if ok == true {
-		sm := table.entries[i]
-		if writeSourceCode == true {
-			fmt.Fprintf(fp, "%s%s%s", sm.Label, sm.Op, sm.Value)
-		} else {
-			fmt.Fprintf(fp, "%s", sm.Expanded)
-		}
-		return true
-	}
-	return false
+	fmt.Fprintf(os.Stderr, sm.Source)
+	os.Exit(1)
+	return sm, nil
 }
 
-// WriteAssignments write all assignment statements to filename
-func WriteAssignments(fname string, table *SymbolTable, writeSourceCode bool) bool {
-	fp, err := os.Create(fname)
-	if err != nil {
-		warning(fmt.Sprintf("Cannot write to %s, error: %s\n", fname, err))
-		return false
-	}
-	defer fp.Close()
-	for _, sm := range table.entries {
-		if writeSourceCode == true {
-			fmt.Fprintf(fp, "%s%s%s\n", sm.Label, sm.Op, sm.Value)
-		} else {
-			fmt.Fprintf(fp, "%s\n", sm.Expanded)
-		}
-	}
-	return true
+var AssignStringCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("AssignString() not implemented.")
 }
 
-// ReadAssignments read in all of the lines of fname and
-// add any assignment statements found to Abbreviations
-// and expand any assignments and return as a string.
-func ReadAssignments(fname string, table *SymbolTable) error {
-	buf, err := ioutil.ReadFile(fname)
-	if err != nil {
-		return fmt.Errorf("Cannot read %s: %s\n", fname, err)
-	}
-	for i, text := range strings.Split(string(buf), "\n") {
-		if IsAssignment(text) {
-			ok := Assign(table, text, i)
-			if ok == false {
-				return fmt.Errorf("Error at line %d in %s\n", i+1, fname)
-			}
-		}
-	}
-	return nil
+var AssignIncludeCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("AssignInclude() not implemented.")
 }
 
-// ReadMarkdown reads in a file and processes it with Blackfriday MarkdownCommon
-func ReadMarkdown(fname string) string {
-	buf, err := ioutil.ReadFile(fname)
-	if err != nil {
-		warning(fmt.Sprintf("Cannot read %s: %s\n", fname, err))
-		return ""
-	}
-	return string(blackfriday.MarkdownCommon(buf))
+var IncludeAssignmentsCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("IncludeAssignments() not implemented.")
+}
+
+var AssignExpansionCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("AssignExpansion() not implemented.")
+}
+
+var AssignExpandExpansionCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("AssignExpandExpansion() not implemented.")
+}
+
+var IncludeExpansionCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("IncludeExpansion() not implemented.")
+}
+
+var AssignShellCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("AssignShell() not implemented.")
+}
+
+var AssignExpandShellCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("AssignExpandShell() not implemented.")
+}
+
+var AssignMarkdownCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("AssignMarkdown() not implemented.")
+}
+
+var AssignExpandMarkdownCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("AssignExpandMarkdown() not implemented.")
+}
+
+var IncludeMarkdownCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("IncludeMarkdown() not implemented.")
+}
+
+var IncludeExpandMarkdownCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("IncludeExpandMarkdown() not implemented.")
+}
+
+var OutputAssignedExpansionCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("OutputAssignedExpansion() not implemented.")
+}
+
+var OutputAssignedExpansionsCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("OutputAssignedExpansions() not implemented.")
+}
+
+var OutputAssignmentCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("OutputAssignment() not implemented.")
+}
+
+var OutputAssignmentsCallback = func(sm SourceMap) (SourceMap, error) {
+	return sm, fmt.Errorf("OutputAssignments() not implemented.")
 }

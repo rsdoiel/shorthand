@@ -60,88 +60,88 @@ func TestIsAssignment(t *testing.T) {
 func TestParse(t *testing.T) {
 	validData := map[string]SourceMap{
 		"@now1 :=: $(date)": SourceMap{
-			Label: "@now1",
-			Op:    AssignString,
-			Value: "$(date)",
+			Label:  "@now1",
+			Op:     AssignString,
+			Source: "$(date)",
 		},
 		"this :=: a valid assignment": SourceMap{
-			Label: "this",
-			Op:    AssignString,
-			Value: "a valid assignment",
+			Label:  "this",
+			Op:     AssignString,
+			Source: "a valid assignment",
 		},
 		"this; :=: a valid assignment": SourceMap{
-			Label: "this;",
-			Op:    AssignString,
-			Value: "a valid assignment",
+			Label:  "this;",
+			Op:     AssignString,
+			Source: "a valid assignment",
 		},
 		`now; :=: $(date +%H:%M);`: SourceMap{
-			Label: "now;",
-			Op:    AssignString,
-			Value: `$(date +%H:%M);`,
+			Label:  "now;",
+			Op:     AssignString,
+			Source: `$(date +%H:%M);`,
 		},
 		"@now2 :=: Fred\n": SourceMap{
-			Label: "@now2",
-			Op:    AssignString,
-			Value: "Fred",
+			Label:  "@now2",
+			Op:     AssignString,
+			Source: "Fred",
 		},
 		"@file :=<: file.txt": SourceMap{
-			Label: "@file",
-			Op:    AssignInclude,
-			Value: "file.txt",
+			Label:  "@file",
+			Op:     AssignInclude,
+			Source: "file.txt",
 		},
 		"@now3 :!: date": SourceMap{
-			Label: "@now3",
-			Op:    AssignShell,
-			Value: "date",
+			Label:  "@now3",
+			Op:     AssignShell,
+			Source: "date",
 		},
 		"@now4 :{: @one @two": SourceMap{
-			Label: "@now4",
-			Op:    AssignExpansion,
-			Value: "@one @two",
+			Label:  "@now4",
+			Op:     AssignExpansion,
+			Source: "@one @two",
 		},
 		"@now5 :}<: test.shorthand": SourceMap{
-			Label: "@now5",
-			Op:    IncludeAssignments,
-			Value: "test.shorthand",
+			Label:  "@now5",
+			Op:     IncludeAssignments,
+			Source: "test.shorthand",
 		},
 		"@now6 :[: **strong words**": SourceMap{
-			Label: "@now6",
-			Op:    AssignMarkdown,
-			Value: "**strong words**",
+			Label:  "@now6",
+			Op:     AssignMarkdown,
+			Source: "**strong words**",
 		},
 		"@now7 :[<: test.md": SourceMap{
-			Label: "@now7",
-			Op:    IncludeMarkdown,
-			Value: "test.md",
+			Label:  "@now7",
+			Op:     IncludeMarkdown,
+			Source: "test.md",
 		},
 		"@label0 :>: label0.txt": SourceMap{
-			Label: "@label0",
-			Op:    OutputAssignedExpansion,
-			Value: "label0.txt",
+			Label:  "@label0",
+			Op:     OutputAssignedExpansion,
+			Source: "label0.txt",
 		},
 		"@label1 :@>: label1.txt": SourceMap{
-			Label: "@label1",
-			Op:    OutputAssignedExpansions,
-			Value: "label1.txt",
+			Label:  "@label1",
+			Op:     OutputAssignedExpansions,
+			Source: "label1.txt",
 		},
 		"@label2 :}>: label2.txt": SourceMap{
-			Label: "@label2",
-			Op:    OutputAssignment,
-			Value: "label2.txt",
+			Label:  "@label2",
+			Op:     OutputAssignment,
+			Source: "label2.txt",
 		},
 		"@label3 :@}>: label3.txt": SourceMap{
-			Label: "@label3",
-			Op:    OutputAssignments,
-			Value: "label3.txt",
+			Label:  "@label3",
+			Op:     OutputAssignments,
+			Source: "label3.txt",
 		},
 	}
 
 	for s, ex := range validData {
 		sm, r := Parse(s, 1)
-		ok.Ok(t, r == true, fmt.Sprintf("Expected Parse OK: label: %s, op: %s, val: %s, expanded: %s, %b", sm.Label, sm.Op, sm.Value, sm.Expanded, r))
+		ok.Ok(t, r == true, fmt.Sprintf("Expected Parse OK: label: %s, op: %s, val: %s, expanded: %s, %b", sm.Label, sm.Op, sm.Source, sm.Expanded, r))
 		ok.Ok(t, sm.Label == ex.Label, "Label should match "+sm.Label+" ? "+ex.Label)
 		ok.Ok(t, sm.Op == ex.Op, "Op should match "+sm.Op+" ? "+ex.Op)
-		ok.Ok(t, sm.Value == ex.Value, "Value should match "+sm.Value+" ? "+ex.Value)
+		ok.Ok(t, sm.Source == ex.Source, "Source should match "+sm.Source+" ? "+ex.Source)
 	}
 
 	// Check an invalid assignment
@@ -150,7 +150,7 @@ func TestParse(t *testing.T) {
 	ok.Ok(t, r == false, "Should not parse "+s)
 	ok.Ok(t, sm.Label == "", "Should not have a label "+sm.Label)
 	ok.Ok(t, sm.Op == "", "Should not have an op "+sm.Op)
-	ok.Ok(t, sm.Value == "", "Should have an empty value "+sm.Value)
+	ok.Ok(t, sm.Source == "", "Should have an empty value "+sm.Source)
 	ok.Ok(t, sm.Expanded == s, "Expanded should have original s "+s)
 
 	// Check an expansion
@@ -159,7 +159,7 @@ func TestParse(t *testing.T) {
 	ok.Ok(t, r == false, "Should not parse "+s)
 	ok.Ok(t, sm.Label == "", "Should not have a label "+sm.Label)
 	ok.Ok(t, sm.Op == "", "Should not have an op "+sm.Op)
-	ok.Ok(t, sm.Value == "", "Should not have a value "+sm.Value)
+	ok.Ok(t, sm.Source == "", "Should not have a value "+sm.Source)
 	ok.Ok(t, sm.Expanded == s, "Expanded should have original s "+s)
 }
 
@@ -339,7 +339,7 @@ func TestExpandedAssignment(t *testing.T) {
 	ok.Ok(t, strings.Contains(resultText, greetingExpansion), "Should have greeting: "+greetingExpansion)
 }
 
-func TestExpandingValuesToFile(t *testing.T) {
+func TestExpandingSourcesToFile(t *testing.T) {
 	if _, err := os.Stat("testdata/helloworld1.txt"); err != nil {
 		os.Remove("testdata/helloworld1.txt")
 	}
@@ -423,4 +423,27 @@ func TestMarkdownSupport(t *testing.T) {
 	Assign(st2, a4, 3)
 	r2 := Expand(st2, "@html")
 	ok.Ok(t, r2 == e2, "Expected ["+e2+"] found ["+r2+"]")
+}
+
+func TestVM(t *testing.T) {
+	vm := New()
+	if vm == nil {
+		t.Error("vm was not created by New()")
+	}
+	ops := vm.GetOps()
+	ok.Ok(t, len(ops) == 18, "Should have sixteen ops defined.")
+	foundExit := false
+	foundQuit := false
+	for _, op := range ops {
+		//fmt.Printf("DEBUG op: %s\n", op)
+		if op == " :exit: " {
+			foundExit = true
+		}
+		if op == " :quit: " {
+			foundQuit = true
+		}
+	}
+	ok.Ok(t, foundExit, "Should have found :exit: in ops")
+	ok.Ok(t, foundQuit, "Should have found :quit: in ops")
+	ok.Ok(t, false, "TestVM() not fully implemented.")
 }
