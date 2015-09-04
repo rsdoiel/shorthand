@@ -14,12 +14,11 @@ package shorthand
 import (
 	"bufio"
 	"fmt"
+	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/russross/blackfriday"
 )
 
 // The version nummber of library and utility
@@ -55,7 +54,7 @@ type SymbolTable struct {
 }
 
 // OperatorMap is a map of operator testings and their related functions
-type OperatorMap map[string]func(SourceMap) (SourceMap, error)
+type OperatorMap map[string]func(*VirtualMachine, SourceMap) (SourceMap, error)
 
 // Assignment Ops
 const (
@@ -283,7 +282,8 @@ func ReadAssignments(fname string, table *SymbolTable) error {
 	if err != nil {
 		return fmt.Errorf("Cannot read %s: %s\n", fname, err)
 	}
-	for i, text := range strings.Split(string(buf), "\n") {
+	lines := strings.Split(string(buf), "\n")
+	for i, text := range lines {
 		if IsAssignment(text) {
 			ok := Assign(table, text, i)
 			if ok == false {
@@ -321,6 +321,7 @@ func ReadMarkdown(fname string) string {
 type VirtualMachine struct {
 	Symbols   *SymbolTable
 	Operators OperatorMap
+	Ops       []string
 }
 
 func New() *VirtualMachine {
@@ -349,30 +350,33 @@ func New() *VirtualMachine {
 	return vm
 }
 
-// GetOps returns a list of registered Shorthand operators.
-func (vm *VirtualMachine) GetOps() []string {
-	var ops []string
-
-	for op := range vm.Operators {
-		ops = append(ops, op)
-	}
-	return ops
-}
-
 // RegisterOp associate a operations with a function
-func (vm *VirtualMachine) RegisterOp(op string, callback func(SourceMap) (SourceMap, error)) error {
+func (vm *VirtualMachine) RegisterOp(op string, callback func(*VirtualMachine, SourceMap) (SourceMap, error)) error {
 	_, ok := vm.Operators[op]
 	if ok == true {
 		return fmt.Errorf("Cannot redefine function %s\n", op)
 	}
 	vm.Operators[op] = callback
+	vm.Ops = append(vm.Ops, op)
 	return nil
 }
 
+// Parse vm method. Takes advantage of the internal ops list.
+func (vm *VirtualMachine) Parse(s string, lineNo int) (SourceMap, error) {
+	for _, op := range vm.Ops {
+		if strings.Index(s, op) != -1 {
+			parts := strings.SplitN(strings.TrimSpace(s), op, 2)
+			return SourceMap{Label: parts[0], Op: op, Source: parts[1], LineNo: lineNo, Expanded: ""}, nil
+		}
+	}
+	return SourceMap{Label: "", Op: "", Source: "", LineNo: lineNo, Expanded: s}, fmt.Errorf("%s\n", s)
+}
+
 // Eval stores a shorthand assignment or expands and writes the content to stdout
+// Returns the expanded  and any error
 func (vm *VirtualMachine) Eval(s string, lineNo int) (string, error) {
-	sm, isAssignment := Parse(s, lineNo)
-	if isAssignment == false {
+	sm, isAssignment := vm.Parse(s, lineNo)
+	if isAssignment != nil {
 		return fmt.Sprintf("%s", Expand(vm.Symbols, s)), nil
 	}
 
@@ -381,9 +385,9 @@ func (vm *VirtualMachine) Eval(s string, lineNo int) (string, error) {
 		return "", fmt.Errorf("ERROR (%d): %s is not an expansion or valid assignment.\n", lineNo, s)
 	}
 
-	newSM, err := callback(sm)
+	newSM, err := callback(vm, sm)
 	if err != nil {
-		return "", fmt.Errorf("ERROR (%d): %s failed %s\n", lineNo, s, err)
+		return "", err
 	}
 
 	if newSM.Label != "" {

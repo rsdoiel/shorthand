@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/rsdoiel/ok"
+	"github.com/russross/blackfriday"
 )
 
 // Test IsAssignment
@@ -430,12 +431,11 @@ func TestVM(t *testing.T) {
 	if vm == nil {
 		t.Error("vm was not created by New()")
 	}
-	ops := vm.GetOps()
+	ops := vm.Ops
 	ok.Ok(t, len(ops) == 18, "Should have sixteen ops defined.")
 	foundExit := false
 	foundQuit := false
 	for _, op := range ops {
-		//fmt.Printf("DEBUG op: %s\n", op)
 		if op == " :exit: " {
 			foundExit = true
 		}
@@ -443,7 +443,48 @@ func TestVM(t *testing.T) {
 			foundQuit = true
 		}
 	}
+
+	// Pickup the contents of the test files.
+	buf, err := ioutil.ReadFile(`testdata/helloworld.txt`)
+	ok.Ok(t, err == nil, `should be able to read testdata/helloworld.txt`)
+	helloWorldTxT := string(buf)
+	buf, err = ioutil.ReadFile(`testdata/test.md`)
+	ok.Ok(t, err == nil, `should be able to read testdata/test.md`)
+	testMd := string(buf)
+
+	// Start testing Eval and available ops.
 	ok.Ok(t, foundExit, "Should have found :exit: in ops")
 	ok.Ok(t, foundQuit, "Should have found :quit: in ops")
+	dt := time.Now()
+	year := dt.Year()
+	yearString := fmt.Sprintf("%d", year)
+	testData := map[string]string{
+		"{{pageTitle}} :=: Hello World":    "",
+		"{{pageTitle}}":                    "Hello World",
+		"{{year}} :!: echo -n $(date +%Y)": "",
+		"{{year}}":                         yearString,
+		"{helloWorldTxT} :=<: testdata/helloworld.txt": "",
+		"{helloWorldTxT}":                              helloWorldTxT,
+		"{fred} :=: Fred":                              "",
+		"{fred}":                                       "Fred",
+		"{one} :=: 1":                                  "",
+		"{two} :=: 2":                                  "",
+		"{it} :{: {one} {two}":                         "",
+		"{it}":                                         "1 2",
+		"{{strong}} :[: **strong words**": "",
+		"{{strong}}":                      "<p><strong>strong words</strong></p>",
+		"{{html}} :[<: testdata/test.md":  "",
+		"{{html}}":                        string(blackfriday.MarkdownCommon([]byte(testMd))),
+	}
+
+	i := 1
+	for source, expected := range testData {
+		result, err := vm.Eval(source, i)
+
+		ok.Ok(t, err == nil, fmt.Sprintf("Eval error: %s\n", err))
+		ok.Ok(t, strings.Compare(expected, result) == 0, fmt.Sprintf("expected: [%s] result: [%s]", expected, result))
+		i++
+	}
+
 	ok.Ok(t, false, "TestVM() not fully implemented.")
 }
