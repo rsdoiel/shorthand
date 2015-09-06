@@ -6,7 +6,7 @@ A simple label expander and markdown utility
 Example use cases:
 
 + label or abbreviation expansion in Markdown files
-+ build very html templates straight from markdown files
++ build html templates from markdown files
 + compose pages from multiple markdown files
 
 The supported command line options can be listed using the _--help_
