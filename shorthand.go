@@ -14,15 +14,12 @@ package shorthand
 import (
 	"bufio"
 	"fmt"
-	//"github.com/russross/blackfriday"
-	//"io/ioutil"
 	"os"
-	//"os/exec"
 	"strings"
 )
 
 // The version nummber of library and utility
-const Version = "v0.0.4-next"
+const Version = "v0.0.4"
 
 //
 // An Op is built from a multi character symbol
@@ -84,6 +81,7 @@ func (st *SymbolTable) SetSymbol(sm SourceMap) int {
 type OperatorMap map[string]func(*VirtualMachine, SourceMap) (SourceMap, error)
 
 type VirtualMachine struct {
+	prompt    string
 	Symbols   *SymbolTable
 	Operators OperatorMap
 	Ops       []string
@@ -128,6 +126,10 @@ func New() *VirtualMachine {
 	vm.RegisterOp(" :exit: ", ExitShorthand)
 	vm.RegisterOp(" :quit: ", ExitShorthand)
 	return vm
+}
+
+func (vm *VirtualMachine) SetPrompt(s string) {
+	vm.prompt = s
 }
 
 // RegisterOp associate a operation and function
@@ -200,6 +202,9 @@ func (vm *VirtualMachine) Eval(s string, lineNo int) (string, error) {
 func (vm *VirtualMachine) Run(in *bufio.Reader) int {
 	lineNo := 0
 	for {
+		if vm.prompt != "" {
+			fmt.Fprint(os.Stdout, vm.prompt)
+		}
 		src, rErr := in.ReadString('\n')
 		if rErr != nil {
 			break
@@ -213,7 +218,7 @@ func (vm *VirtualMachine) Run(in *bufio.Reader) int {
 			fmt.Fprintf(os.Stderr, "ERROR (%d): %s\n", lineNo, err)
 		}
 		if out != "" {
-			fmt.Fprintf(os.Stdout, out)
+			fmt.Fprint(os.Stdout, out)
 		}
 	}
 	return lineNo

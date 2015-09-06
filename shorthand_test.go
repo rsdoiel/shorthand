@@ -503,8 +503,8 @@ func TestMarkdownSupport(t *testing.T) {
 
 	i := 0
 	for src, expected := range testData {
-		vm.Eval(fmt.Sprintf("test :[: %s", src), i)
-		result := vm.Expand("test")
+		vm.Eval(fmt.Sprintf("@test :[: %s", src), i)
+		result := vm.Expand("@test")
 		ok.Ok(t, expected == result, fmt.Sprintf("%s -> %s", expected, result))
 		i++
 	}
@@ -513,10 +513,10 @@ func TestMarkdownSupport(t *testing.T) {
 	i++
 	vm.Eval("@url :=: http://example.com", i)
 	i++
-	vm.Eval("html :{[: [@link](@url)", i)
+	vm.Eval("@html :{[: [@link](@url)", i)
 	i++
 	expected := "<p><a href=\"http://example.com\">my link</a></p>\n"
-	result := vm.Expand("html")
+	result := vm.Expand("@html")
 	ok.Ok(t, strings.Compare(expected, result) == 0, fmt.Sprintf("%s != %s", expected, result))
 
 	_, err := vm.Eval("@page :[<: testdata/test.md", i)
@@ -536,6 +536,25 @@ func TestMarkdownSupport(t *testing.T) {
 	ok.Ok(t, err == nil, fmt.Sprintf("%i testdata/test.md error: %s", i, err))
 	result = vm.Expand("@page")
 	ok.Ok(t, strings.Contains(result, "<h2>Another heading two element</h2>"), "Should have another heading two element from test.md"+result)
+
+	// Re-read testdata/test.md and process the maarkdown
+	_, err = vm.Eval("H2 :=: heading two element", i)
+	i++
+	ok.Ok(t, err == nil, fmt.Sprintf("Should be able to assign string to 'H2': %s", err))
+	_, err = vm.Eval("@page :{[<: testdata/test.md", i)
+	i++
+	ok.Ok(t, err == nil, fmt.Sprintf("%i testdata/test.md error: %s", i, err))
+	_, err = vm.Eval("@page :>: testdata/test.html", i)
+	ok.Ok(t, err == nil, fmt.Sprintf("%i write testdata/test.html error: %s", i, err))
+	i++
+
+	_, err = os.Stat("testdata/test.html")
+	ok.Ok(t, err == nil, "testdata/test.html should exist.")
+
+	buf, err := ioutil.ReadFile("testdata/test.html")
+	ok.Ok(t, err == nil, "should be able to read testdata/test.html.")
+	result2 := string(buf)
+	ok.Ok(t, strings.Compare(result, result2) == 0, fmt.Sprintf("Should have same results: '%s' <> '%s'", result, result2))
 
 }
 

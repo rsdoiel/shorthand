@@ -13,23 +13,21 @@ package main
 import (
 	shorthand "../../"
 	"bufio"
-	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 type expressionList []string
 
 var (
-	help        bool
-	version     bool
-	expression  expressionList
-	prompt      string
-	symbolTable *shorthand.SymbolTable
-	lineNo      int
+	help       bool
+	version    bool
+	expression expressionList
+	prompt     string
+	vm         *shorthand.VirtualMachine
+	lineNo     int
 )
 
 var usage = func(exit_code int, msg string) {
@@ -40,7 +38,7 @@ var usage = func(exit_code int, msg string) {
 	cmdName := os.Args[0]
 
 	fmt.Fprintf(fh, `%s
-USAGE %s [options]
+USAGE %s [options] [FILES_TO_PROCESS]
 
 %s is a command line utility to expand labels based on their
 assigned definitions. The render output is the transformed text 
@@ -156,15 +154,12 @@ func (e *expressionList) String() string {
 }
 
 func (e *expressionList) Set(value string) error {
-	if shorthand.IsAssignment(value) == false {
-		return errors.New("Shorthand is not valid (LABEL := VALUE)")
-	}
-	shorthand.Assign(symbolTable, value, lineNo)
+	vm.Eval(value, lineNo)
 	return nil
 }
 
 func init() {
-	symbolTable = new(shorthand.SymbolTable)
+	vm = shorthand.New()
 }
 
 func main() {
@@ -175,6 +170,7 @@ func main() {
 	flag.BoolVar(&version, "v", false, "Version information")
 	flag.BoolVar(&version, "version", false, "Version information")
 	flag.Parse()
+	args := flag.Args()
 	if help == true {
 		usage(0, "")
 	}
@@ -182,26 +178,23 @@ func main() {
 		revision()
 	}
 
+	if prompt != "" {
+		vm.SetPrompt(prompt)
+	}
+
 	//FIXME: If a filename is provided on the command line use it instead of standard input.
-	reader := bufio.NewReader(os.Stdin)
-
-	for {
-		if prompt != "" {
-			fmt.Printf("%s ", prompt)
+	if len(args) > 0 {
+		for _, arg := range args {
+			fp, err := os.Open(arg)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "%s\n", err)
+			}
+			defer fp.Close()
+			reader := bufio.NewReader(fp)
+			vm.Run(reader)
 		}
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			break
-		}
-		lineNo += 1
-
-		// Process the input plus some repl commands.
-		if strings.TrimSpace(line) == ":exit:" || strings.TrimSpace(line) == ":quit:" {
-			break
-		} else if shorthand.IsAssignment(line) {
-			shorthand.Assign(symbolTable, line, lineNo)
-		} else {
-			fmt.Print(shorthand.Expand(symbolTable, line))
-		}
+	} else {
+		reader := bufio.NewReader(os.Stdin)
+		vm.Run(reader)
 	}
 }

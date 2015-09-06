@@ -139,7 +139,7 @@ var IncludeExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, e
 
 var OutputExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	oSM := vm.Symbols.GetSymbol(sm.Label)
-	out := vm.Expand(oSM.Source)
+	out := oSM.Expanded
 	fname := sm.Source
 	err := ioutil.WriteFile(fname, []byte(out), 0666)
 	if err != nil {

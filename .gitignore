@@ -28,6 +28,7 @@ _testmain.go
 #
 testdata/assigned?.txt
 testdata/expansion?.txt
+testdata/test.html
 index.shorthand
 shorthand.shorthand
 
