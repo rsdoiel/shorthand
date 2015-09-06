@@ -6,12 +6,11 @@ package shorthand
 
 import (
 	"fmt"
+	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/russross/blackfriday"
 )
 
 //ExitShorthand - call os.Exit() with appropriate value and exit the repl
@@ -24,35 +23,35 @@ var ExitShorthand = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	return SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: ""}, nil
 }
 
-//AssignStringCallback take the Source and copy to Expanded
-var AssignStringCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+//AssignString take the Source and copy to Expanded
+var AssignString = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	expanded := sm.Source
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-//AssignIncludeCallback read a file using Source as filename and put the results in Expanded
-var AssignIncludeCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+//AssignInclude read a file using Source as filename and put the results in Expanded
+var AssignInclude = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	buf, err := ioutil.ReadFile(sm.Source)
 	if err != nil {
-		return SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: ""},
+		return SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: "", LineNo: sm.LineNo},
 			fmt.Errorf("Cannot read %s: %s\n", sm.Source, err)
 	}
 	expanded := string(buf)
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// IncludeAssignmentsCallback evaluates the file for assignment operations
-var IncludeAssignmentsCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+// ImportAssignments evaluates the file for assignment operations
+var ImportAssignments = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	var output []string
 	buf, err := ioutil.ReadFile(sm.Source)
 	if err != nil {
-		return SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: ""}, err
+		return SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: "", LineNo: sm.LineNo}, err
 	}
 	lineNo := 1
 	for _, src := range strings.Split(string(buf), "\n") {
 		s, err := vm.Eval(src, lineNo)
 		if err != nil {
-			return SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: ""},
+			return SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: "", LineNo: sm.LineNo},
 				fmt.Errorf("ERROR (%s %d): %s", sm.Source, lineNo, err)
 		}
 		if s != "" {
@@ -60,96 +59,128 @@ var IncludeAssignmentsCallback = func(vm *VirtualMachine, sm SourceMap) (SourceM
 		}
 	}
 	expanded := strings.Join(output, "\n")
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// AssignExpanshionCallback expands Source and copy to Expanded
-var AssignExpansionCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	expanded := Expand(vm.Symbols, sm.Source)
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+// AssignExpanshion expands Source and copy to Expanded
+var AssignExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+	expanded := vm.Expand(sm.Source)
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// AssignExpandExpansionsCallback expand an expanded Source and copy to Expanded
-var AssignExpandExpansionCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	tmp := Expand(vm.Symbols, sm.Source)
-	expanded := Expand(vm.Symbols, tmp)
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+// AssignExpandExpansions expand an expanded Source and copy to Expanded
+var AssignExpandExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+	tmp := vm.Expand(sm.Source)
+	expanded := vm.Expand(tmp)
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// IncludeExpansionCallback include the filename from Source, expand and copy to Expanded
-var IncludeExpansionCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+// IncludeExpansion include the filename from Source, expand and copy to Expanded
+var IncludeExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	buf, err := ioutil.ReadFile(sm.Source)
 	if err != nil {
 		return sm, err
 	}
-	expanded := Expand(vm.Symbols, string(buf))
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	expanded := vm.Expand(string(buf))
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// AssignShellCallback pass Source to shell and copy stdout to Expanded
-var AssignShellCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+// AssignShell pass Source to shell and copy stdout to Expanded
+var AssignShell = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	buf, err := exec.Command("bash", "-c", sm.Source).Output()
 	if err != nil {
 		return sm, err
 	}
 	expanded := string(buf)
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// AssignExpandShellCallback expand Source, pass to Bash and assign output to Expanded
-var AssignExpandShellCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	buf, err := exec.Command("bash", "-c", Expand(vm.Symbols, sm.Source)).Output()
+// AssignExpandShell expand Source, pass to Bash and assign output to Expanded
+var AssignExpandShell = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+	buf, err := exec.Command("bash", "-c", vm.Expand(sm.Source)).Output()
 	if err != nil {
 		return sm, err
 	}
 	expanded := string(buf)
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// AssignMarkdownCallback process Source with Blackfriday and copy
-var AssignMarkdownCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+// AssignMarkdown process Source with Blackfriday and copy
+var AssignMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	expanded := string(blackfriday.MarkdownCommon([]byte(sm.Source)))
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-var AssignExpandMarkdownCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	tmp := Expand(vm.Symbols, sm.Source)
+var AssignExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+	tmp := vm.Expand(sm.Source)
 	expanded := string(blackfriday.MarkdownCommon([]byte(tmp)))
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-var IncludeMarkdownCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+var IncludeMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	buf, err := ioutil.ReadFile(sm.Source)
 	if err != nil {
 		return sm, err
 	}
 	tmp := string(buf)
 	expanded := string(blackfriday.MarkdownCommon([]byte(tmp)))
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-var IncludeExpandMarkdownCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+var IncludeExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	buf, err := ioutil.ReadFile(sm.Source)
 	if err != nil {
 		return sm, err
 	}
-	tmp := Expand(vm.Symbols, string(buf))
+	tmp := vm.Expand(string(buf))
 	expanded := string(blackfriday.MarkdownCommon([]byte(tmp)))
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded}, nil
+	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-var OutputAssignedExpansionCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	return sm, fmt.Errorf("OutputAssignedExpansionCallback() not implemented.")
+var OutputExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+	oSM := vm.Symbols.GetSymbol(sm.Label)
+	out := vm.Expand(oSM.Source)
+	fname := sm.Source
+	err := ioutil.WriteFile(fname, []byte(out), 0666)
+	if err != nil {
+		return sm, fmt.Errorf("%d Write error %s: %s", sm.LineNo, fname, err)
+	}
+	return oSM, nil
 }
 
-var OutputAssignedExpansionsCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	return sm, fmt.Errorf("OutputAssignedExpansionsCallback() not implemented.")
+var OutputExpansions = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+	fp, err := os.Create(sm.Source)
+	if err != nil {
+		return sm, fmt.Errorf("%d Create error %s: %s", sm.LineNo, sm.Source, err)
+	}
+	defer fp.Close()
+	symbols := vm.Symbols.GetSymbols()
+	for _, oSM := range symbols {
+		fmt.Fprintln(fp, vm.Expand(oSM.Expanded))
+	}
+	return sm, nil
 }
 
-var OutputAssignmentCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	return sm, fmt.Errorf("OutputAssignmentCallback() not implemented.")
+var ExportAssignment = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+	oSM := vm.Symbols.GetSymbol(sm.Label)
+	out := fmt.Sprintf("%s%s%s", oSM.Label, oSM.Op, oSM.Source)
+	fname := sm.Source
+	err := ioutil.WriteFile(fname, []byte(out), 0666)
+	if err != nil {
+		return sm, fmt.Errorf("%d Write error %s: %s", sm.LineNo, fname, err)
+	}
+	return oSM, nil
 }
 
-var OutputAssignmentsCallback = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	return sm, fmt.Errorf("OutputAssignmentsCallback() not implemented.")
+var ExportAssignments = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+	fp, err := os.Create(sm.Source)
+	if err != nil {
+		return sm, fmt.Errorf("%d Create error %s: %s", sm.LineNo, sm.Source, err)
+	}
+	defer fp.Close()
+	symbols := vm.Symbols.GetSymbols()
+	for _, oSM := range symbols {
+		fmt.Fprintf(fp, "%s%s%s\n", oSM.Label, oSM.Op, oSM.Source)
+	}
+	return sm, nil
 }

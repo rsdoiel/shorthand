@@ -27,7 +27,7 @@ _testmain.go
 # generated test data
 #
 testdata/assigned?.txt
-testdata/helloworld?.txt
+testdata/expansion?.txt
 index.shorthand
 shorthand.shorthand
 
