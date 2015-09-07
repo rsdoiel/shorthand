@@ -423,7 +423,7 @@ func TestExpandingSourcesToFile(t *testing.T) {
 	}
 
 	// Clean up testdata area
-	for fname, _ := range testFiles {
+	for fname := range testFiles {
 		if _, err := os.Stat(fname); err != nil {
 			os.Remove(fname)
 		}
@@ -461,7 +461,7 @@ func TestExportAssignments(t *testing.T) {
 		"testdata/assigned1.txt": "@hello_world :=: Hello World",
 		"testdata/assigned2.txt": "@hello_world :=: Hello World\n@max :!: echo -n 'Hello Max'\n",
 	}
-	for fname, _ := range testFiles {
+	for fname := range testFiles {
 		if _, err := os.Stat(fname); err != nil {
 			os.Remove(fname)
 		}

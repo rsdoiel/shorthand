@@ -50,6 +50,7 @@ type SymbolTable struct {
 	labels  map[string]int
 }
 
+// GetSymbol finds the symbol entry and returns the SourceMap
 func (st *SymbolTable) GetSymbol(sym string) SourceMap {
 	i, ok := st.labels[sym]
 	if ok == true {
@@ -58,6 +59,7 @@ func (st *SymbolTable) GetSymbol(sym string) SourceMap {
 	return SourceMap{Label: "", Op: "", Source: "", Expanded: "", LineNo: -1}
 }
 
+// GetSymbols returns a list of all symbols defined by labels as an array of SourceMaps
 func (st *SymbolTable) GetSymbols() []SourceMap {
 	var symbols []SourceMap
 
@@ -67,6 +69,7 @@ func (st *SymbolTable) GetSymbols() []SourceMap {
 	return symbols
 }
 
+// SetSymbol adds a SourceMap to entries and points the labels at the most recent definition.
 func (st *SymbolTable) SetSymbol(sm SourceMap) int {
 	st.entries = append(st.entries, sm)
 	if st.labels == nil {
@@ -80,6 +83,8 @@ func (st *SymbolTable) SetSymbol(sm SourceMap) int {
 // OperatorMap is a map of operator testings and their related functions
 type OperatorMap map[string]func(*VirtualMachine, SourceMap) (SourceMap, error)
 
+// VirtualMachine defines the structure which holds symbols, operator map,
+// ops and current prompt setting for a shorthand instance.
 type VirtualMachine struct {
 	prompt    string
 	Symbols   *SymbolTable
@@ -87,8 +92,7 @@ type VirtualMachine struct {
 	Ops       []string
 }
 
-// VirtualMachine binds methods to shared Symbol and Operator structure.
-// It is responsible for registering all supported Operators
+// New returns a VirtualMachine struct and registers all Operators
 func New() *VirtualMachine {
 	vm := new(VirtualMachine)
 	vm.Symbols = new(SymbolTable)
@@ -128,6 +132,7 @@ func New() *VirtualMachine {
 	return vm
 }
 
+// SetPrompt sets the string value of the prompt for a VirtualMachine instance
 func (vm *VirtualMachine) SetPrompt(s string) {
 	vm.prompt = s
 }
@@ -209,7 +214,7 @@ func (vm *VirtualMachine) Run(in *bufio.Reader) int {
 		if rErr != nil {
 			break
 		}
-		lineNo += 1
+		lineNo++
 		if strings.Contains(src, ":exit:") || strings.Contains(src, ":quit:") {
 			break
 		}
