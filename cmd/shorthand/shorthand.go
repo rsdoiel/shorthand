@@ -26,6 +26,7 @@ var (
 	version    bool
 	expression expressionList
 	prompt     string
+	noprompt   bool
 	vm         *shorthand.VirtualMachine
 	lineNo     int
 )
@@ -144,6 +145,33 @@ See: http://opensource.org/licenses/BSD-2-Clause
 	os.Exit(exit_code)
 }
 
+var welcome = `
+  Welcome to shorthand the simple label expander and markdown processor.
+  Use ':exit:' to quit the repl, ':help:' to get a list of supported operators.
+
+`
+
+var helpShorthand = func(vm *shorthand.VirtualMachine, sm shorthand.SourceMap) (shorthand.SourceMap, error) {
+	fmt.Printf(`
+The following operators are supported in shorthand:
+
+`)
+	for op, msg := range vm.Help {
+		fmt.Printf("\t%s\t%s\n", op, msg)
+	}
+	return shorthand.SourceMap{Label: "", Op: ":help:", Source: "", Expanded: ""}, nil
+}
+
+//exitShorthand - call os.Exit() with appropriate value and exit the repl
+var exitShorthand = func(vm *shorthand.VirtualMachine, sm shorthand.SourceMap) (shorthand.SourceMap, error) {
+	if sm.Source == "" {
+		os.Exit(0)
+	}
+	fmt.Fprintf(os.Stderr, sm.Source)
+	os.Exit(1)
+	return shorthand.SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: ""}, nil
+}
+
 func revision() {
 	fmt.Printf("%s %s\n", filepath.Base(os.Args[0]), shorthand.Version)
 	os.Exit(0)
@@ -164,7 +192,8 @@ func init() {
 
 func main() {
 	flag.Var(&expression, "e", "The shorthand notation(s) you wish at add")
-	flag.StringVar(&prompt, "p", "", "Output a prompt for interactive processing")
+	flag.StringVar(&prompt, "p", "=> ", "Output a prompt for interactive processing")
+	flag.BoolVar(&noprompt, "n", false, "Turn off the prompt for interactive processing")
 	flag.BoolVar(&help, "h", false, "Display this help document")
 	flag.BoolVar(&help, "help", false, "Display this help document")
 	flag.BoolVar(&version, "v", false, "Version information")
@@ -178,12 +207,14 @@ func main() {
 		revision()
 	}
 
-	if prompt != "" {
-		vm.SetPrompt(prompt)
+	if noprompt == true {
+		prompt = ""
 	}
+	vm.SetPrompt(prompt)
 
-	//FIXME: If a filename is provided on the command line use it instead of standard input.
+	// If a filename is provided on the command line use it instead of standard input.
 	if len(args) > 0 {
+		vm.SetPrompt("")
 		for _, arg := range args {
 			fp, err := os.Open(arg)
 			if err != nil {
@@ -194,6 +225,11 @@ func main() {
 			vm.Run(reader)
 		}
 	} else {
+		vm.RegisterOp(":exit:", exitShorthand, "Exit shorthand repl")
+		vm.RegisterOp(":help:", helpShorthand, "This help message")
+		if prompt != "" {
+			fmt.Println(welcome)
+		}
 		reader := bufio.NewReader(os.Stdin)
 		vm.Run(reader)
 	}

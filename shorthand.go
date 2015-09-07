@@ -19,7 +19,7 @@ import (
 )
 
 // The version nummber of library and utility
-const Version = "v0.0.4"
+const Version = "v0.0.5"
 
 //
 // An Op is built from a multi character symbol
@@ -90,6 +90,7 @@ type VirtualMachine struct {
 	Symbols   *SymbolTable
 	Operators OperatorMap
 	Ops       []string
+	Help      map[string]string
 }
 
 // New returns a VirtualMachine struct and registers all Operators
@@ -97,6 +98,8 @@ func New() *VirtualMachine {
 	vm := new(VirtualMachine)
 	vm.Symbols = new(SymbolTable)
 	vm.Operators = make(OperatorMap)
+	vm.Help = make(map[string]string)
+
 	//
 	// An Op is built from a multi character symbol
 	// Each element in the symbol has meaning
@@ -111,24 +114,22 @@ func New() *VirtualMachine {
 	// @ operate on whole symbol table
 	//
 	// Now register the built-in operators
-	vm.RegisterOp(" :=: ", AssignString)
-	vm.RegisterOp(" :=<: ", AssignInclude)
-	vm.RegisterOp(" :}<: ", ImportAssignments)
-	vm.RegisterOp(" :{: ", AssignExpansion)
-	vm.RegisterOp(" :{{: ", AssignExpandExpansion)
-	vm.RegisterOp(" :{<: ", IncludeExpansion)
-	vm.RegisterOp(" :!: ", AssignShell)
-	vm.RegisterOp(" :{!: ", AssignExpandShell)
-	vm.RegisterOp(" :[: ", AssignMarkdown)
-	vm.RegisterOp(" :{[: ", AssignExpandMarkdown)
-	vm.RegisterOp(" :[<: ", IncludeMarkdown)
-	vm.RegisterOp(" :{[<: ", IncludeExpandMarkdown)
-	vm.RegisterOp(" :>: ", OutputExpansion)
-	vm.RegisterOp(" :@>: ", OutputExpansions)
-	vm.RegisterOp(" :}>: ", ExportAssignment)
-	vm.RegisterOp(" :@}>: ", ExportAssignments)
-	vm.RegisterOp(" :exit: ", ExitShorthand)
-	vm.RegisterOp(" :quit: ", ExitShorthand)
+	vm.RegisterOp(" :=: ", AssignString, "Assign a string to label")
+	vm.RegisterOp(" :=<: ", AssignInclude, "Include content and assign to label")
+	vm.RegisterOp(" :}<: ", ImportAssignments, "Import assignments from a shorthand file")
+	vm.RegisterOp(" :{: ", AssignExpansion, "Expand and assign to label")
+	vm.RegisterOp(" :{{: ", AssignExpandExpansion, "Expand and expansion and assign to label")
+	vm.RegisterOp(" :{<: ", IncludeExpansion, "Include a file, expand and assign to label")
+	vm.RegisterOp(" :!: ", AssignShell, "Assign the output of a Bash command to label")
+	vm.RegisterOp(" :{!: ", AssignExpandShell, "Expand and then assign the results of a Bash command to label")
+	vm.RegisterOp(" :[: ", AssignMarkdown, "Convert markdown and assign to label")
+	vm.RegisterOp(" :{[: ", AssignExpandMarkdown, "Expand and convert markdown and assign to label")
+	vm.RegisterOp(" :[<: ", IncludeMarkdown, "Include and convert markdown and assign to label")
+	vm.RegisterOp(" :{[<: ", IncludeExpandMarkdown, "Include an expansion, convert with Markdown and assign to label")
+	vm.RegisterOp(" :>: ", OutputExpansion, "Write an expansion to a file")
+	vm.RegisterOp(" :@>: ", OutputExpansions, "Write all expansions to a file (order not guaranteed)")
+	vm.RegisterOp(" :}>: ", ExportAssignment, "Export assignment to a file")
+	vm.RegisterOp(" :@}>: ", ExportAssignments, "Expand all assignments (order not guaranteed)")
 	return vm
 }
 
@@ -138,13 +139,14 @@ func (vm *VirtualMachine) SetPrompt(s string) {
 }
 
 // RegisterOp associate a operation and function
-func (vm *VirtualMachine) RegisterOp(op string, callback func(*VirtualMachine, SourceMap) (SourceMap, error)) error {
+func (vm *VirtualMachine) RegisterOp(op string, callback func(*VirtualMachine, SourceMap) (SourceMap, error), help string) error {
 	_, ok := vm.Operators[op]
 	if ok == true {
 		return fmt.Errorf("Cannot redefine function %s\n", op)
 	}
 	vm.Operators[op] = callback
 	vm.Ops = append(vm.Ops, op)
+	vm.Help[op] = help
 	return nil
 }
 
@@ -154,9 +156,15 @@ func (vm *VirtualMachine) RegisterOp(op string, callback func(*VirtualMachine, S
 // at the parse stage.
 func (vm *VirtualMachine) Parse(s string, lineNo int) SourceMap {
 	for _, op := range vm.Ops {
-		if strings.Index(s, op) != -1 {
+		if strings.Contains(s, op) {
 			parts := strings.SplitN(strings.TrimSpace(s), op, 2)
-			return SourceMap{Label: parts[0], Op: op, Source: parts[1], LineNo: lineNo, Expanded: ""}
+			if len(parts) == 2 {
+				return SourceMap{Label: parts[0], Op: op, Source: parts[1], LineNo: lineNo, Expanded: ""}
+			}
+			if len(parts) == 1 {
+				return SourceMap{Label: parts[0], Op: op, Source: "", LineNo: lineNo, Expanded: ""}
+			}
+			return SourceMap{Label: "", Op: op, Source: "", LineNo: lineNo, Expanded: ""}
 		}
 	}
 	return SourceMap{Label: "", Op: "", Source: s, LineNo: lineNo, Expanded: ""}
