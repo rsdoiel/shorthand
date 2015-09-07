@@ -159,6 +159,7 @@ The following operators are supported in shorthand:
 	for op, msg := range vm.Help {
 		fmt.Printf("\t%s\t%s\n", op, msg)
 	}
+	fmt.Printf("\nshorthand %s\n\n", shorthand.Version)
 	return shorthand.SourceMap{Label: "", Op: ":help:", Source: "", Expanded: ""}, nil
 }
 
