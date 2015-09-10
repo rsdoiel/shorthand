@@ -17,7 +17,7 @@
 
 <ul>
 <li>label or abbreviation expansion in Markdown files</li>
-<li>build very html templates straight from markdown files</li>
+<li>build html templates from markdown files</li>
 <li>compose pages from multiple markdown files</li>
 </ul>
 
@@ -50,10 +50,11 @@ options.</p>
 
 <p>From the command line you can do something like this</p>
 
-<pre><code class="language-shell">    shorthand -e &quot;@now :!: date&quot; \
+<pre><code class="language-shell">    shorthand -e '@now :!: date' \
         -e &quot;@report :=&lt;: testdata/report.md&quot; \
         -@ &quot;@html :[: @report&quot; \
-        -e &quot;@html&quot; &gt; testdata/report.html
+        -e &quot;@html&quot; \
+        -e ':exit:' &gt; testdata/report.html
 </code></pre>
 
 <p>What this command does is launch the <em>shorthand</em> interpreter and it
@@ -92,7 +93,7 @@ markdown itself. with something like</p>
 
 <p>That makes the command line a little shorter</p>
 
-<pre><code class="language-shell">    shorthand &lt; testdata/report.md | markdown &gt; testdata/report.html
+<pre><code class="language-shell">    shorthand testdata/report.md | markdown &gt; testdata/report.html
 </code></pre>
 </section>
     <nav><ul>
@@ -102,7 +103,7 @@ markdown itself. with something like</p>
 </ul>
 </nav>
     <footer>
-    shorthand v0.0.4, Thu Sep 10 16:49:53 PDT 2015
+    shorthand v0.0.4, Thu Sep 10 16:50:32 PDT 2015
 <p><p>copyright &copy; 2015 all rights reserved.
 Released under the BSD 2-Clause license
 See: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a></p>

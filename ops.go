@@ -13,16 +13,6 @@ import (
 	"strings"
 )
 
-//ExitShorthand - call os.Exit() with appropriate value and exit the repl
-var ExitShorthand = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	if sm.Source == "" {
-		os.Exit(0)
-	}
-	fmt.Fprintf(os.Stderr, sm.Source)
-	os.Exit(1)
-	return SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: ""}, nil
-}
-
 //AssignString take the Source and copy to Expanded
 var AssignString = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	expanded := sm.Source

@@ -26,11 +26,7 @@ _testmain.go
 #
 # generated test data
 #
-testdata/assigned?.txt
-testdata/expansion?.txt
-testdata/test.html
-index.shorthand
-shorthand.shorthand
+testdata/*
 
 #
 # command line files generated

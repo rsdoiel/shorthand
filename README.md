@@ -6,7 +6,7 @@ A simple label expander and markdown utility
 Example use cases:
 
 + label or abbreviation expansion in Markdown files
-+ build very html templates straight from markdown files
++ build html templates from markdown files
 + compose pages from multiple markdown files
 
 The supported command line options can be listed using the _--help_
@@ -41,10 +41,11 @@ If the content of the markdown file _testdata/report.md_ was
 From the command line you can do something like this
 
 ```shell
-    shorthand -e "@now :!: date" \
+    shorthand -e '@now :!: date' \
         -e "@report :=<: testdata/report.md" \
         -@ "@html :[: @report" \
-        -e "@html" > testdata/report.html
+        -e "@html" \
+        -e ':exit:' > testdata/report.html
 ```
 
 What this command does is launch the _shorthand_ interpreter and it
@@ -86,7 +87,7 @@ markdown itself. with something like
 That makes the command line a little shorter
 
 ```shell
-    shorthand < testdata/report.md | markdown > testdata/report.html
+    shorthand testdata/report.md | markdown > testdata/report.html
 ```
 
 

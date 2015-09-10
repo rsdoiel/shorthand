@@ -93,4 +93,7 @@
 + io
     + support for URI/URL for file operation
     + support CURL like operations
++ Add some sort of random text or Lorem Ipsum function for testing and filling in templates
+    + [Random Text](https://github.com/AhmedZaleh/margopher?utm_source=golangweekly&utm_medium=email) with MarGopher
+    + Lorem Ipsum in Golang: [Golorem](https://github.com/drhodes/golorem), other version are probably out there too
 
