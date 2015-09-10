@@ -183,12 +183,21 @@ func (e *expressionList) String() string {
 }
 
 func (e *expressionList) Set(value string) error {
-	vm.Eval(value, lineNo)
+	lineNo++
+	out, err := vm.Eval(value, lineNo)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR (%d): %s\n", lineNo, err)
+		return err
+	}
+	if out != "" {
+		fmt.Fprintf(os.Stdout, "%s\n", out)
+	}
 	return nil
 }
 
 func init() {
 	vm = shorthand.New()
+	vm.RegisterOp(":exit:", exitShorthand, "Exit shorthand repl")
 }
 
 func main() {
@@ -226,7 +235,6 @@ func main() {
 			vm.Run(reader)
 		}
 	} else {
-		vm.RegisterOp(":exit:", exitShorthand, "Exit shorthand repl")
 		vm.RegisterOp(":help:", helpShorthand, "This help message")
 		if prompt != "" {
 			fmt.Println(welcome)
