@@ -43,7 +43,7 @@ From the command line you can do something like this
 ```shell
     shorthand -e '@now :!: date' \
         -e "@report :=<: testdata/report.md" \
-        -@ "@html :[: @report" \
+        -e "@html :[: @report" \
         -e "@html" \
         -e ':exit:' > testdata/report.html
 ```
