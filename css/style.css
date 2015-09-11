@@ -22,6 +22,7 @@ header > h1 {
 }
 
 section {
+    position: relative;
     margin: 1em;
     display: inline-block;
     max-width: 80%;
@@ -33,11 +34,10 @@ section > h1 {
 }
 
 nav {
+    position: absolute;
     display: inline-block;
     border-left: 1px solid red;
-    position: relative;
     text-align: top;
-    height: auto;
 }
 
 nav ul {
