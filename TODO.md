@@ -13,4 +13,5 @@
 + add line number ranges when including include files.
 + the glygh :{<: does not seem to work for reading in a file, expanding content and assigning the results to a label (or at least not as expected)
     + do we need anything more than :=<: when you have support for :{{: to double expand content (e.g. when reading in a shorthand file as template)
++ expose command line args without explicitly using the -e option.
 
