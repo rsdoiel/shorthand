@@ -6,11 +6,13 @@ package shorthand
 
 import (
 	"fmt"
-	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
+
+	// 3rd party packages
+	"github.com/russross/blackfriday"
 )
 
 //AssignString take the Source and copy to Expanded

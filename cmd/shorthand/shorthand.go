@@ -11,12 +11,14 @@
 package main
 
 import (
-	shorthand "../../"
 	"bufio"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
+
+	// my packages
+	shorthand "github.com/rsdoiel/shorthand"
 )
 
 type expressionList []string

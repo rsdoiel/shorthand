@@ -14,13 +14,17 @@ package shorthand
 import (
 	"bufio"
 	"fmt"
-	"github.com/rsdoiel/ok"
-	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
 	"time"
+
+	// 3rd Party packages
+	"github.com/russross/blackfriday"
+
+	// My packages
+	"github.com/rsdoiel/ok"
 )
 
 // TestParse
