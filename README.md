@@ -91,3 +91,12 @@ That makes the command line a little shorter
 ```
 
 
+## Installation
+
+_shorthand_ can be installed with the *go get* command.
+
+```
+    go get github.com/rsdoiel/shorthand/...
+```
+
+
