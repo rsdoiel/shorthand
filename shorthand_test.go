@@ -33,182 +33,182 @@ import (
 // TestParse
 func TestParse(t *testing.T) {
 	validData := map[string]SourceMap{
-		"@now1 :=: $(date)": SourceMap{
+		"@now1 :=: $(date)": {
 			Label:    "@now1",
 			Op:       " :=: ",
 			Source:   "$(date)",
 			Expanded: "",
 			LineNo:   1,
 		},
-		"this :=: a valid assignment": SourceMap{
+		"this :=: a valid assignment": {
 			Label:    "this",
 			Op:       " :=: ",
 			Source:   "a valid assignment",
 			Expanded: "",
 			LineNo:   2,
 		},
-		"this; :=: a valid assignment": SourceMap{
+		"this; :=: a valid assignment": {
 			Label:    "this;",
 			Op:       " :=: ",
 			Source:   "a valid assignment",
 			Expanded: "",
 			LineNo:   3,
 		},
-		`now; :=: $(date +%H:%M);`: SourceMap{
+		`now; :=: $(date +%H:%M);`: {
 			Label:    "now;",
 			Op:       " :=: ",
 			Source:   `$(date +%H:%M);`,
 			Expanded: "",
 			LineNo:   4,
 		},
-		"@now2 :=: Fred\n": SourceMap{
+		"@now2 :=: Fred\n": {
 			Label:    "@now2",
 			Op:       " :=: ",
 			Source:   "Fred",
 			Expanded: "",
 			LineNo:   5,
 		},
-		"@file :=<: file.txt": SourceMap{
+		"@file :=<: file.txt": {
 			Label:    "@file",
 			Op:       " :=<: ",
 			Source:   "file.txt",
 			Expanded: "",
 			LineNo:   6,
 		},
-		"@now3 :!: date": SourceMap{
+		"@now3 :!: date": {
 			Label:    "@now3",
 			Op:       " :!: ",
 			Source:   "date",
 			Expanded: "",
 			LineNo:   7,
 		},
-		"@now4 :{: @one @two": SourceMap{
+		"@now4 :{: @one @two": {
 			Label:    "@now4",
 			Op:       " :{: ",
 			Source:   "@one @two",
 			Expanded: "",
 			LineNo:   8,
 		},
-		"@now5 :}<: test.shorthand": SourceMap{
+		"@now5 :}<: test.shorthand": {
 			Label:    "@now5",
 			Op:       " :}<: ",
 			Source:   "test.shorthand",
 			Expanded: "",
 			LineNo:   9,
 		},
-		"@now6 :[: **strong words**": SourceMap{
+		"@now6 :[: **strong words**": {
 			Label:    "@now6",
 			Op:       " :[: ",
 			Source:   "**strong words**",
 			Expanded: "",
 			LineNo:   10,
 		},
-		"@now7 :[<: test.md": SourceMap{
+		"@now7 :[<: test.md": {
 			Label:    "@now7",
 			Op:       " :[<: ",
 			Source:   "test.md",
 			Expanded: "",
 			LineNo:   11,
 		},
-		"@label0 :>: label0.txt": SourceMap{
+		"@label0 :>: label0.txt": {
 			Label:    "@label0",
 			Op:       " :>: ",
 			Source:   "label0.txt",
 			Expanded: "",
 			LineNo:   12,
 		},
-		"@label1 :@>: label1.txt": SourceMap{
+		"@label1 :@>: label1.txt": {
 			Label:    "@label1",
 			Op:       " :@>: ",
 			Source:   "label1.txt",
 			Expanded: "",
 			LineNo:   13,
 		},
-		"@label2 :}>: label2.txt": SourceMap{
+		"@label2 :}>: label2.txt": {
 			Label:    "@label2",
 			Op:       " :}>: ",
 			Source:   "label2.txt",
 			Expanded: "",
 			LineNo:   14,
 		},
-		"@label3 :@}>: label3.txt": SourceMap{
+		"@label3 :@}>: label3.txt": {
 			Label:    "@label3",
 			Op:       " :@}>: ",
 			Source:   "label3.txt",
 			Expanded: "",
 			LineNo:   15,
 		},
-		`@label4 :++ something`: SourceMap{
+		`@label4 :++ something`: {
 			Label:    "",
 			Op:       "",
 			Source:   "@label4 :++ something",
 			Expanded: "",
 			LineNo:   16,
 		},
-		"This should have @label4 and other things.": SourceMap{
+		"This should have @label4 and other things.": {
 			Label:    "",
 			Op:       "",
 			Source:   "This should have @label4 and other things.",
 			Expanded: "",
 			LineNo:   17,
 		},
-		"{{pageTitle}} :=: Hello World": SourceMap{
+		"{{pageTitle}} :=: Hello World": {
 			Label:    "{{pageTitle}}",
 			Op:       " :=: ",
 			Source:   "Hello World",
 			Expanded: "",
 			LineNo:   18,
 		},
-		"{{year}} :!: echo -n $(date +%Y)": SourceMap{
+		"{{year}} :!: echo -n $(date +%Y)": {
 			Label:    "{{year}}",
 			Op:       " :!: ",
 			Source:   "echo -n $(date +%Y)",
 			Expanded: "",
 			LineNo:   19,
 		},
-		"{fred} :=: Fred": SourceMap{
+		"{fred} :=: Fred": {
 			Label:    "{fred}",
 			Op:       " :=: ",
 			Source:   "Fred",
 			Expanded: "",
 			LineNo:   20,
 		},
-		"{{strong}} :[: **strong words**": SourceMap{
+		"{{strong}} :[: **strong words**": {
 			Label:    "{{strong}}",
 			Op:       " :[: ",
 			Source:   "**strong words**",
 			Expanded: "",
 			LineNo:   21,
 		},
-		"{one} :=: 1": SourceMap{
+		"{one} :=: 1": {
 			Label:    "{one}",
 			Op:       " :=: ",
 			Source:   "1",
 			Expanded: "",
 			LineNo:   22,
 		},
-		"{two} :=: 2": SourceMap{
+		"{two} :=: 2": {
 			Label:    "{two}",
 			Op:       " :=: ",
 			Source:   "2",
 			Expanded: "",
 			LineNo:   23,
 		},
-		"{it} :{: {one} {two}": SourceMap{
+		"{it} :{: {one} {two}": {
 			Label:    "{it}",
 			Op:       " :{: ",
 			Source:   "{one} {two}",
 			Expanded: "",
 			LineNo:   24,
 		},
-		"{{html}} :[<: testdata/test.md": SourceMap{
+		"{{html}} :[<: testdata/test.md": {
 			Label:    "{{html}}",
 			Op:       " :[<: ",
 			Source:   "testdata/test.md",
 			Expanded: "",
 			LineNo:   25,
 		},
-		"{helloWorldTxT} :=<: testdata/helloworld.txt": SourceMap{
+		"{helloWorldTxT} :=<: testdata/helloworld.txt": {
 			Label:    "{helloWorldTxT}",
 			Op:       " :=<: ",
 			Source:   "testdata/helloworld.txt",
