@@ -525,7 +525,7 @@ func TestMarkdownSupport(t *testing.T) {
 
 	_, err := vm.Eval("@page :[<: testdata/test.md", i)
 	i++
-	ok.Ok(t, err == nil, fmt.Sprintf("%i testdata/test.md error: %s", i, err))
+	ok.Ok(t, err == nil, fmt.Sprintf("%d testdata/test.md error: %s", i, err))
 	result = vm.Expand("@page")
 	ok.Ok(t, strings.Contains(result, "<h2>Another H2</h2>"), "Should have a h2 from test.md"+result)
 
@@ -537,7 +537,7 @@ func TestMarkdownSupport(t *testing.T) {
 
 	_, err = vm.Eval("@page :{[<: testdata/test.md", i)
 	i++
-	ok.Ok(t, err == nil, fmt.Sprintf("%i testdata/test.md error: %s", i, err))
+	ok.Ok(t, err == nil, fmt.Sprintf("%d testdata/test.md error: %s", i, err))
 	result = vm.Expand("@page")
 	ok.Ok(t, strings.Contains(result, "<h2>Another heading two element</h2>"), "Should have another heading two element from test.md"+result)
 
@@ -547,9 +547,9 @@ func TestMarkdownSupport(t *testing.T) {
 	ok.Ok(t, err == nil, fmt.Sprintf("Should be able to assign string to 'H2': %s", err))
 	_, err = vm.Eval("@page :{[<: testdata/test.md", i)
 	i++
-	ok.Ok(t, err == nil, fmt.Sprintf("%i testdata/test.md error: %s", i, err))
+	ok.Ok(t, err == nil, fmt.Sprintf("%d testdata/test.md error: %s", i, err))
 	_, err = vm.Eval("@page :>: testdata/test.html", i)
-	ok.Ok(t, err == nil, fmt.Sprintf("%i write testdata/test.html error: %s", i, err))
+	ok.Ok(t, err == nil, fmt.Sprintf("%d write testdata/test.html error: %s", i, err))
 	i++
 
 	_, err = os.Stat("testdata/test.html")
