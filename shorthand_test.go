@@ -1,4 +1,4 @@
-// Package stn is a library for processing Simple Timesheet Notation.
+// Package stngo is a library for processing Simple Timesheet Notation.
 //
 //
 // shorthand_test.go - tests for short package for handling shorthand
