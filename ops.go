@@ -1,5 +1,15 @@
 //
-// Shorthand package operators - assign a function with the func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) signature
+// Package shorthand provides shorthand definition and expansion.
+//
+// shorthand.go - A simple definition and expansion notation to use
+// as shorthand when a template language is too much.
+//
+// @author R. S. Doiel, <rsdoiel@gmail.com>
+// copyright (c) 2015 all rights reserved.
+// Released under the BSD 2-Clause license
+// See: http://opensource.org/licenses/BSD-2-Clause
+//
+// operators - assign a function with the func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) signature
 // and use RegisterOp (e.g. in the New() function) to add support to Shorthand.
 //
 package shorthand

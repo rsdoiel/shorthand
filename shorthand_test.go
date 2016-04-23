@@ -1,13 +1,16 @@
-// Package stngo is a library for processing Simple Timesheet Notation.
 //
+// Package shorthand provides shorthand definition and expansion.
 //
-// shorthand_test.go - tests for short package for handling shorthand
-// definition and expansion.
+// shorthand.go - A simple definition and expansion notation to use
+// as shorthand when a template language is too much.
 //
 // @author R. S. Doiel, <rsdoiel@gmail.com>
 // copyright (c) 2015 all rights reserved.
 // Released under the BSD 2-Clause license
 // See: http://opensource.org/licenses/BSD-2-Clause
+//
+// shorthand_test.go - tests for short package for handling shorthand
+// definition and expansion.
 //
 package shorthand
 
