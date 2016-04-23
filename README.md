@@ -1,5 +1,8 @@
-shorthand
-=========
+
+[![Go Report Card](http://goreportcard.com/badge/rsdoiel/shorthand)](http://goreportcard.com/report/rsdoiel/shorthand)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
+# shorthand
 
 A simple label expander and markdown utility
 
