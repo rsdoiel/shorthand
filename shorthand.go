@@ -18,7 +18,7 @@ import (
 	"strings"
 )
 
-// The version nummber of library and utility
+// Version nummber of library and utility
 const Version = "v0.0.5"
 
 //
