@@ -6,7 +6,7 @@
 # Released under the BSD 2-Clause license
 # See: http://opensource.org/licenses/BSD-2-Clause
 #
-build: cmds/shorthand/shorthand.go shorthand.go ops.go
+build:
 	go build -o bin/shorthand cmds/shorthand/shorthand.go
 
 lint:
@@ -21,11 +21,14 @@ clean:
 	if [ -f bin/shorthand ]; then rm bin/shorthand; fi
 
 install:
-	go install cmds/shorthand/shorthand.go
+	GOBIN=$HOME/bin go install cmds/shorthand/shorthand.go
 
 uninstall:
 	if [ -f $(GOBIN)/shorthand ]; then /bin/rm $(GOBIN)/shorthand; fi
 
-doc: build.shorthand nav.md shorthand.md TODO.md ideas.md README.md
+doc:
 	shorthand build.shorthand
+
+release:
+	./mk-release.sh
 
