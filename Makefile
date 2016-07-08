@@ -8,6 +8,7 @@
 #
 build:
 	go build -o bin/shorthand cmds/shorthand/shorthand.go
+	shorthand build.shorthand
 
 lint:
 	gofmt -w shorthand.go && golint shorthand.go
