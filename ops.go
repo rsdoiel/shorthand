@@ -1,16 +1,28 @@
 //
-// Shorthand package operators - assign a function with the func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) signature
+// Package shorthand provides shorthand definition and expansion.
+//
+// shorthand.go - A simple definition and expansion notation to use
+// as shorthand when a template language is too much.
+//
+// @author R. S. Doiel, <rsdoiel@gmail.com>
+// copyright (c) 2015 all rights reserved.
+// Released under the BSD 2-Clause license
+// See: http://opensource.org/licenses/BSD-2-Clause
+//
+// operators - assign a function with the func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) signature
 // and use RegisterOp (e.g. in the New() function) to add support to Shorthand.
 //
 package shorthand
 
 import (
 	"fmt"
-	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
+
+	// 3rd party packages
+	"github.com/russross/blackfriday"
 )
 
 //AssignString take the Source and copy to Expanded
@@ -52,13 +64,13 @@ var ImportAssignments = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// AssignExpanshion expands Source and copy to Expanded
+// AssignExpansion expands Source and copy to Expanded
 var AssignExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	expanded := vm.Expand(sm.Source)
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// AssignExpandExpansions expand an expanded Source and copy to Expanded
+// AssignExpandExpansion expand an expanded Source and copy to Expanded
 var AssignExpandExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	tmp := vm.Expand(sm.Source)
 	expanded := vm.Expand(tmp)
@@ -101,12 +113,14 @@ var AssignMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
+// AssignExpandMarkdown process source, expand witi BlackFriday and copy
 var AssignExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	tmp := vm.Expand(sm.Source)
 	expanded := string(blackfriday.MarkdownCommon([]byte(tmp)))
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
+// IncludeMarkdown run through markdown then assign
 var IncludeMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	buf, err := ioutil.ReadFile(sm.Source)
 	if err != nil {
@@ -117,6 +131,7 @@ var IncludeMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) 
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
+// IncludeExpandMarkdown expand then include the markdown processed source
 var IncludeExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	buf, err := ioutil.ReadFile(sm.Source)
 	if err != nil {
@@ -127,6 +142,7 @@ var IncludeExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, e
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
+// OutputExpansion expanded and write content to file
 var OutputExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	oSM := vm.Symbols.GetSymbol(sm.Label)
 	out := oSM.Expanded
@@ -138,6 +154,7 @@ var OutputExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) 
 	return oSM, nil
 }
 
+// OutputExpansions write the expanded content out
 var OutputExpansions = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	fp, err := os.Create(sm.Source)
 	if err != nil {
@@ -151,6 +168,7 @@ var OutputExpansions = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error)
 	return sm, nil
 }
 
+// ExportAssignment write the assignment to a file
 var ExportAssignment = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	oSM := vm.Symbols.GetSymbol(sm.Label)
 	out := fmt.Sprintf("%s%s%s", oSM.Label, oSM.Op, oSM.Source)
@@ -162,6 +180,7 @@ var ExportAssignment = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error)
 	return oSM, nil
 }
 
+// ExportAssignments write multiple assignments to a file
 var ExportAssignments = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	fp, err := os.Create(sm.Source)
 	if err != nil {

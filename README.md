@@ -1,5 +1,8 @@
-shorthand
-=========
+
+[![Go Report Card](http://goreportcard.com/badge/rsdoiel/shorthand)](http://goreportcard.com/report/rsdoiel/shorthand)
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
+
+# shorthand
 
 A simple label expander and markdown utility
 
@@ -41,9 +44,9 @@ If the content of the markdown file _testdata/report.md_ was
 From the command line you can do something like this
 
 ```shell
-    shorthand -e '@now :!: date' \
-        -e "@report :=<: testdata/report.md" \
-        -e "@html :[: @report" \
+    shorthand -e '@now :bash: date' \
+        -e "@report :import-text: testdata/report.md" \
+        -e "@html :markdown: @report" \
         -e "@html" \
         -e ':exit:' > testdata/report.html
 ```
@@ -72,7 +75,7 @@ You could also embed the shorthand definitions command straight in the
 markdown itself. with something like
 
 ```markdown
-    @now :!: date
+    @now :bash: date
 
     Report Date: @now
 
@@ -88,6 +91,15 @@ That makes the command line a little shorter
 
 ```shell
     shorthand testdata/report.md | markdown > testdata/report.html
+```
+
+
+## Installation
+
+_shorthand_ can be installed with the *go get* command.
+
+```
+    go get github.com/rsdoiel/shorthand/...
 ```
 
 

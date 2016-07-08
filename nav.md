@@ -1,4 +1,5 @@
 
 + [README](index.html)
-+ [Details](shorthand.html)
-+ [Background](ideas.html)
++ [Documentation](shorthand.html)
++ [Installation](installation.html)
++ [Ideas and Background](ideas.html)
