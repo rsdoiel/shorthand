@@ -23,12 +23,9 @@ _testmain.go
 *.test
 *.prof
 
-#
-# generated test data
-#
+# Project ignores
 testdata/*
-
-#
-# command line files generated
-#
 bin/*
+dist/*
+*~
+*.swp

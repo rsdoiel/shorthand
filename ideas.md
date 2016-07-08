@@ -25,7 +25,7 @@
 + An expansion is a string with zero or more labels expanded
 + By defaut shorthand works on standard in and standard out
 + Operators (functions whos results are assigned to labels)
-    + begin and end with colons and cannot contain spaces (e.g. :=:, :=<:)
+    + begin and end with colons and cannot contain spaces (e.g. " :label: ", " :import-text: ")
     + internal inputs
         + assign a string to a label
         + assign an expansion result to a label

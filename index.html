@@ -9,7 +9,10 @@
     <header>
         <h1>Shorthand - a simple label expander and markdown processor</h1>
     </header>
-    <section><h1>shorthand</h1>
+    <section><p><a href="http://goreportcard.com/report/rsdoiel/shorthand"><img src="http://goreportcard.com/badge/rsdoiel/shorthand" alt="Go Report Card" /></a>
+<a href="https://opensource.org/licenses/BSD-2-Clause"><img src="https://img.shields.io/badge/License-BSD%202--Clause-blue.svg" alt="License" /></a></p>
+
+<h1>shorthand</h1>
 
 <p>A simple label expander and markdown utility</p>
 
@@ -50,9 +53,9 @@ options.</p>
 
 <p>From the command line you can do something like this</p>
 
-<pre><code class="language-shell">    shorthand -e '@now :!: date' \
-        -e &quot;@report :=&lt;: testdata/report.md&quot; \
-        -@ &quot;@html :[: @report&quot; \
+<pre><code class="language-shell">    shorthand -e '@now :bash: date' \
+        -e &quot;@report :import-text: testdata/report.md&quot; \
+        -e &quot;@html :markdown: @report&quot; \
         -e &quot;@html&quot; \
         -e ':exit:' &gt; testdata/report.html
 </code></pre>
@@ -79,7 +82,7 @@ output from the Unix program <em>date</em>.</p>
 <p>You could also embed the shorthand definitions command straight in the
 markdown itself. with something like</p>
 
-<pre><code class="language-markdown">    @now :!: date
+<pre><code class="language-markdown">    @now :bash: date
 
     Report Date: @now
 
@@ -95,15 +98,22 @@ markdown itself. with something like</p>
 
 <pre><code class="language-shell">    shorthand testdata/report.md | markdown &gt; testdata/report.html
 </code></pre>
+
+<h2>Installation</h2>
+
+<p><em>shorthand</em> can be installed with the <em>go get</em> command.</p>
+
+<pre><code>    go get github.com/rsdoiel/shorthand/...
+</code></pre>
 </section>
     <nav><ul>
 <li><a href="index.html">README</a></li>
-<li><a href="shorthand.html">Shorthand details</a></li>
-<li><a href="ideas.html">Some background ideas</a></li>
+<li><a href="shorthand.html">Details</a></li>
+<li><a href="ideas.html">Background</a></li>
 </ul>
 </nav>
     <footer>
-    shorthand v0.0.5, Thu Sep 10 16:56:41 PDT 2015
+    shorthand v0.0.6, Fri Jul  8 11:03:59 PDT 2016
 <p><p>copyright &copy; 2015 all rights reserved.
 Released under the BSD 2-Clause license
 See: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a></p>
