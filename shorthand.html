@@ -25,7 +25,9 @@
 <li>Output all assignment statements to a file</li>
 </ul>
 
-<p><em>shorthand</em> replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is not written to stdout output.</p>
+<p><em>shorthand</em> replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed.
+Commonlly this might be curly brackes, dollar signs or even at signs.  Doesn&rsquo;t really matter but it needs to be unique
+and cannot be in the pattern of space, colon, string, colon and space.  An assignment statement is not written to stdout output.</p>
 
 <table>
 <thead>
@@ -76,7 +78,7 @@
 <tr>
 <td>:expand:</td>
 <td>Assign an expansion</td>
-<td>{{reportTitle}} :expand: Report: @title for @date</td>
+<td>$reportTitle$ :expand: Report: @title for @date</td>
 </tr>
 
 <tr>
@@ -100,7 +102,7 @@
 <tr>
 <td>:import-expansion:</td>
 <td>Include Expansion</td>
-<td>{{nav}} :import-expansion: mynav.html</td>
+<td>@nav@ :import-expansion: mynav.html</td>
 </tr>
 
 <tr>
@@ -136,7 +138,7 @@
 <tr>
 <td>:markdown:</td>
 <td>Assign Markdown processed text</td>
-<td>{{div}} :markdown: # My h1 for a Div</td>
+<td>{div} :markdown: # My h1 for a Div</td>
 </tr>
 
 <tr>
@@ -160,7 +162,7 @@
 <tr>
 <td>:import-markdown:</td>
 <td>Include Markdown processed text</td>
-<td>{{nav}} :import-markdown: mynav.md</td>
+<td>$nav$ :import-markdown: mynav.md</td>
 </tr>
 
 <tr>
@@ -172,7 +174,7 @@
 <tr>
 <td>:import-expanded-markdown:</td>
 <td>Include Expanded Markdown processed text</td>
-<td>{{nav}} :import-expanded-markdown: mynav.md</td>
+<td>{nav} :import-expanded-markdown: mynav.md</td>
 </tr>
 
 <tr>
@@ -329,12 +331,13 @@ it will display &ldquo;? &rdquo; to indicate it is ready for an assignment or ex
 </section>
     <nav><ul>
 <li><a href="index.html">README</a></li>
-<li><a href="shorthand.html">Details</a></li>
-<li><a href="ideas.html">Background</a></li>
+<li><a href="shorthand.html">Documentation</a></li>
+<li><a href="installation.html">Installation</a></li>
+<li><a href="ideas.html">Ideas and Background</a></li>
 </ul>
 </nav>
     <footer>
-    shorthand v0.0.6, Fri Jul  8 11:28:57 PDT 2016
+    shorthand v0.0.7, Fri Jul  8 11:41:16 PDT 2016
 <p><p>copyright &copy; 2015 all rights reserved.
 Released under the BSD 2-Clause license
 See: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a></p>

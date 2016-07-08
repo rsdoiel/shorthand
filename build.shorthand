@@ -26,8 +26,16 @@ Reading in template and writing out shorthand.html
 HTML :import-expansion: page.shorthand
 HTML :export-expansion: shorthand.html
 
+Reading in title and content for installation.html...
+{{pageTitle}} :label: Shorthand - installation
+{{pageContent}} :import-markdown: INSTALL.md
+
+Reading in template and writing out installtion.html
+HTML :import-expansion: page.shorthand
+HTML :export-expansion: installation.html
+
 Reading in title and content for ideas.html...
-{{pageTitle}} :label Shorthand - ideas and background
+{{pageTitle}} :label: Shorthand - ideas and background
 {{pageContent}} :import-markdown: ideas.md
 
 Reading in template and writing out ideas.html
