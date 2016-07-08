@@ -21,13 +21,14 @@ clean:
 	if [ -f bin/shorthand ]; then rm bin/shorthand; fi
 
 install:
-	GOBIN=$HOME/bin go install cmds/shorthand/shorthand.go
+	GOBIN=$(HOME)/bin go install cmds/shorthand/shorthand.go
 
 uninstall:
 	if [ -f $(GOBIN)/shorthand ]; then /bin/rm $(GOBIN)/shorthand; fi
 
 doc:
 	shorthand build.shorthand
+	./mk-website.sh
 
 release:
 	./mk-release.sh

@@ -4,37 +4,37 @@ for the shorthand project website. It uses other shorthand files as templates
 and markdown documents for content.
 
 Reading shorthand version, copyright and build dates.
-@start :!: date
-@version :!: echo -n "$(shorthand --version)"
-{{nav}} :[<: nav.md
-{{copyright}} :[<: copyright.md
-{{sitebuilt}} :{: @version, @start
+@start :bash: date
+@version :bash: echo -n "$(shorthand --version)"
+{{nav}} :import-markdown: nav.md
+{{copyright}} :import-markdown: copyright.md
+{{sitebuilt}} :expand: @version, @start
 
 Reading in title and content for index.html...
-{{pageTitle}} :=: Shorthand - a simple label expander and markdown processor
-{{pageContent}} :{[<: README.md
+{{pageTitle}} :label: Shorthand - a simple label expander and markdown processor
+{{pageContent}} :import-expand-markdown: README.md
 
 Reading in template and writing out index.html
-HTML :{<: page.shorthand
-HTML :>: index.html
+HTML :import-expansion: page.shorthand
+HTML :export-expansion: index.html
 
 Setting up title and content for shorthand.html...
-{{pageTitle}} :=: Shorthand - the gory details
-{{pageContent}} :[<: shorthand.md
+{{pageTitle}} :label: Shorthand - the gory details
+{{pageContent}} :import-markdown: shorthand.md
 
 Reading in template and writing out shorthand.html
-HTML :{<: page.shorthand
-HTML :>: shorthand.html
+HTML :import-expansion: page.shorthand
+HTML :export-expansion: shorthand.html
 
 Reading in title and content for ideas.html...
-{{pageTitle}} :=: Shorthand - ideas and background
-{{pageContent}} :[<: ideas.md
+{{pageTitle}} :label Shorthand - ideas and background
+{{pageContent}} :import-markdown: ideas.md
 
 Reading in template and writing out ideas.html
-HTML :{<: page.shorthand
-HTML :>: ideas.html
+HTML :import-expansion: page.shorthand
+HTML :export-expansion: ideas.html
 
-@finished :!: date
+@finished :bash: date
 Started: @start
 Finished: @finished
 Done!

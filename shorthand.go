@@ -19,7 +19,7 @@ import (
 )
 
 // Version nummber of library and utility
-const Version = "v0.0.5"
+const Version = "v0.0.6"
 
 //
 // An Op is built from a multi character symbol
@@ -113,23 +113,52 @@ func New() *VirtualMachine {
 	// > is to output an to a file
 	// @ operate on whole symbol table
 	//
-	// Now register the built-in operators
+
+	// Register the built-in operators (glyph versions, these should be depreciated at somepoint)
 	vm.RegisterOp(" :=: ", AssignString, "Assign a string to label")
 	vm.RegisterOp(" :=<: ", AssignInclude, "Include content and assign to label")
 	vm.RegisterOp(" :}<: ", ImportAssignments, "Import assignments from a shorthand file")
+
 	vm.RegisterOp(" :{: ", AssignExpansion, "Expand and assign to label")
 	vm.RegisterOp(" :{{: ", AssignExpandExpansion, "Expand and expansion and assign to label")
 	vm.RegisterOp(" :{<: ", IncludeExpansion, "Include a file, expand and assign to label")
+
 	vm.RegisterOp(" :!: ", AssignShell, "Assign the output of a Bash command to label")
 	vm.RegisterOp(" :{!: ", AssignExpandShell, "Expand and then assign the results of a Bash command to label")
+
 	vm.RegisterOp(" :[: ", AssignMarkdown, "Convert markdown and assign to label")
 	vm.RegisterOp(" :{[: ", AssignExpandMarkdown, "Expand and convert markdown and assign to label")
 	vm.RegisterOp(" :[<: ", IncludeMarkdown, "Include and convert markdown and assign to label")
 	vm.RegisterOp(" :{[<: ", IncludeExpandMarkdown, "Include an expansion, convert with Markdown and assign to label")
+
 	vm.RegisterOp(" :>: ", OutputExpansion, "Write an expansion to a file")
 	vm.RegisterOp(" :@>: ", OutputExpansions, "Write all expansions to a file (order not guaranteed)")
+
 	vm.RegisterOp(" :}>: ", ExportAssignment, "Export assignment to a file")
 	vm.RegisterOp(" :@}>: ", ExportAssignments, "Expand all assignments (order not guaranteed)")
+
+	// Register the built-in operators (readable versions)
+	vm.RegisterOp(" :label: ", AssignString, "Assign a string to label")
+	vm.RegisterOp(" :import-text: ", AssignInclude, "Include content and assign to label")
+	vm.RegisterOp(" :import-shorthand: ", ImportAssignments, "Import assignments from a shorthand file")
+
+	vm.RegisterOp(" :expand: ", AssignExpansion, "Expand and assign to label")
+	vm.RegisterOp(" :expand-expansion: ", AssignExpandExpansion, "Expand and expansion and assign to label")
+	vm.RegisterOp(" :import-expansion: ", IncludeExpansion, "Include a file, expand and assign to label")
+
+	vm.RegisterOp(" :bash: ", AssignShell, "Assign the output of a Bash command to label")
+	vm.RegisterOp(" :expand-and-bash: ", AssignExpandShell, "Expand and then assign the results of a Bash command to label")
+
+	vm.RegisterOp(" :markdown: ", AssignMarkdown, "Convert markdown and assign to label")
+	vm.RegisterOp(" :expand-markdown: ", AssignExpandMarkdown, "Expand and convert markdown and assign to label")
+	vm.RegisterOp(" :import-markdown: ", IncludeMarkdown, "Include and convert markdown and assign to label")
+	vm.RegisterOp(" :import-expand-markdown: ", IncludeExpandMarkdown, "Include an expansion, convert with Markdown and assign to label")
+
+	vm.RegisterOp(" :export-expansion: ", OutputExpansion, "Write an expansion to a file")
+	vm.RegisterOp(" :export-all-expansions: ", OutputExpansions, "Write all expansions to a file (order not guaranteed)")
+
+	vm.RegisterOp(" :export-shorthand: ", ExportAssignment, "Export assignment to a file")
+	vm.RegisterOp(" :export-all-shorthand: ", ExportAssignments, "Expand all assignments (order not guaranteed)")
 	return vm
 }
 
