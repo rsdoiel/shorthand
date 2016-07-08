@@ -64,7 +64,7 @@ The spaces surrounding " :label: ", " :import-text: ", " :bash: ", " :expand: ",
 In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label @NOW.  
 ```text
     {{PREAMBLE}} :import-text: /home/me/preamble.text
-    {{NOW}} :=: 3:30
+    {{NOW}} :label: 3:30
 
     At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.
 ```

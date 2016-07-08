@@ -28,7 +28,6 @@ uninstall:
 
 doc:
 	shorthand build.shorthand
-	./mk-website.sh
 
 release:
 	./mk-release.sh

@@ -8,10 +8,7 @@ if [ "$GO" = "" ]; then
 fi
 
 # Install dependent libraries
-# Add test package for shorthand
-go get github.com/rsdoiel/ok
-# Markdown library
-go get github.com/russross/blackfriday
+go get github.com/russross/blackfriday/...
 
 make
 make test
