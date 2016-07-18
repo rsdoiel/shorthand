@@ -33,3 +33,5 @@ doc:
 release:
 	./mk-release.sh
 
+publish:
+	./publish.sh
