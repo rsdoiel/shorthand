@@ -53,7 +53,7 @@ operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :expand-expansion:         | Assign expanded expansion                | {{reportHeading}} :expand-expansion: @reportTitle
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-expansion:         | Include Expansion                        | {{nav}} :import-expansion: mynav.html
+ :import:                   | Include a file, procesisng the shorthand | {{nav}} :import: mynav.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :bash:                     | Assign Shell output                      | {{date}} :bash: date +%Y-%m-%d
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -288,7 +288,7 @@ func New() *VirtualMachine {
 
 	vm.RegisterOp(" :expand: ", AssignExpansion, "Expand and assign to label")
 	vm.RegisterOp(" :expand-expansion: ", AssignExpandExpansion, "Expand and expansion and assign to label")
-	vm.RegisterOp(" :import-expansion: ", IncludeExpansion, "Include a file, expand and assign to label")
+	vm.RegisterOp(" :import: ", IncludeExpansion, "Include a file, evaluate the shorthand")
 
 	vm.RegisterOp(" :bash: ", AssignShell, "Assign the output of a Bash command to label")
 	vm.RegisterOp(" :expand-and-bash: ", AssignExpandShell, "Expand and then assign the results of a Bash command to label")

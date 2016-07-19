@@ -295,9 +295,9 @@ func TestParseReadable(t *testing.T) {
 			Expanded: "",
 			LineNo:   8,
 		},
-		"@now5 :import-expansion: test.shorthand": {
+		"@now5 :import: test.shorthand": {
 			Label:    "@now5",
-			Op:       " :import-expansion: ",
+			Op:       " :import: ",
 			Source:   "test.shorthand",
 			Expanded: "",
 			LineNo:   9,
@@ -476,19 +476,19 @@ func TestEvalGlyph(t *testing.T) {
 // TestEvalReadable
 func TestEvalReadable(t *testing.T) {
 	testData := []string{
-		"@now :label: $(date)",                         // 0
-		"this :label: a valid assignment",              // 1
-		"this; :label: is a valid assignment",          // 2
-		"now; :label: $(date +\"%H:%M\");",             // 3
-		"@here :import-text: testdata/testme.md",       // 4
-		"@there :import-expansion: testdata/testme.md", // 5
-		"{here} :import-text: testdata/testme.md",      // 6
-		"{{here}} :import-text: testdata/testme.md",    // 7
-		"This is not an assignment",                    // 8
-		"this:label: is not a valid assignment",        // 9
-		"nor :label:is this a valid assignment",        // 10
-		"and not : label:is this a valid assignment",   // 11
-		"also not :label :is this a valid assignment",  // 12
+		"@now :label: $(date)",                        // 0
+		"this :label: a valid assignment",             // 1
+		"this; :label: is a valid assignment",         // 2
+		"now; :label: $(date +\"%H:%M\");",            // 3
+		"@here :import-text: testdata/testme.md",      // 4
+		"@there :import: testdata/testme.md",          // 5
+		"{here} :import-text: testdata/testme.md",     // 6
+		"{{here}} :import-text: testdata/testme.md",   // 7
+		"This is not an assignment",                   // 8
+		"this:label: is not a valid assignment",       // 9
+		"nor :label:is this a valid assignment",       // 10
+		"and not : label:is this a valid assignment",  // 11
+		"also not :label :is this a valid assignment", // 12
 	}
 	vm := New()
 	for i, src := range testData {

@@ -15,32 +15,32 @@ Reading in title and content for index.html...
 {{pageContent}} :import-expand-markdown: README.md
 
 Reading in template and writing out index.html
-HTML :import-expansion: page.shorthand
-HTML :export-expansion: index.html
+HTML :import: page.shorthand
+HTML :export: index.html
 
 Setting up title and content for shorthand.html...
 {{pageTitle}} :label: Shorthand - the gory details
 {{pageContent}} :import-markdown: shorthand.md
 
 Reading in template and writing out shorthand.html
-HTML :import-expansion: page.shorthand
-HTML :export-expansion: shorthand.html
+HTML :import: page.shorthand
+HTML :export: shorthand.html
 
 Reading in title and content for installation.html...
 {{pageTitle}} :label: Shorthand - installation
 {{pageContent}} :import-markdown: INSTALL.md
 
 Reading in template and writing out installtion.html
-HTML :import-expansion: page.shorthand
-HTML :export-expansion: installation.html
+HTML :import: page.shorthand
+HTML :export: installation.html
 
 Reading in title and content for ideas.html...
 {{pageTitle}} :label: Shorthand - ideas and background
 {{pageContent}} :import-markdown: ideas.md
 
 Reading in template and writing out ideas.html
-HTML :import-expansion: page.shorthand
-HTML :export-expansion: ideas.html
+HTML :import: page.shorthand
+HTML :export: ideas.html
 
 @finished :bash: date
 Started: @start
