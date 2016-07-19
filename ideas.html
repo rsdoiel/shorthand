@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shorthand - ideas and background</title>
+    <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href="css/style.css" rel="stylesheet" />
+<head>
+<body>
+    <header>
+        <h1>Shorthand - ideas and background</h1>
+    </header>
+    <section><h1>Shorthand prototype</h1>
+
+<h2>Basic ideas</h2>
+
+<ul>
+<li>Shorthand is a incomplete-language (lacks loops, recusion, control statements, and lambdas)</li>
+<li>Shorthand is based on the general idea of assigning a value to a label</li>
+<li>Shorthand only has two types of statements - assignments and expansions
+
+<ul>
+<li>Assignments exist on a single line in the form of label, operator and value
+
+<ul>
+<li>assignments (attaching a value or expansion to a label)</li>
+</ul></li>
+<li>If the line is not an assignment it is an expansion written to stdout
+
+<ul>
+<li>expansion (is a string with any labels in string resolved to their previously computed value)</li>
+</ul></li>
+</ul></li>
+<li>A assignment statement is a triple (three cells of a tuple)
+
+<ul>
+<li>label (the receiver of the results)</li>
+<li>op (the assignment operation to be performed)</li>
+<li>value (the thing being operated on)</li>
+</ul></li>
+<li>In memory it is represented as a five-tuple
+
+<ul>
+<li>label</li>
+<li>op</li>
+<li>value</li>
+<li>expansion</li>
+<li>line number</li>
+</ul></li>
+<li>An additional map contains an index into the 5-tuple pointing at the most recent assignment associated with that label
+
+<ul>
+<li>this allows labels to mutate but the prior version of the label still exists in memory and can be written out to a file</li>
+</ul></li>
+<li>An expansion is a string with zero or more labels expanded</li>
+<li>By defaut shorthand works on standard in and standard out</li>
+<li>Operators (functions whos results are assigned to labels)
+
+<ul>
+<li>begin and end with colons and cannot contain spaces (e.g. &ldquo; :label: &ldquo;, &rdquo; :import-text: &ldquo;)</li>
+<li>internal inputs
+
+<ul>
+<li>assign a string to a label</li>
+<li>assign an expansion result to a label</li>
+<li>assign an expansion or another expansion</li>
+<li>assign a markdown processed string to a label</li>
+<li>assign a expansion markdown processed string to a label</li>
+</ul></li>
+<li>external inputs
+
+<ul>
+<li>assign the contents of a file to a label</li>
+<li>assign the expanded contents fo a file to a label</li>
+<li>assign the output of a Bash command to a label</li>
+<li>expands the command sent to Bash, assign the output to a label</li>
+<li>assign a markdown processed file to a label</li>
+<li>assign an expansion markdown processed file to a label</li>
+</ul></li>
+<li>special form
+
+<ul>
+<li>read a file for assignments nothing is assigned to the label</li>
+</ul></li>
+<li>outputs
+
+<ul>
+<li>write to a file the expansion for a label</li>
+<li>write to a file all the expansions for all labels (order not guaranteed)</li>
+<li>write to a file an assignment state for a label</li>
+<li>write to a file all assignment statements (order by parse sequence)</li>
+</ul></li>
+</ul></li>
+<li>two factors prevent shorthand from being a full &ldquo;language&rdquo;
+
+<ul>
+<li>it does not support a control statements (you might be able to synthesize this via Bash)</li>
+<li>it does not support creation of new operators (though expansion of labels passed to Bash is similar)</li>
+</ul></li>
+<li>it is not &ldquo;functional&rdquo; in the sense that labels are mutable (can take a new value over time)
+
+<ul>
+<li>but the prior version to the mutation still exists in the queue of assignments and can be played back by dumping to a file.</li>
+</ul></li>
+<li>there is only one type - a string</li>
+<li>there are no built in data structures</li>
+<li>there is no comments though you could treat the output to stnout as comments</li>
+<li>there is no interactive though you could synthesize this from Bash</li>
+<li>shorthand could be expanded to use another interpretive environment but Bash is very convientent</li>
+<li>A &ldquo;compiler&rdquo; could be built generating a go program that then could be compiled and run</li>
+<li>text is UTF-8</li>
+<li>operators begin with a space and colon, end with the next space</li>
+<li>assignments are a single line (terminated with a \n)</li>
+</ul>
+
+<h2>someday, maybe</h2>
+
+<ul>
+<li>Write a formal definision of Shorthand to encourage other emplementations</li>
+<li>Allow additional operators to be defined in other easily go embedded languages
+
+<ul>
+<li>JavaScript</li>
+<li>Lua</li>
+<li>PHP</li>
+<li>Scheme (LispEx, GLisp)</li>
+</ul></li>
+<li>Organize the registration of operators in the code for easy expansion
+
+<ul>
+<li>symbol (e.g. := )</li>
+<li>Name</li>
+<li>Function pointer</li>
+</ul></li>
+<li>lamda operator
+
+<ul>
+<li>if the &ldquo;label&rdquo; if the lamba is in the form of a an operator it receives the value expression and then can be used as an Operator itself</li>
+</ul></li>
+<li>Additional data types
+
+<ul>
+<li>stack of strings</li>
+<li>a queue of strings</li>
+<li>a map of strings</li>
+<li>numbers in the lisp sense of numbers (e.g. integers, ratios, decimal)</li>
+</ul></li>
+<li>Additional built-in operators
+
+<ul>
+<li>math
+
+<ul>
+<li>add</li>
+<li>substract (alias to add with second number sign flip)</li>
+<li>multiply
+
+<ul>
+<li>invert sign of number (positive/negative)</li>
+</ul></li>
+<li>divide</li>
+<li>modulo</li>
+<li>inc by N (positive or negative)</li>
+</ul></li>
+</ul></li>
+<li>io
+
+<ul>
+<li>support for URI/URL for file operation</li>
+<li>support CURL like operations</li>
+</ul></li>
+<li>Add some sort of random text or Lorem Ipsum function for testing and filling in templates
+
+<ul>
+<li><a href="https://github.com/AhmedZaleh/margopher?utm_source=golangweekly&amp;utm_medium=email">Random Text</a> with MarGopher</li>
+<li>Lorem Ipsum in Golang: <a href="https://github.com/drhodes/golorem">Golorem</a>, other version are probably out there too</li>
+</ul></li>
+</ul>
+</section>
+    <nav><ul>
+<li><a href="/">Home</a></li>
+<li><a href="index.html">README</a></li>
+<li><a href="shorthand.html">Documentation</a></li>
+<li><a href="installation.html">Installation</a></li>
+<li><a href="ideas.html">Ideas and Background</a></li>
+</ul>
+</nav>
+    <footer>
+    shorthand v0.0.8, Tue Jul 19 11:54:24 PDT 2016
+<p><p>copyright &copy; 2015 all rights reserved.
+Released under the BSD 2-Clause license
+See: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a></p>
+
+    </footer>
+</body>
+</html>
