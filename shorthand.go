@@ -67,9 +67,9 @@ operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :import-expanded-markdown: | Include Expanded Markdown processed text | {{nav}} :import-expanded-markdown: mynav.md
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-expansion:         | Output Assigned Expansion                | {{content}} :export-expansion: content.txt
+ :export:                   | Output a label's value to a file         | {{content}} :export: content.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-all-expansions:    | Output all assigned Expansions           | _ :export-all-expansions: contents.txt
+ :export-all:               | Output all assigned Expansions           | _ :export-all: contents.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :export-label:             | Output Assignment                        | {{content}} :export-label: content.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -83,7 +83,7 @@ operator                    | meaning                                  | example
 Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment 
 statements to a file.
 
-The spaces surrounding " :label: ", " :import-text: ", " :bash: ", " :expand: ", " :export-expansion: ", etc. are required.
+The spaces surrounding " :label: ", " :import-text: ", " :bash: ", " :expand: ", " :export: ", etc. are required.
 
 
 EXAMPLE
@@ -161,7 +161,7 @@ Load the mardkown file and transform it into HTML with embedded shorthand labels
     @pageTitle :label A Post
     @contentBlock :import-markdown: a-post.md
     @output :expand-expansion: @doctype<html>@headBlock<body>@pageTemplate</body></html>
-    @output :export-expansion: post.html
+    @output :export: post.html
 
 `
 
@@ -298,11 +298,12 @@ func New() *VirtualMachine {
 	vm.RegisterOp(" :import-markdown: ", IncludeMarkdown, "Include and convert markdown and assign to label")
 	vm.RegisterOp(" :import-expand-markdown: ", IncludeExpandMarkdown, "Include an expansion, convert with Markdown and assign to label")
 
-	vm.RegisterOp(" :export-expansion: ", OutputExpansion, "Write an expansion to a file")
-	vm.RegisterOp(" :export-all-expansions: ", OutputExpansions, "Write all expansions to a file (order not guaranteed)")
+	vm.RegisterOp(" :export: ", OutputExpansion, "Write an the contents of an label to a file")
+	vm.RegisterOp(" :export-all: ", OutputExpansions, "Write all label contents to a (order not guaranteed)")
 
 	vm.RegisterOp(" :export-shorthand: ", ExportAssignment, "Export assignment to a file")
 	vm.RegisterOp(" :export-all-shorthand: ", ExportAssignments, "Expand all assignments (order not guaranteed)")
+
 	return vm
 }
 

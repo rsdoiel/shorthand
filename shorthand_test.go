@@ -316,30 +316,30 @@ func TestParseReadable(t *testing.T) {
 			Expanded: "",
 			LineNo:   11,
 		},
-		"@label0 :export-expansion: label0.txt": {
+		"@label0 :export: label0.txt": {
 			Label:    "@label0",
-			Op:       " :export-expansion: ",
+			Op:       " :export: ",
 			Source:   "label0.txt",
 			Expanded: "",
 			LineNo:   12,
 		},
-		"@label1 :export-all-expansions: label1.txt": {
+		"@label1 :export-all: label1.txt": {
 			Label:    "@label1",
-			Op:       " :export-all-expansions: ",
+			Op:       " :export-all: ",
 			Source:   "label1.txt",
 			Expanded: "",
 			LineNo:   13,
 		},
-		"@label2 :export-expansion: label2.txt": {
+		"@label2 :export: label2.txt": {
 			Label:    "@label2",
-			Op:       " :export-expansion: ",
+			Op:       " :export: ",
 			Source:   "label2.txt",
 			Expanded: "",
 			LineNo:   14,
 		},
-		"@label3 :export-all-expansions: label3.txt": {
+		"@label3 :export-all: label3.txt": {
 			Label:    "@label3",
-			Op:       " :export-all-expansions: ",
+			Op:       " :export-all: ",
 			Source:   "label3.txt",
 			Expanded: "",
 			LineNo:   15,
