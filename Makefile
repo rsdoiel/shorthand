@@ -19,7 +19,9 @@ test:
 	go test
 
 clean:
-	if [ -f bin/shorthand ]; then rm bin/shorthand; fi
+	if [ -d bin ]; then /bin/rm -fR bin; fi
+	if [ -d dist ]; then /bin/rm -fR dist; fi
+	if [ -f shorthand-binary-release.zip ]; then /bin/rm shorthand-binary-release.zip; fi
 
 install:
 	GOBIN=$(HOME)/bin go install cmds/shorthand/shorthand.go
