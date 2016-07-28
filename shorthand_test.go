@@ -818,7 +818,7 @@ func TestRun(t *testing.T) {
 	reader := bufio.NewReader(fp)
 
 	fmt.Println("Starting vm.Run()")
-	cnt := vm.Run(reader)
+	cnt := vm.Run(reader, false)
 	ok(t, cnt == 3, fmt.Sprintf("Exited int wrong : %d", cnt))
 	fmt.Println("Success.")
 }

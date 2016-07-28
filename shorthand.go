@@ -16,10 +16,13 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	// 3rd Party packages
+	"github.com/russross/blackfriday"
 )
 
 // Version nummber of library and utility
-const Version = "v0.0.8"
+const Version = "v0.0.9"
 
 // HowItWorks is a help text describing shorthand.
 var HowItWorks = `
@@ -386,7 +389,7 @@ func (vm *VirtualMachine) Eval(s string, lineNo int) (string, error) {
 // Run takes a reader (e.g. os.Stdin), and two writers (e.g. os.Stdout and os.Stderr)
 // It reads until EOF, :exit:, or :quit: operation is encountered
 // returns the number of lines processed.
-func (vm *VirtualMachine) Run(in *bufio.Reader) int {
+func (vm *VirtualMachine) Run(in *bufio.Reader, postProcessWithMarkdown bool) int {
 	lineNo := 0
 	for {
 		if vm.prompt != "" {
@@ -401,6 +404,9 @@ func (vm *VirtualMachine) Run(in *bufio.Reader) int {
 			break
 		}
 		out, err := vm.Eval(src, lineNo)
+		if postProcessWithMarkdown == true {
+			out = string(blackfriday.MarkdownCommon([]byte(out)))
+		}
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "ERROR (%d): %s\n", lineNo, err)
 		}

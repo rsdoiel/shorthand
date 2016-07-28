@@ -25,13 +25,14 @@ import (
 type expressionList []string
 
 var (
-	help       bool
-	version    bool
-	expression expressionList
-	prompt     string
-	noprompt   bool
-	vm         *shorthand.VirtualMachine
-	lineNo     int
+	help        bool
+	version     bool
+	expression  expressionList
+	prompt      string
+	noprompt    bool
+	vm          *shorthand.VirtualMachine
+	lineNo      int
+	postProcessWithMarkdown bool
 )
 
 var usage = func(exit_code int, msg string) {
@@ -135,6 +136,8 @@ func main() {
 	flag.BoolVar(&help, "help", false, "Display this help document")
 	flag.BoolVar(&version, "v", false, "Version information")
 	flag.BoolVar(&version, "version", false, "Version information")
+	flag.BoolVar(&postProcessWithMarkdown, "m", false, "Run final output through markdown processor")
+	flag.BoolVar(&postProcessWithMarkdown, "markdown", false, "Run final output through markdown processor")
 	flag.Parse()
 	args := flag.Args()
 	if help == true {
@@ -159,14 +162,15 @@ func main() {
 			}
 			defer fp.Close()
 			reader := bufio.NewReader(fp)
-			vm.Run(reader)
+			vm.Run(reader, postProcessWithMarkdown)
 		}
 	} else {
+		// Run as repl
 		vm.RegisterOp(":help:", helpShorthand, "This help message")
 		if prompt != "" {
 			fmt.Println(welcome)
 		}
 		reader := bufio.NewReader(os.Stdin)
-		vm.Run(reader)
+		vm.Run(reader, false)
 	}
 }
