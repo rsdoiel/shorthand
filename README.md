@@ -90,7 +90,7 @@ markdown itself. with something like
 That makes the command line a little shorter
 
 ```shell
-    shorthand testdata/report.md | markdown > testdata/report.html
+    shorthand -markdown testdata/report.md > testdata/report.html
 ```
 
 
