@@ -3,7 +3,7 @@
 <head>
     <title>{{pageTitle}}</title>
     <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
-    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" />
 <head>
 <body>
     <header>
