@@ -49,25 +49,25 @@ dist/linux-amd64:
 
 dist/macosx-amd64:
 	mkdir -p dist/bin
-	env GOOS=darwin	GOARCH=amd64 go build -o dist/macosx-amd64/shorthand cmds/shorthand/shorthand.go
+	env GOOS=darwin	GOARCH=amd64 go build -o dist/bin/shorthand cmds/shorthand/shorthand.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-macosx-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/windows-amd64:
 	mkdir -p dist/bin
-	env GOOS=windows GOARCH=amd64 go build -o dist/windows-amd64/shorthand.exe cmds/shorthand/shorthand.go
+	env GOOS=windows GOARCH=amd64 go build -o dist/bin/shorthand.exe cmds/shorthand/shorthand.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-windows-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/raspbian-arm7:
 	mkdir -p dist/bin
-	env GOOS=linux GOARCH=arm GOARM=6 go build -o dist/raspberrypi-arm6/shorthand cmds/shorthand/shorthand.go
+	env GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/shorthand cmds/shorthand/shorthand.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-raspbian-arm7.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/linux-arm64:
 	mkdir -p dist/bin
-	env GOOS=linux GOARCH=arm GOARM=7 go build -o dist/linux-arm64/shorthand cmds/shorthand/shorthand.go
+	env GOOS=linux GOARCH=arm64 go build -o dist/bin/shorthand cmds/shorthand/shorthand.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-arm64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
@@ -77,7 +77,7 @@ distrubute_docs:
 	cp -v LICENSE dist/
 	cp -v INSTALL.md dist/
 
-release: distrubute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-amd7 dist/linux-arm64
+release: distrubute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7 dist/linux-arm64
 
 publish:
 	./publish.sh
