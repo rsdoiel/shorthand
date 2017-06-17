@@ -1,49 +1,147 @@
 
 # Installation
 
-*shorthand* is a command line program run from a shell like Bash. If you download the 
-repository a compiled version is in the dist directory. The compiled binary matching
-your computer type and operating system can be copied to a bin directory in your PATH.
+*shorthand* is a command line program run from a shell like Bash.  You can find compiled
+version in the [releases](https://github.com/rsdoiel/shorthand/releases/latest) 
 
-Compiled versions are available for Mac OS X (amd64 processor), Linux (amd64), Windows
-(amd64) and Rapsberry Pi (both ARM6 and ARM7)
+## Compiled version
 
-## Mac OS X
+This is generalized instructions for a release. 
 
-1. Go to [github.com/rsdoiel/shorthand/releases/latest](https://github.com/rsdoiel/shorthand/releases/latest)
-2. Click on the green "shorthand-binary-release.zip" link and download
-3. Open a finder window and find the downloaded file and unzip it (e.g. shorthand-binary-release.zip)
-4. Look in the unziped folder and find dist/macosx-amd64/shorthand
-5. Drag (or copy) the *shorthand* to a "bin" directory in your path
-6. Open and "Terminal" and run `shorthand -h`
+Compiled versions are available for Mac OS X (amd64 processor, macosx-amd64), 
+Linux (amd64 process, linux-amd64), Windows (amd64 processor, windows-amd64), 
+Rapsberry Pi (arm7 processor, raspbian-arm7) and Pine64 (arm64 processor, linux-arm64)
 
-## Windows
 
-1. Go to [github.com/rsdoiel/shorthand/releases/latest](https://github.com/rsdoiel/shorthand/releases/latest)
-2. Click on the green "shorthand-binary-release.zip" link and download
-3. Open the file manager find the downloaded file and unzip it (e.g. shorthand-binary-release.zip)
-4. Look in the unziped folder and find dist/windows-amd64/shorthand.exe
-5. Drag (or copy) the *shorthand.exe* to a "bin" directory in your path
-6. Open Bash and and run `shorthand -h`
+VERSION_NUMBER is a [symantic version number](http://semver.org/) (e.g. v0.1.2)
 
-## Linux
 
-1. Go to [github.com/rsdoiel/shorthand/releases/latest](https://github.com/rsdoiel/shorthand/releases/latest)
-2. Click on the green "shorthand-binary-release.zip" link and download
-3. find the downloaded zip file and unzip it (e.g. unzip ~/Downloads/shorthand-binary-release.zip)
-4. In the unziped directory and find for dist/linux-amd64/shorthand
-5. copy the *shorthand* to a "bin" directory (e.g. cp ~/Downloads/shorthand-binary-release/dist/linux-amd64/shorthand ~/bin/)
-6. From the shell prompt run `shorthand -h`
+For all the released version go to the project page on Github and click latest release
 
-## Raspberry Pi
+>    https://github.com/rsdoiel/shorthand/releases/latest
 
-If you are using a Raspberry Pi 2 or later use the ARM7 binary, ARM6 is only for the first generaiton Raspberry Pi.
 
-1. Go to [github.com/rsdoiel/shorthand/releases/latest](https://github.com/rsdoiel/shorthand/releases/latest)
-2. Click on the green "shorthand-binary-release.zip" link and download
-3. find the downloaded zip file and unzip it (e.g. unzip ~/Downloads/shorthand-binary-release.zip)
-4. In the unziped directory and find for dist/raspberrypi-arm7/shorthand
-5. copy the *shorthand* to a "bin" directory (e.g. cp ~/Downloads/shorthand-binary-release/dist/raspberrypi-arm7/shorthand ~/bin/)
-    + if you are using an original Raspberry Pi you should copy the ARM6 version instead
-6. From the shell prompt run `shorthand -h`
+| Platform    | Zip Filename                           |
+|-------------|----------------------------------------|
+| Windows     | shorthand-VERSION_NUMBER-windows-amd64.zip |
+| Mac OS X    | shorthand-VERSION_NUMBER-macosx-amd64.zip  |
+| Linux/Intel | shorthand-VERSION_NUMBER-linux-amd64.zip   |
+| Raspbery Pi | shorthand-VERSION_NUMBER-raspbian-arm7.zip |
+| Pine64      | shorthand-VERSION_NUMBER-linux-arm64.zip   |
+
+
+## The basic recipe
+
++ Find the Zip file listed matching the architecture you're running and download it
+    + (e.g. if you're on a Windows 10 laptop/Surface with a amd64 style CPU you'd choose the Zip file with "windows-amd64" in the name).
++ Download the zip file and unzip the file.  
++ Copy the contents of the folder named "bin" to a folder that is in your path 
+    + (e.g. "$HOME/bin" is common).
++ Adjust your PATH if needed
+    + (e.g. `export PATH="$HOME/bin:$PATH"`)
++ Test
+
+
+### Mac OS X
+
+1. Download the zip file
+2. Unzip the zip file
+3. Copy the executables to $HOME/bin (or a folder in your path)
+4. Make sure the new location in in our path
+5. Test
+
+Here's an example of the commands run in the Terminal App after downloading the 
+zip file.
+
+```shell
+    cd Downloads/
+    unzip shorthand-*-macosx-amd64.zip
+    mkdir -p $HOME/bin
+    cp -v bin/* $HOME/bin/
+    export PATH=$HOME/bin:$PATH
+    shorthand -version
+```
+
+### Windows
+
+1. Download the zip file
+2. Unzip the zip file
+3. Copy the executables to $HOME/bin (or a folder in your path)
+4. Test
+
+Here's an example of the commands run in from the Bash shell on Windows 10 after
+downloading the zip file.
+
+```shell
+    cd Downloads/
+    unzip shorthand-*-windows-amd64.zip
+    mkdir -p $HOME/bin
+    cp -v bin/* $HOME/bin/
+    export PATH=$HOME/bin:$PATH
+    shorthand -version
+```
+
+
+### Linux 
+
+1. Download the zip file
+2. Unzip the zip file
+3. Copy the executables to $HOME/bin (or a folder in your path)
+4. Test
+
+Here's an example of the commands run in from the Bash shell after
+downloading the zip file.
+
+```shell
+    cd Downloads/
+    unzip shorthand-*-linux-amd64.zip
+    mkdir -p $HOME/bin
+    cp -v bin/* $HOME/bin/
+    export PATH=$HOME/bin:$PATH
+    shorthand -version
+```
+
+
+### Raspberry Pi
+
+Released version is for a Raspberry Pi 2 or later use (i.e. requires ARM 7 support).
+
+1. Download the zip file
+2. Unzip the zip file
+3. Copy the executables to $HOME/bin (or a folder in your path)
+4. Test
+
+Here's an example of the commands run in from the Bash shell after
+downloading the zip file.
+
+```shell
+    cd Downloads/
+    unzip shorthand-*-raspbian-arm7.zip
+    mkdir -p $HOME/bin
+    cp -v bin/* $HOME/bin/
+    export PATH=$HOME/bin:$PATH
+    shorthand -version
+```
+
+
+## Compiling from source
+
+_shorthand_ is "go gettable".  Use the "go get" command to download the dependant packages
+as well as _shorthand_'s source code.
+
+```shell
+    go get -u github.com/rsdoiel/shorthand/...
+```
+
+Or clone the repstory and then compile
+
+```shell
+    cd
+    git clone https://github.com/rsdoiel/shorthand src/github.com/rsdoiel/shorthand
+    cd src/github.com/rsdoiel/shorthand
+    make
+    make test
+    make install
+```
+
 
