@@ -16,68 +16,48 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
 
 	// my packages
 	shorthand "github.com/rsdoiel/shorthand"
+
+	// Caltech Library packages
+	"github.com/caltechlibrary/cli"
 )
 
 type expressionList []string
 
 var (
-	help        bool
-	version     bool
-	expression  expressionList
-	prompt      string
-	noprompt    bool
-	vm          *shorthand.VirtualMachine
-	lineNo      int
-	postProcessWithMarkdown bool
-)
+	usage = `USAGE: %s [OPTIONS] [FILES_TO_PROCESS]`
 
-var usage = func(exit_code int, msg string) {
-	var fh = os.Stderr
-	if exit_code == 0 {
-		fh = os.Stdout
-	}
-	cmdName := path.Base(os.Args[0])
-
-	fmt.Fprintf(fh, `%s
-USAGE %s [options] [FILES_TO_PROCESS]
-
-%s is a command line utility to expand labels based on their
+	description = `%s is a command line utility to expand labels based on their
 assigned definitions. The render output is the transformed text 
 and without the shorthand definitions themselves. %s reads 
-from standard input and writes to standard output. 
-
-OPTIONS
-
-`, msg, cmdName, cmdName)
-
-	flag.VisitAll(func(f *flag.Flag) {
-		fmt.Fprintf(fh, "\t-%s\t\t%s\n", f.Name, f.Usage)
-	})
-
-	fmt.Fprintf(fh, `
-
-HOW IT WORKS
-
-%s
-
-Version: %s
+from standard input and writes to standard output.`
+	license = `%s %s
 
 copyright (c) 2015 all rights reserved.
 Released under the BSD 2-Clause license.
-See: http://opensource.org/licenses/BSD-2-Clause
-`, shorthand.HowItWorks, shorthand.Version)
-	os.Exit(exit_code)
-}
+See: http://opensource.org/licenses/BSD-2-Clause`
 
-var welcome = `
+	welcome = `
   Welcome to shorthand the simple label expander and markdown processor.
   Use ':exit:' to quit the repl, ':help:' to get a list of supported operators.
-
 `
+
+	// Standard Options
+	showHelp     bool
+	showLicense  bool
+	showVersion  bool
+	showExamples bool
+
+	// Application Options
+	expression              expressionList
+	prompt                  string
+	noprompt                bool
+	vm                      *shorthand.VirtualMachine
+	lineNo                  int
+	postProcessWithMarkdown bool
+)
 
 var helpShorthand = func(vm *shorthand.VirtualMachine, sm shorthand.SourceMap) (shorthand.SourceMap, error) {
 	fmt.Printf(`
@@ -101,11 +81,6 @@ var exitShorthand = func(vm *shorthand.VirtualMachine, sm shorthand.SourceMap) (
 	return shorthand.SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: ""}, nil
 }
 
-func revision() {
-	fmt.Printf("%s %s\n", filepath.Base(os.Args[0]), shorthand.Version)
-	os.Exit(0)
-}
-
 func (e *expressionList) String() string {
 	return fmt.Sprintf("%s", *e)
 }
@@ -124,28 +99,61 @@ func (e *expressionList) Set(value string) error {
 }
 
 func init() {
-	vm = shorthand.New()
-	vm.RegisterOp(":exit:", exitShorthand, "Exit shorthand repl")
-}
+	// Standard Options
+	flag.BoolVar(&showHelp, "h", false, "display help")
+	flag.BoolVar(&showHelp, "help", false, "display help")
+	flag.BoolVar(&showLicense, "l", false, "display license")
+	flag.BoolVar(&showLicense, "license", false, "display license")
+	flag.BoolVar(&showVersion, "v", false, "Version information")
+	flag.BoolVar(&showVersion, "version", false, "Version information")
+	flag.BoolVar(&showExamples, "example", false, "display example(s)")
 
-func main() {
+	// Application Options
 	flag.Var(&expression, "e", "The shorthand notation(s) you wish at add")
 	flag.StringVar(&prompt, "p", "=> ", "Output a prompt for interactive processing")
 	flag.BoolVar(&noprompt, "n", false, "Turn off the prompt for interactive processing")
-	flag.BoolVar(&help, "h", false, "Display this help document")
-	flag.BoolVar(&help, "help", false, "Display this help document")
-	flag.BoolVar(&version, "v", false, "Version information")
-	flag.BoolVar(&version, "version", false, "Version information")
 	flag.BoolVar(&postProcessWithMarkdown, "m", false, "Run final output through markdown processor")
 	flag.BoolVar(&postProcessWithMarkdown, "markdown", false, "Run final output through markdown processor")
+}
+
+func main() {
+	appName := path.Base(os.Args[0])
 	flag.Parse()
 	args := flag.Args()
-	if help == true {
-		usage(0, "")
+	cfg := cli.New(appName, "", shorthand.Version)
+	cfg.UsageText = fmt.Sprintf(usage, appName)
+	cfg.DescriptionText = fmt.Sprintf(description, appName, appName)
+	cfg.OptionText = "OPTIONS\n\n"
+	cfg.ExampleText = shorthand.HowItWorks
+	cfg.LicenseText = fmt.Sprintf(license, appName)
+
+	if showHelp == true {
+		if len(args) > 0 {
+			fmt.Println(cfg.Help(args...))
+		} else {
+			fmt.Println(cfg.Usage())
+		}
+		os.Exit(0)
 	}
-	if version == true {
-		revision()
+	if showExamples == true {
+		if len(args) > 0 {
+			fmt.Println(cfg.Example(args...))
+		} else {
+			fmt.Println(cfg.ExampleText)
+		}
+		os.Exit(0)
 	}
+	if showLicense == true {
+		fmt.Println(cfg.License())
+		os.Exit(0)
+	}
+	if showVersion == true {
+		fmt.Println(cfg.Version())
+		os.Exit(0)
+	}
+
+	vm = shorthand.New()
+	vm.RegisterOp(":exit:", exitShorthand, "Exit shorthand repl")
 
 	if noprompt == true {
 		prompt = ""
