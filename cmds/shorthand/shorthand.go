@@ -136,11 +136,7 @@ func main() {
 		os.Exit(0)
 	}
 	if showExamples == true {
-		if len(args) > 0 {
-			fmt.Println(cfg.Example(args...))
-		} else {
-			fmt.Println(cfg.ExampleText)
-		}
+		fmt.Println(cfg.ExampleText)
 		os.Exit(0)
 	}
 	if showLicense == true {
