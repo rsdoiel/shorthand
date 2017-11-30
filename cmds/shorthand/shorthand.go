@@ -81,6 +81,9 @@ func main() {
 	app := cli.NewCli(shorthand.Version)
 	appName := app.AppName()
 
+	// Describe expexted non-option parameters
+	app.AddParams("[SHORTHAMD_FILES]")
+
 	// Add some help texts
 	app.AddHelp("welcome", []byte(welcome))
 	app.AddHelp("description", []byte(fmt.Sprintf(description, appName, appName)))
@@ -116,11 +119,11 @@ func main() {
 		os.Exit(0)
 	}
 	if showLicense == true {
-		fmt.Fprintf(os.Stdout, app.License())
+		fmt.Fprintf(os.Stdout, "%s\n", app.License())
 		os.Exit(0)
 	}
 	if showVersion == true {
-		fmt.Fprintf(os.Stdout, app.Version())
+		fmt.Fprintf(os.Stdout, "%s\n", app.Version())
 		os.Exit(0)
 	}
 
