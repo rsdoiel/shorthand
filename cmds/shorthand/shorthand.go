@@ -44,6 +44,7 @@ See: http://opensource.org/licenses/BSD-2-Clause`
 	showVersion  bool
 	showExamples bool
 	inputFName   string
+	outputFName  string
 	quiet        bool
 
 	// Application Options
@@ -93,9 +94,10 @@ func main() {
 	// Standard Options
 	app.BoolVar(&showHelp, "h,help", false, "display help")
 	app.BoolVar(&showLicense, "l,license", false, "display license")
-	app.BoolVar(&showVersion, "v,version", false, "Version information")
-	app.BoolVar(&showExamples, "example", false, "display example(s)")
+	app.BoolVar(&showVersion, "v,version", false, "diplsay version")
+	app.BoolVar(&showExamples, "examples", false, "display examples")
 	app.StringVar(&inputFName, "i,input", "", "input filename")
+	app.StringVar(&outputFName, "o,output", "", "output filename")
 	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
 
 	// Application Options
@@ -106,24 +108,38 @@ func main() {
 	app.Parse()
 	args := app.Args()
 
+	// Setup IO
+	var err error
+
+	app.Eout = os.Stderr
+
+	app.In, err = cli.Open(inputFName, os.Stdin)
+	cli.ExitOnError(app.Eout, err, quiet)
+	defer cli.CloseFile(inputFName, app.In)
+
+	app.Out, err = cli.Create(outputFName, os.Stdout)
+	cli.ExitOnError(app.Eout, err, quiet)
+	defer cli.CloseFile(outputFName, app.Out)
+
+	// Handle options
 	if showHelp == true {
 		if len(args) > 0 {
-			fmt.Fprintf(os.Stdout, app.Help(args...))
+			fmt.Fprintf(app.Out, app.Help(args...))
 		} else {
-			app.Usage(os.Stdout)
+			app.Usage(app.Out)
 		}
 		os.Exit(0)
 	}
 	if showExamples == true {
-		fmt.Fprintf(os.Stdout, app.Help("examples"))
+		fmt.Fprintf(app.Out, app.Help("examples"))
 		os.Exit(0)
 	}
 	if showLicense == true {
-		fmt.Fprintf(os.Stdout, "%s\n", app.License())
+		fmt.Fprintf(app.Out, "%s\n", app.License())
 		os.Exit(0)
 	}
 	if showVersion == true {
-		fmt.Fprintf(os.Stdout, "%s\n", app.Version())
+		fmt.Fprintf(app.Out, "%s\n", app.Version())
 		os.Exit(0)
 	}
 
@@ -140,7 +156,7 @@ func main() {
 		vm.SetPrompt("")
 		fp, err := os.Open(inputFName)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%s\n", err)
+			fmt.Fprintf(app.Eout, "%s\n", err)
 		}
 		defer fp.Close()
 		reader := bufio.NewReader(fp)
@@ -153,7 +169,7 @@ func main() {
 		for _, arg := range args {
 			fp, err := os.Open(arg)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "%s\n", err)
+				fmt.Fprintf(app.Eout, "%s\n", err)
 			}
 			defer fp.Close()
 			reader := bufio.NewReader(fp)
@@ -165,7 +181,7 @@ func main() {
 		if prompt != "" {
 			fmt.Println(welcome)
 		}
-		reader := bufio.NewReader(os.Stdin)
+		reader := bufio.NewReader(app.In)
 		vm.Run(reader, false)
 	}
 }
