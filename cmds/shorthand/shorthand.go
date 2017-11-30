@@ -82,7 +82,7 @@ func main() {
 	appName := app.AppName()
 
 	// Describe expexted non-option parameters
-	app.AddParams("[SHORTHAMD_FILES]")
+	app.AddParams("[SHORTHAND_FILES]")
 
 	// Add some help texts
 	app.AddHelp("welcome", []byte(welcome))
