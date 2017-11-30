@@ -39,13 +39,14 @@ See: http://opensource.org/licenses/BSD-2-Clause`
   Use ':exit:' to quit the repl, ':help:' to get a list of supported operators.
 `
 	// Standard Options
-	showHelp     bool
-	showLicense  bool
-	showVersion  bool
-	showExamples bool
-	inputFName   string
-	outputFName  string
-	quiet        bool
+	showHelp             bool
+	showLicense          bool
+	showVersion          bool
+	showExamples         bool
+	inputFName           string
+	outputFName          string
+	quiet                bool
+	generateMarkdownDocs bool
 
 	// Application Options
 	prompt                  string
@@ -99,6 +100,7 @@ func main() {
 	app.StringVar(&inputFName, "i,input", "", "input filename")
 	app.StringVar(&outputFName, "o,output", "", "output filename")
 	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
+	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
 
 	// Application Options
 	app.StringVar(&prompt, "p,prompt", "=> ", "Output a prompt for interactive processing")
@@ -122,6 +124,10 @@ func main() {
 	defer cli.CloseFile(outputFName, app.Out)
 
 	// Handle options
+	if generateMarkdownDocs {
+		app.GenerateMarkdownDocs(app.Out)
+		os.Exit(0)
+	}
 	if showHelp == true {
 		if len(args) > 0 {
 			fmt.Fprintf(app.Out, app.Help(args...))
