@@ -64,14 +64,14 @@
 
 ## someday, maybe
 
-+ Write a formal definision of Shorthand to encourage other emplementations
++ Write a formal definition of Shorthand to encourage other implementations
 + Allow additional operators to be defined in other easily go embedded languages
     + JavaScript
     + Lua
     + PHP
     + Scheme (LispEx, GLisp)
 + Organize the registration of operators in the code for easy expansion
-    + symbol (e.g. := )
+    + symbol (e.g. :=: )
     + Name
     + Function pointer
 + lamda operator
