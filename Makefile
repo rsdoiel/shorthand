@@ -12,9 +12,16 @@ VERSION = $(shell grep -m1 'Version = ' $(PROJECT).go | cut -d\"  -f 2)
 
 BRANCH = $(shell git branch | cut -d\  -f 2)
 
+OS = $(shell uname)
+
+EXT =
+ifeq ($(OS), Windows)
+    EXT = .exe
+endif
+
 build:
-	go build -o bin/shorthand cmds/shorthand/shorthand.go
-	shorthand build.shorthand
+	go build -o bin/shorthand$(EXT) cmds/shorthand/shorthand.go
+	bin/shorthand$(EXT) build.shorthand
 
 lint:
 	gofmt -w shorthand.go && golint shorthand.go
@@ -23,6 +30,9 @@ lint:
 
 test:
 	go test
+
+status:
+	git status
 
 save:
 	if [ "$(msg)" != "" ]; then git commit -am "$(msg)"; else git commit -am "Quick Save"; fi

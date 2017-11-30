@@ -12,10 +12,8 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"os"
-	"path"
 
 	// my packages
 	shorthand "github.com/rsdoiel/shorthand"
@@ -24,15 +22,12 @@ import (
 	"github.com/caltechlibrary/cli"
 )
 
-type expressionList []string
-
 var (
-	usage = `USAGE: %s [OPTIONS] [FILES_TO_PROCESS]`
-
 	description = `%s is a command line utility to expand labels based on their
 assigned definitions. The render output is the transformed text 
 and without the shorthand definitions themselves. %s reads 
 from standard input and writes to standard output.`
+
 	license = `%s %s
 
 copyright (c) 2015 all rights reserved.
@@ -43,15 +38,15 @@ See: http://opensource.org/licenses/BSD-2-Clause`
   Welcome to shorthand the simple label expander and markdown processor.
   Use ':exit:' to quit the repl, ':help:' to get a list of supported operators.
 `
-
 	// Standard Options
 	showHelp     bool
 	showLicense  bool
 	showVersion  bool
 	showExamples bool
+	inputFName   string
+	quiet        bool
 
 	// Application Options
-	expression              expressionList
 	prompt                  string
 	noprompt                bool
 	vm                      *shorthand.VirtualMachine
@@ -81,70 +76,51 @@ var exitShorthand = func(vm *shorthand.VirtualMachine, sm shorthand.SourceMap) (
 	return shorthand.SourceMap{Label: "", Op: ":exit:", Source: "", Expanded: ""}, nil
 }
 
-func (e *expressionList) String() string {
-	return fmt.Sprintf("%s", *e)
-}
+func main() {
+	// Create app to hold the CLUI
+	app := cli.NewCli(shorthand.Version)
+	appName := app.AppName()
 
-func (e *expressionList) Set(value string) error {
-	lineNo++
-	out, err := vm.Eval(value, lineNo)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR (%d): %s\n", lineNo, err)
-		return err
-	}
-	if out != "" {
-		fmt.Fprintf(os.Stdout, "%s\n", out)
-	}
-	return nil
-}
+	// Add some help texts
+	app.AddHelp("welcome", []byte(welcome))
+	app.AddHelp("description", []byte(fmt.Sprintf(description, appName, appName)))
+	app.AddHelp("examples", []byte(shorthand.HowItWorks))
+	app.AddHelp("license", []byte(fmt.Sprintf(license, appName)))
 
-func init() {
 	// Standard Options
-	flag.BoolVar(&showHelp, "h", false, "display help")
-	flag.BoolVar(&showHelp, "help", false, "display help")
-	flag.BoolVar(&showLicense, "l", false, "display license")
-	flag.BoolVar(&showLicense, "license", false, "display license")
-	flag.BoolVar(&showVersion, "v", false, "Version information")
-	flag.BoolVar(&showVersion, "version", false, "Version information")
-	flag.BoolVar(&showExamples, "example", false, "display example(s)")
+	app.BoolVar(&showHelp, "h,help", false, "display help")
+	app.BoolVar(&showLicense, "l,license", false, "display license")
+	app.BoolVar(&showVersion, "v,version", false, "Version information")
+	app.BoolVar(&showExamples, "example", false, "display example(s)")
+	app.StringVar(&inputFName, "i,input", "", "input filename")
+	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
 
 	// Application Options
-	flag.Var(&expression, "e", "The shorthand notation(s) you wish at add")
-	flag.StringVar(&prompt, "p", "=> ", "Output a prompt for interactive processing")
-	flag.BoolVar(&noprompt, "n", false, "Turn off the prompt for interactive processing")
-	flag.BoolVar(&postProcessWithMarkdown, "m", false, "Run final output through markdown processor")
-	flag.BoolVar(&postProcessWithMarkdown, "markdown", false, "Run final output through markdown processor")
-}
+	app.StringVar(&prompt, "p,prompt", "=> ", "Output a prompt for interactive processing")
+	app.BoolVar(&noprompt, "n,no-prompt", false, "Turn off the prompt for interactive processing")
+	app.BoolVar(&postProcessWithMarkdown, "m,markdown", false, "Run final output through markdown processor")
 
-func main() {
-	appName := path.Base(os.Args[0])
-	flag.Parse()
-	args := flag.Args()
-	cfg := cli.New(appName, "", shorthand.Version)
-	cfg.UsageText = fmt.Sprintf(usage, appName)
-	cfg.DescriptionText = fmt.Sprintf(description, appName, appName)
-	cfg.OptionText = "OPTIONS\n\n"
-	cfg.ExampleText = shorthand.HowItWorks
-	cfg.LicenseText = fmt.Sprintf(license, appName)
+	app.Parse()
+	args := app.Args()
 
 	if showHelp == true {
 		if len(args) > 0 {
-			fmt.Println(cfg.Help(args...))
+			fmt.Fprintf(os.Stdout, app.Help(args...))
 		} else {
-			fmt.Println(cfg.Usage())
+			app.Usage(os.Stdout)
 		}
 		os.Exit(0)
 	}
 	if showExamples == true {
-		fmt.Println(cfg.ExampleText)
+		fmt.Fprintf(os.Stdout, app.Help("examples"))
 		os.Exit(0)
 	}
 	if showLicense == true {
-		fmt.Println(cfg.License())
+		fmt.Fprintf(os.Stdout, app.License())
 		os.Exit(0)
 	}
 	if showVersion == true {
-		fmt.Println(cfg.Version())
+		fmt.Fprintf(os.Stdout, app.Version())
 		os.Exit(0)
 	}
 
@@ -155,6 +131,18 @@ func main() {
 		prompt = ""
 	}
 	vm.SetPrompt(prompt)
+
+	// if inputFName
+	if inputFName != "" {
+		vm.SetPrompt("")
+		fp, err := os.Open(inputFName)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+		}
+		defer fp.Close()
+		reader := bufio.NewReader(fp)
+		vm.Run(reader, postProcessWithMarkdown)
+	}
 
 	// If a filename is provided on the command line use it instead of standard input.
 	if len(args) > 0 {
