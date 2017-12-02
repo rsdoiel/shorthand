@@ -89,5 +89,10 @@ distrubute_docs:
 
 release: distrubute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7 dist/linux-arm64
 
+website:
+	go build -o bin/shorthand$(EXT) cmds/shorthand/shorthand.go
+	#./mk-website.bash
+
 publish:
-	./publish.sh
+	go build -o bin/shorthand$(EXT) cmds/shorthand/shorthand.go
+	./publish.bash
