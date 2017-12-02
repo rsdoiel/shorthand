@@ -21,7 +21,6 @@ cleanUpHTML
 
 # Look through files and build new site
 mkpage "nav=nav.md" "content=markdown:$(cat LICENSE)" page.tmpl > license.html
-git add license.html
 findfile -s ".md" . | while read P; do
     DNAME=$(dirname "$P")
     FNAME=$(basename "$P")
@@ -40,7 +39,7 @@ findfile -s ".md" . | while read P; do
         HTML_NAME=$(echo "$P" | sed -E 's/.md$/.html/g')
         ;;
     esac
-    if [ "${DNAME:0:4}" != "dist" ] && [ "${FNAME}" != "nav.md" ]; then
+    if [[ "${DNAME:0:4}" != "dist" && "${DNAME:0:4}" != "test" && "${FNAME}" != "nav.md" ]]; then
         NAV=$(FindNavMD "$DNAME")
         echo "Building $HTML_NAME from $DNAME/$FNAME and $NAV"
         mkpage "nav=$NAV" "content=${DNAME}/${FNAME}" page.tmpl >"${HTML_NAME}"
