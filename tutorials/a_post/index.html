@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><no value></title>
+    <link href="/css/site.css" rel="stylesheet" />
+</head>
+<body>
+<header>
+<no value>
+</header>
+<section>
+<h1>A post</h1>
+
+<p>This is an example of using <em>shorthand</em> to build a blog post.</p>
+
+<h2>Parts</h2>
+
+<ol>
+<li><a href="build.shorthand">build.shorthand</a> - this is the <em>shorthand</em> file orchestrating everything</li>
+<li><a href="post.md">post.md</a> - the Post we want to make in Markdown</li>
+<li><a href="template.md">template.md</a> - is a markdown file with <em>shorthand</em> embedded, it is our template because we embedded <em>shorthand</em>
+
+<ul>
+<li><a href="template.html">template.html</a> - an HTML rendering of the template to show HTML but un-resolved <em>shorthand</em> still in it.</li>
+</ul></li>
+<li><a href="post.html">post.html</a> - the final post</li>
+</ol>
+
+<h2>Process</h2>
+
+<p>Run the build process</p>
+
+<pre><code class="language-shell">    shorthand build.shorthand
+</code></pre>
+
+<p>This reads in build.shorthand which intern pulls in template.md to use
+as a template with content taken from post.md rendering the final post.html.</p>
+
+</section>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="../../">README</a></li>
+<li><a href="../../docs/shorthand/">Documentation</a></li>
+<li><a href="../../install.html">Installation</a></li>
+<li><a href="../../license.html">License</a></li>
+<li><a href="../">Tutorials</a></li>
+<li><a href="../../ideas.html">Ideas and Background</a></li>
+</ul>
+
+</nav>
+<footer>
+copyright (c) 2015, 2016 all rights reserved.
+Released under the BSD 3-Clause license
+See: http://opensource.org/licenses/BSD-3-Clause
+</footer>
+</body>
+</html>

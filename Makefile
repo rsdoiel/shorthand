@@ -39,14 +39,14 @@ save:
 	git push origin $(BRANCH)
 
 clean:
-	if [ -d bin ]; then /bin/rm -fR bin; fi
-	if [ -d dist ]; then /bin/rm -fR dist; fi
+	if [ -d bin ]; then rm -fR bin; fi
+	if [ -d dist ]; then rm -fR dist; fi
 
 install:
 	GOBIN=$(HOME)/bin go install cmds/shorthand/shorthand.go
 
 uninstall:
-	if [ -f $(GOBIN)/shorthand ]; then /bin/rm $(GOBIN)/shorthand; fi
+	if [ -f $(GOBIN)/shorthand ]; then rm $(GOBIN)/shorthand; fi
 
 doc:
 	shorthand build.shorthand
@@ -89,5 +89,9 @@ distrubute_docs:
 
 release: distrubute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7 dist/linux-arm64
 
+website:
+	./mk-website.bash
+
 publish:
-	./publish.sh
+	./mk-website.bash
+	./publish.bash

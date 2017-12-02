@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><no value></title>
+    <link href="/css/site.css" rel="stylesheet" />
+</head>
+<body>
+<header>
+<no value>
+</header>
+<section>
+<h1>USAGE</h1>
+
+<pre><code>shorthand [OPTIONS] [SHORTHAND_FILES]
+</code></pre>
+
+<h2>SYNOPSIS</h2>
+
+<p>shorthand is a command line utility to expand labels based on their
+assigned definitions. The render output is the transformed text
+and without the shorthand definitions themselves. shorthand reads
+from standard input and writes to standard output.</p>
+
+<h2>OPTIONS</h2>
+
+<pre><code>    -examples                 display examples
+    -generate-markdown-docs   output documentation in Markdown
+    -h, -help                 display help
+    -i, -input                input filename
+    -l, -license              display license
+    -m, -markdown             Run final output through markdown processor
+    -n, -no-prompt            Turn off the prompt for interactive processing
+    -o, -output               output filename
+    -p, -prompt               Output a prompt for interactive processing
+    -quiet                    suppress error messages
+    -v, -version              diplsay version
+</code></pre>
+
+<h2>EXAMPLES</h2>
+
+<p>ASSIGNMENTS AND EXPANSIONS</p>
+
+<p>Shorthand is a simple label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions</p>
+
+<ul>
+<li>Assign a string to a LABEL</li>
+<li>Assign the contents of a file to a LABEL</li>
+<li>Assign the output of a Bash shell expression to a LABEL</li>
+<li>Assign the output of a shorthand expansion to a LABEL</li>
+<li>Read a file of shorthand assignments and assign any expansions to the LABEL</li>
+<li>Output a LABEL value to a file</li>
+<li>Output all LABEL values to a file</li>
+<li>Output a LABEL assignment statement to a file</li>
+<li>Output all assignment statements to a file</li>
+</ul>
+
+<p><em>shorthand</em> replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is
+not written to stdout output.</p>
+
+<table>
+<thead>
+<tr>
+<th>operator</th>
+<th>meaning</th>
+<th>example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>:label:</td>
+<td>Assign String</td>
+<td>{{name}} :label: Freda</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:import-text:</td>
+<td>Assign the contents of a file</td>
+<td>{{content}} :import-text: myfile.txt</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:import-shorthand:</td>
+<td>Get assignments from a file</td>
+<td>_ :import-shorthand: myfile.shorthand</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:expand:</td>
+<td>Assign an expansion</td>
+<td>{{reportTitle}} :expand: Report: @title for @date</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:expand-expansion:</td>
+<td>Assign expanded expansion</td>
+<td>{{reportHeading}} :expand-expansion: @reportTitle</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:import:</td>
+<td>Include a file, procesisng the shorthand</td>
+<td>{{nav}} :import: mynav.shorthand</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:bash:</td>
+<td>Assign Shell output</td>
+<td>{{date}} :bash: date +%Y-%m-%d</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:expand-and-bash:</td>
+<td>Assign Expand then gete Shell output</td>
+<td>{{entry}} :expand-and-bash: cat header.txt @filename footer.txt</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:markdown:</td>
+<td>Assign Markdown processed text</td>
+<td>{{div}} :markdown: # My h1 for a Div</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:expand-markdown:</td>
+<td>Assign Expanded Markdown</td>
+<td>{{div}} :expand-markdown: Greetings <strong>@name</strong></td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:import-markdown:</td>
+<td>Include Markdown processed text</td>
+<td>{{nav}} :import-markdown: mynav.md</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:import-expanded-markdown:</td>
+<td>Include Expanded Markdown processed text</td>
+<td>{{nav}} :import-expanded-markdown: mynav.md</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:export:</td>
+<td>Output a label&rsquo;s value to a file</td>
+<td>{{content}} :export: content.txt</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:export-all:</td>
+<td>Output all assigned Expansions</td>
+<td>_ :export-all: contents.txt</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:export-label:</td>
+<td>Output Assignment</td>
+<td>{{content}} :export-label: content.shorthand</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:export-all-labels:</td>
+<td>Output all Assignments</td>
+<td>_ :export-all-labels: contents.shorthand</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+
+<tr>
+<td>:exit:</td>
+<td>Exit the shorthand repl</td>
+<td>:exit:</td>
+</tr>
+
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+</tbody>
+</table>
+
+<p>Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment
+statements to a file.</p>
+
+<p>The spaces surrounding &ldquo; :label: &ldquo;, &rdquo; :import-text: &ldquo;, &rdquo; :bash: &ldquo;, &rdquo; :expand: &ldquo;, &rdquo; :export: &ldquo;, etc. are required.</p>
+
+<p>EXAMPLE</p>
+
+<p>In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label {{NOW}}.</p>
+
+<pre><code>{{PREAMBLE}} :import-text: /home/me/preamble.text
+{{NOW}} :label: 3:30
+
+At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.
+</code></pre>
+
+<p>If the file preamble.txt contained the phrase &ldquo;Hello World&rdquo; (including the quotes but without any carriage return or line feed) the output
+after processing the shorthand would look like -</p>
+
+<pre><code>At 3:30 I will be reading the &quot;Hello World&quot; until everyone falls asleep.
+</code></pre>
+
+<p>Notice the lines containing the assignments are not included in the output and that no carriage returns or line feeds are added the the
+substituted labels.</p>
+
+<ul>
+<li>Assign shorthand expansions to a LABEL
+
+<ul>
+<li>LABEL :expand: SHORTHAND_TO_BE_EXPANDED</li>
+<li>@content@ :expand: @report_name@ @report_date@
+
+<ul>
+<li>this would concatenate report name and date</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>PROCESSING MARKDOWN PAGES</p>
+
+<p><em>shorthand</em> also provides a markdown processor. It uses the <a href="https://github.com/russross/blackfriday">blackfriday</a> markdown library.
+This is both a convience and also allows you to treat markdown with shorthand assignments as a template that renders HTML or HTML with
+shorthand ready for expansion. It is a poorman&rsquo;s text rendering engine.</p>
+
+<p>In this example we&rsquo;ll build a HTML page with shorthand labels from markdown text. Then
+we will use the render HTML as a template for a blog page entry.</p>
+
+<p>Our markdown file serving as a template will be call &ldquo;post-template.md&rdquo;. It should contain
+the outline of the structure of the page plus some shorthand labels we&rsquo;ll expand later.</p>
+
+<pre><code># @blogTitle
+
+## @pageTitle
+
+### @dateString
+
+@contentBlocks
+</code></pre>
+
+<p>For the purposes of this exercise we&rsquo;ll use <em>shorthand</em> as a repl and just enter the assignments sequencly.  Also rather than use
+the output of shorthand directly we&rsquo;ll build up the content for the page in a label and use shorthand itself to write the final page out.</p>
+
+<p>The steps we&rsquo;ll follow will be to</p>
+
+<ol>
+<li>Read in our markdown file page.md and turn it into an HTML with embedded shorthand labels</li>
+<li>Assign some values to the labels</li>
+<li>Expand the labels in the HTML and assign to a new label</li>
+<li>Write the new label out to are page call &ldquo;page.html&rdquo;</li>
+</ol>
+
+<p>Start the repl with this version of the shorthand command:</p>
+
+<pre><code>shorthand -p &quot;? &quot;
+</code></pre>
+
+<p>The <em>-p</em> option tells <em>shorthand</em> to use the value &ldquo;? &rdquo; as the prompt. When <em>shorthand</em> starts it will display &ldquo;? &rdquo; to indicate it is
+ready for an assignment or expansion.</p>
+
+<p>The following assumes you are in the <em>shorthand</em> repl.</p>
+
+<p>Load the mardkown file and transform it into HTML with embedded shorthand labels</p>
+
+<pre><code>@doctype :bash: echo &quot;&lt;!DOCTYPE html&gt;&quot;
+@headBlock :label: &lt;head&gt;&lt;title&gt;@pageTitle&lt;/title&gt;
+@pageTemplate :import-markdown: post-template.md
+@dateString :bash: date
+@blogTitle :label:  My Blog
+@pageTitle :label A Post
+@contentBlock :import-markdown: a-post.md
+@output :expand-expansion: @doctype&lt;html&gt;@headBlock&lt;body&gt;@pageTemplate&lt;/body&gt;&lt;/html&gt;
+@output :export: post.html
+</code></pre>
+
+<p>shorthand v0.0.11</p>
+
+</section>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="../../">README</a></li>
+<li><a href="./">Documentation</a></li>
+<li><a href="../../install.html">Installation</a></li>
+<li><a href="../../license.html">License</a></li>
+<li><a href="../../tutorials/">Tutorials</a></li>
+<li><a href="../../ideas.html">Ideas and Background</a></li>
+</ul>
+
+</nav>
+<footer>
+copyright (c) 2015, 2016 all rights reserved.
+Released under the BSD 3-Clause license
+See: http://opensource.org/licenses/BSD-3-Clause
+</footer>
+</body>
+</html>
