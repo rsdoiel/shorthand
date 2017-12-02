@@ -1,8 +1,8 @@
 
 + [Home](/)
 + [README](../../)
-+ [Documentation](./)
++ [Documentation](../../docs/shorthand/)
 + [Installation](../../install.html)
 + [License](../../license.html)
-+ [Tutorials](../../tutorials/)
++ [Tutorials](../)
 + [Ideas and Background](../../ideas.html)
