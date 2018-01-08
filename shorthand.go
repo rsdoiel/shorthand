@@ -335,6 +335,28 @@ func (vm *VirtualMachine) Eval(s string, lineNo int) (string, error) {
 	return "", nil
 }
 
+// Apply takes a byte array, and processes it returning a byte array. It is
+// like Run but for embedded uses of Shorthand.
+func (vm *VirtualMachine) Apply(src []byte, postProcessWithMarkdown bool) ([]byte, error) {
+	vm.SetPrompt("")
+
+	out := []byte{}
+	for lineNo, line := range strings.Split(string(src), "\n") {
+		if strings.Contains(line, ":exit:") || strings.Contains(line, ":quit:") {
+			break
+		}
+		r, err := vm.Eval(line, lineNo)
+		if err != nil {
+			return nil, fmt.Errorf("line (%d): %s\n", lineNo, err)
+		}
+		if postProcessWithMarkdown == true {
+			r = string(blackfriday.MarkdownCommon([]byte(r)))
+		}
+		out = append(out, []byte(r)...)
+	}
+	return out, nil
+}
+
 // Run takes a reader (e.g. os.Stdin), and two writers (e.g. os.Stdout and os.Stderr)
 // It reads until EOF, :exit:, or :quit: operation is encountered
 // returns the number of lines processed.
