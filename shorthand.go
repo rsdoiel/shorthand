@@ -340,7 +340,7 @@ func (vm *VirtualMachine) Eval(s string, lineNo int) (string, error) {
 func (vm *VirtualMachine) Apply(src []byte, postProcessWithMarkdown bool) ([]byte, error) {
 	vm.SetPrompt("")
 
-	out := []byte{}
+	out := []string{}
 	for lineNo, line := range strings.Split(string(src), "\n") {
 		if strings.Contains(line, ":exit:") || strings.Contains(line, ":quit:") {
 			break
@@ -352,9 +352,9 @@ func (vm *VirtualMachine) Apply(src []byte, postProcessWithMarkdown bool) ([]byt
 		if postProcessWithMarkdown == true {
 			r = string(blackfriday.MarkdownCommon([]byte(r)))
 		}
-		out = append(out, []byte(r)...)
+		out = append(out, r)
 	}
-	return out, nil
+	return []byte(strings.Join(out, "\n")), nil
 }
 
 // Run takes a reader (e.g. os.Stdin), and two writers (e.g. os.Stdout and os.Stderr)
