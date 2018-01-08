@@ -233,20 +233,6 @@ func New() *VirtualMachine {
 	vm.Operators = make(OperatorMap)
 	vm.Help = make(map[string]string)
 
-	//
-	// An Op is built from a multi character symbol
-	// Each element in the symbol has meaning
-	// " :" is the start of a glyph band the end ": " is a colon and trailing space
-	// = the source value is next, this is basic assignment of a string value to a symbol
-	// < is input from a file
-	// { expand (resolved label values)
-	// } assign a statement (i.e. label, op, value)
-	// ! input from a shell expression
-	// [ is a markdown expansion
-	// > is to output an to a file
-	// @ operate on whole symbol table
-	//
-
 	// Register the built-in operators (readable versions)
 	vm.RegisterOp(" :set: ", AssignString, "Assign a string to label")
 	vm.RegisterOp(" :import-text: ", AssignInclude, "Include content and assign to label")
