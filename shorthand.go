@@ -22,7 +22,7 @@ import (
 )
 
 // Version nummber of library and utility
-const Version = "v0.0.11"
+const Version = "v0.0.12"
 
 // HowItWorks is a help text describing shorthand.
 var HowItWorks = `
@@ -46,7 +46,7 @@ not written to stdout output.
 
 operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :label:                    | Assign String                            | {{name}} :label: Freda
+ :set:                    | Assign String                            | {{name}} :set: Freda
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :import-text:              | Assign the contents of a file            | {{content}} :import-text: myfile.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -74,9 +74,9 @@ operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :export-all:               | Output all assigned Expansions           | _ :export-all: contents.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-label:             | Output Assignment                        | {{content}} :export-label: content.shorthand
+ :export-shorthand:             | Output Assignment                        | {{content}} :export-shorthand: content.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-all-labels:        | Output all Assignments                   | _ :export-all-labels: contents.shorthand
+ :export-all-shorthand:        | Output all shorthand assignments      | _ :export-all-shorthand: contents.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :exit:                     | Exit the shorthand repl                  | :exit:
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -86,7 +86,7 @@ operator                    | meaning                                  | example
 Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment 
 statements to a file.
 
-The spaces surrounding " :label: ", " :import-text: ", " :bash: ", " :expand: ", " :export: ", etc. are required.
+The spaces surrounding " :set: ", " :import-text: ", " :bash: ", " :expand: ", " :export: ", etc. are required.
 
 
 EXAMPLE
@@ -94,7 +94,7 @@ EXAMPLE
 In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label {{NOW}}.
 
     {{PREAMBLE}} :import-text: /home/me/preamble.text
-    {{NOW}} :label: 3:30
+    {{NOW}} :set: 3:30
 
     At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.
 
@@ -157,30 +157,16 @@ The following assumes you are in the _shorthand_ repl.
 Load the mardkown file and transform it into HTML with embedded shorthand labels
 
     @doctype :bash: echo "<!DOCTYPE html>"
-    @headBlock :label: <head><title>@pageTitle</title>
+    @headBlock :set: <head><title>@pageTitle</title>
     @pageTemplate :import-markdown: post-template.md
     @dateString :bash: date
-    @blogTitle :label:  My Blog
-    @pageTitle :label A Post
+    @blogTitle :set:  My Blog
+    @pageTitle :set: A Post
     @contentBlock :import-markdown: a-post.md
     @output :expand-expansion: @doctype<html>@headBlock<body>@pageTemplate</body></html>
     @output :export: post.html
 
 `
-
-//
-// An Op is built from a multi character symbol
-// Each element in the symbol has meaning
-// " :" is the start of a glyph band the end ": " is a colon and trailing space
-// = the source value is next, this is basic assignment of a string value to a symbol
-// < is input from a file
-// { expand (resolved label values)
-// } assign a statement (i.e. label, op, value)
-// ! input from a shell expression
-// [ is a markdown expansion
-// > is to output an to a file
-// @ operate on whole symbol table
-//
 
 // SourceMap holds the source and value of an assignment
 type SourceMap struct {
@@ -261,31 +247,8 @@ func New() *VirtualMachine {
 	// @ operate on whole symbol table
 	//
 
-	// Register the built-in operators (glyph versions, these should be depreciated at somepoint)
-	vm.RegisterOp(" :=: ", AssignString, "Assign a string to label")
-	vm.RegisterOp(" :=<: ", AssignInclude, "Include content and assign to label")
-	vm.RegisterOp(" :}<: ", ImportAssignments, "Import assignments from a shorthand file")
-
-	vm.RegisterOp(" :{: ", AssignExpansion, "Expand and assign to label")
-	vm.RegisterOp(" :{{: ", AssignExpandExpansion, "Expand and expansion and assign to label")
-	vm.RegisterOp(" :{<: ", IncludeExpansion, "Include a file, expand and assign to label")
-
-	vm.RegisterOp(" :!: ", AssignShell, "Assign the output of a Bash command to label")
-	vm.RegisterOp(" :{!: ", AssignExpandShell, "Expand and then assign the results of a Bash command to label")
-
-	vm.RegisterOp(" :[: ", AssignMarkdown, "Convert markdown and assign to label")
-	vm.RegisterOp(" :{[: ", AssignExpandMarkdown, "Expand and convert markdown and assign to label")
-	vm.RegisterOp(" :[<: ", IncludeMarkdown, "Include and convert markdown and assign to label")
-	vm.RegisterOp(" :{[<: ", IncludeExpandMarkdown, "Include an expansion, convert with Markdown and assign to label")
-
-	vm.RegisterOp(" :>: ", OutputExpansion, "Write an expansion to a file")
-	vm.RegisterOp(" :@>: ", OutputExpansions, "Write all expansions to a file (order not guaranteed)")
-
-	vm.RegisterOp(" :}>: ", ExportAssignment, "Export assignment to a file")
-	vm.RegisterOp(" :@}>: ", ExportAssignments, "Expand all assignments (order not guaranteed)")
-
 	// Register the built-in operators (readable versions)
-	vm.RegisterOp(" :label: ", AssignString, "Assign a string to label")
+	vm.RegisterOp(" :set: ", AssignString, "Assign a string to label")
 	vm.RegisterOp(" :import-text: ", AssignInclude, "Include content and assign to label")
 	vm.RegisterOp(" :import-shorthand: ", ImportAssignments, "Import assignments from a shorthand file")
 

@@ -20,13 +20,13 @@ ifeq ($(OS), Windows)
 endif
 
 build:
-	go build -o bin/shorthand$(EXT) cmds/shorthand/shorthand.go
+	go build -o bin/shorthand$(EXT) cmd/shorthand/shorthand.go
 	bin/shorthand$(EXT) build.shorthand
 
 lint:
 	gofmt -w shorthand.go && golint shorthand.go
 	gofmt -w shorthand_test.go && golint shorthand_test.go
-	gofmt -w cmds/shorthand/shorthand.go && golint cmds/shorthand/shorthand.go
+	gofmt -w cmd/shorthand/shorthand.go && golint cmd/shorthand/shorthand.go
 
 test:
 	go test
@@ -43,7 +43,7 @@ clean:
 	if [ -d dist ]; then rm -fR dist; fi
 
 install:
-	GOBIN=$(HOME)/bin go install cmds/shorthand/shorthand.go
+	GOBIN=$(HOME)/bin go install cmd/shorthand/shorthand.go
 
 uninstall:
 	if [ -f $(GOBIN)/shorthand ]; then rm $(GOBIN)/shorthand; fi
@@ -53,31 +53,31 @@ doc:
 
 dist/linux-amd64:
 	mkdir -p dist/bin
-	env GOOS=linux GOARCH=amd64 go build -o dist/bin/shorthand cmds/shorthand/shorthand.go
+	env GOOS=linux GOARCH=amd64 go build -o dist/bin/shorthand cmd/shorthand/shorthand.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/macosx-amd64:
 	mkdir -p dist/bin
-	env GOOS=darwin	GOARCH=amd64 go build -o dist/bin/shorthand cmds/shorthand/shorthand.go
+	env GOOS=darwin	GOARCH=amd64 go build -o dist/bin/shorthand cmd/shorthand/shorthand.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-macosx-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/windows-amd64:
 	mkdir -p dist/bin
-	env GOOS=windows GOARCH=amd64 go build -o dist/bin/shorthand.exe cmds/shorthand/shorthand.go
+	env GOOS=windows GOARCH=amd64 go build -o dist/bin/shorthand.exe cmd/shorthand/shorthand.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-windows-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/raspbian-arm7:
 	mkdir -p dist/bin
-	env GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/shorthand cmds/shorthand/shorthand.go
+	env GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/shorthand cmd/shorthand/shorthand.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-raspbian-arm7.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/linux-arm64:
 	mkdir -p dist/bin
-	env GOOS=linux GOARCH=arm64 go build -o dist/bin/shorthand cmds/shorthand/shorthand.go
+	env GOOS=linux GOARCH=arm64 go build -o dist/bin/shorthand cmd/shorthand/shorthand.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-arm64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 

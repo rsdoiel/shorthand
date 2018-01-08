@@ -11,7 +11,7 @@ Reading shorthand version, copyright and build dates.
 {{sitebuilt}} :expand: @version, @start
 
 Reading in title and content for index.html...
-{{pageTitle}} :label: Shorthand - a simple label expander and markdown processor
+{{pageTitle}} :set: Shorthand - a simple label expander and markdown processor
 {{pageContent}} :import-expand-markdown: README.md
 
 Reading in template and writing out index.html
@@ -19,23 +19,23 @@ HTML :import: page.shorthand
 HTML :export: index.html
 
 Setting up title and content for shorthand.html...
-{{pageTitle}} :label: Shorthand - the gory details
-{{pageContent}} :import-markdown: shorthand.md
+{{pageTitle}} :set: Shorthand - the gory details
+{{pageContent}} :import-markdown: docs/shorthand/shorthand.md
 
 Reading in template and writing out shorthand.html
 HTML :import: page.shorthand
-HTML :export: shorthand.html
+HTML :export: docs/shorthand/shorthand.html
 
-Reading in title and content for installation.html...
-{{pageTitle}} :label: Shorthand - installation
+Reading in title and content for install.html...
+{{pageTitle}} :set: Shorthand - installation
 {{pageContent}} :import-markdown: INSTALL.md
 
-Reading in template and writing out installtion.html
+Reading in template and writing out install.html
 HTML :import: page.shorthand
-HTML :export: installation.html
+HTML :export: install.html
 
 Reading in title and content for ideas.html...
-{{pageTitle}} :label: Shorthand - ideas and background
+{{pageTitle}} :set: Shorthand - ideas and background
 {{pageContent}} :import-markdown: ideas.md
 
 Reading in template and writing out ideas.html

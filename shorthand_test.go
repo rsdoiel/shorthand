@@ -27,119 +27,118 @@ import (
 	"github.com/russross/blackfriday"
 )
 
-// ok is similar to assert true, calls testing.T.Errorf if expression is false
-func ok(t *testing.T, expression bool, message string) bool {
+// notOk is similar to assertError true
+func notOk(expression bool) bool {
 	if expression == true {
-		return true
+		return false
 	}
-	t.Errorf("not OK: %s\n", message)
-	return false
+	return true
 }
 
-// TestParseGlyphs
-func TestParseGlyphs(t *testing.T) {
+// TestParseOps
+func TestParseOps(t *testing.T) {
 	validData := map[string]SourceMap{
-		"@now1 :=: $(date)": {
+		"@now1 :set: $(date)": {
 			Label:    "@now1",
-			Op:       " :=: ",
+			Op:       " :set: ",
 			Source:   "$(date)",
 			Expanded: "",
 			LineNo:   1,
 		},
-		"this :=: a valid assignment": {
+		"this :set: a valid assignment": {
 			Label:    "this",
-			Op:       " :=: ",
+			Op:       " :set: ",
 			Source:   "a valid assignment",
 			Expanded: "",
 			LineNo:   2,
 		},
-		"this; :=: a valid assignment": {
+		"this; :set: a valid assignment": {
 			Label:    "this;",
-			Op:       " :=: ",
+			Op:       " :set: ",
 			Source:   "a valid assignment",
 			Expanded: "",
 			LineNo:   3,
 		},
-		`now; :=: $(date +%H:%M);`: {
+		`now; :set: $(date +%H:%M);`: {
 			Label:    "now;",
-			Op:       " :=: ",
+			Op:       " :set: ",
 			Source:   `$(date +%H:%M);`,
 			Expanded: "",
 			LineNo:   4,
 		},
-		"@now2 :=: Fred\n": {
+		"@now2 :set: Fred\n": {
 			Label:    "@now2",
-			Op:       " :=: ",
+			Op:       " :set: ",
 			Source:   "Fred",
 			Expanded: "",
 			LineNo:   5,
 		},
-		"@file :=<: file.txt": {
+		"@file :import-text: file.txt": {
 			Label:    "@file",
-			Op:       " :=<: ",
+			Op:       " :import-text: ",
 			Source:   "file.txt",
 			Expanded: "",
 			LineNo:   6,
 		},
-		"@now3 :!: date": {
+		"@now3 :bash: date": {
 			Label:    "@now3",
-			Op:       " :!: ",
+			Op:       " :bash: ",
 			Source:   "date",
 			Expanded: "",
 			LineNo:   7,
 		},
-		"@now4 :{: @one @two": {
+		"@now4 :expand: @one @two": {
 			Label:    "@now4",
-			Op:       " :{: ",
+			Op:       " :expand: ",
 			Source:   "@one @two",
 			Expanded: "",
 			LineNo:   8,
 		},
-		"@now5 :}<: test.shorthand": {
+		"@now5 :import-shorthand: test.shorthand": {
 			Label:    "@now5",
-			Op:       " :}<: ",
+			Op:       " :import-shorthand: ",
 			Source:   "test.shorthand",
 			Expanded: "",
 			LineNo:   9,
 		},
-		"@now6 :[: **strong words**": {
+		"@now6 :markdown: **strong words**": {
 			Label:    "@now6",
-			Op:       " :[: ",
+			Op:       " :markdown: ",
 			Source:   "**strong words**",
 			Expanded: "",
 			LineNo:   10,
 		},
-		"@now7 :[<: test.md": {
+		"@now7 :import-markdown: test.md": {
 			Label:    "@now7",
-			Op:       " :[<: ",
+			Op:       " :import-markdown: ",
 			Source:   "test.md",
 			Expanded: "",
 			LineNo:   11,
 		},
-		"@label0 :>: label0.txt": {
+		"@label0 :export: label0.txt": {
 			Label:    "@label0",
-			Op:       " :>: ",
+			Op:       " :export: ",
 			Source:   "label0.txt",
 			Expanded: "",
 			LineNo:   12,
 		},
-		"@label1 :@>: label1.txt": {
+		"@label1 :export-all: label1.txt": {
 			Label:    "@label1",
-			Op:       " :@>: ",
+			Op:       " :export-all: ",
 			Source:   "label1.txt",
 			Expanded: "",
 			LineNo:   13,
 		},
-		"@label2 :}>: label2.txt": {
+		"@label2 :export-shorthand: label2.txt": {
 			Label:    "@label2",
-			Op:       " :}>: ",
+			Op:       " :export-shorthand: ",
 			Source:   "label2.txt",
 			Expanded: "",
 			LineNo:   14,
 		},
-		"@label3 :@}>: label3.txt": {
+		"@label3 :export-all-shorthand: label3.txt": {
 			Label:    "@label3",
-			Op:       " :@}>: ",
+			Op:       " :export-all-shorthand: ",
 			Source:   "label3.txt",
 			Expanded: "",
 			LineNo:   15,
@@ -158,65 +157,65 @@ func TestParseGlyphs(t *testing.T) {
 			Expanded: "",
 			LineNo:   17,
 		},
-		"{{pageTitle}} :=: Hello World": {
+		"{{pageTitle}} :set: Hello World": {
 			Label:    "{{pageTitle}}",
-			Op:       " :=: ",
+			Op:       " :set: ",
 			Source:   "Hello World",
 			Expanded: "",
 			LineNo:   18,
 		},
-		"{{year}} :!: echo -n $(date +%Y)": {
+		"{{year}} :bash: echo -n $(date +%Y)": {
 			Label:    "{{year}}",
-			Op:       " :!: ",
+			Op:       " :bash: ",
 			Source:   "echo -n $(date +%Y)",
 			Expanded: "",
 			LineNo:   19,
 		},
-		"{fred} :=: Fred": {
+		"{fred} :set: Fred": {
 			Label:    "{fred}",
-			Op:       " :=: ",
+			Op:       " :set: ",
 			Source:   "Fred",
 			Expanded: "",
 			LineNo:   20,
 		},
-		"{{strong}} :[: **strong words**": {
+		"{{strong}} :markdown: **strong words**": {
 			Label:    "{{strong}}",
-			Op:       " :[: ",
+			Op:       " :markdown: ",
 			Source:   "**strong words**",
 			Expanded: "",
 			LineNo:   21,
 		},
-		"{one} :=: 1": {
+		"{one} :set: 1": {
 			Label:    "{one}",
-			Op:       " :=: ",
+			Op:       " :set: ",
 			Source:   "1",
 			Expanded: "",
 			LineNo:   22,
 		},
-		"{two} :=: 2": {
+		"{two} :set: 2": {
 			Label:    "{two}",
-			Op:       " :=: ",
+			Op:       " :set: ",
 			Source:   "2",
 			Expanded: "",
 			LineNo:   23,
 		},
-		"{it} :{: {one} {two}": {
+		"{it} :expand: {one} {two}": {
 			Label:    "{it}",
-			Op:       " :{: ",
+			Op:       " :expand: ",
 			Source:   "{one} {two}",
 			Expanded: "",
 			LineNo:   24,
 		},
-		"{{html}} :[<: testdata/test.md": {
+		"{{html}} :import-markdown: testdata/test.md": {
 			Label:    "{{html}}",
-			Op:       " :[<: ",
+			Op:       " :import-markdown: ",
 			Source:   "testdata/test.md",
 			Expanded: "",
 			LineNo:   25,
 		},
-		"{helloWorldTxT} :=<: testdata/helloworld.txt": {
+		"{helloWorldTxT} :import-text: testdata/helloworld.txt": {
 			Label:    "{helloWorldTxT}",
-			Op:       " :=<: ",
+			Op:       " :import-text: ",
 			Source:   "testdata/helloworld.txt",
 			Expanded: "",
 			LineNo:   26,
@@ -228,10 +227,18 @@ func TestParseGlyphs(t *testing.T) {
 	i := 1
 	for s, ex := range validData {
 		sm := vm.Parse(s, i)
-		ok(t, strings.Compare(sm.Label, ex.Label) == 0, fmt.Sprintf("%d %q Label should match glyph %q ? %q", i, s, sm.Label, ex.Label))
-		ok(t, strings.Compare(sm.Op, ex.Op) == 0, fmt.Sprintf("%d %q Op should match glyph %q ? %q", i, s, sm.Op, ex.Op))
-		ok(t, strings.Compare(sm.Source, ex.Source) == 0, fmt.Sprintf("%d %q Source should match glyph %q ? %q", i, s, sm.Source, ex.Source))
-		ok(t, strings.Compare(sm.Expanded, ex.Expanded) == 0, fmt.Sprintf("%d %q Source should match glyph %q ? %q", i, s, sm.Source, ex.Source))
+		if notOk(strings.Compare(sm.Label, ex.Label) == 0) {
+			t.Errorf("%d %q Label should match %q ? %q", i, s, sm.Label, ex.Label)
+		}
+		if notOk(strings.Compare(sm.Op, ex.Op) == 0) {
+			t.Errorf("%d %q Op should match %q ? %q", i, s, sm.Op, ex.Op)
+		}
+		if notOk(strings.Compare(sm.Source, ex.Source) == 0) {
+			t.Errorf("%d %q Source should match %q ? %q", i, s, sm.Source, ex.Source)
+		}
+		if notOk(strings.Compare(sm.Expanded, ex.Expanded) == 0) {
+			t.Errorf("%d %q Source should match %q ? %q", i, s, sm.Source, ex.Source)
+		}
 		i++
 	}
 }
@@ -239,37 +246,37 @@ func TestParseGlyphs(t *testing.T) {
 // TestParseReadable
 func TestParseReadable(t *testing.T) {
 	validData := map[string]SourceMap{
-		"@now1 :label: $(date)": {
+		"@now1 :set: $(date)": {
 			Label:    "@now1",
-			Op:       " :label: ",
+			Op:       " :set: ",
 			Source:   "$(date)",
 			Expanded: "",
 			LineNo:   1,
 		},
-		"this :label: a valid assignment": {
+		"this :set: a valid assignment": {
 			Label:    "this",
-			Op:       " :label: ",
+			Op:       " :set: ",
 			Source:   "a valid assignment",
 			Expanded: "",
 			LineNo:   2,
 		},
-		"this; :label: a valid assignment": {
+		"this; :set: a valid assignment": {
 			Label:    "this;",
-			Op:       " :label: ",
+			Op:       " :set: ",
 			Source:   "a valid assignment",
 			Expanded: "",
 			LineNo:   3,
 		},
-		`now; :label: $(date +%H:%M);`: {
+		`now; :set: $(date +%H:%M);`: {
 			Label:    "now;",
-			Op:       " :label: ",
+			Op:       " :set: ",
 			Source:   `$(date +%H:%M);`,
 			Expanded: "",
 			LineNo:   4,
 		},
-		"@now2 :label: Fred\n": {
+		"@now2 :set: Fred\n": {
 			Label:    "@now2",
-			Op:       " :label: ",
+			Op:       " :set: ",
 			Source:   "Fred",
 			Expanded: "",
 			LineNo:   5,
@@ -358,9 +365,9 @@ func TestParseReadable(t *testing.T) {
 			Expanded: "",
 			LineNo:   17,
 		},
-		"{{pageTitle}} :label: Hello World": {
+		"{{pageTitle}} :set: Hello World": {
 			Label:    "{{pageTitle}}",
-			Op:       " :label: ",
+			Op:       " :set: ",
 			Source:   "Hello World",
 			Expanded: "",
 			LineNo:   18,
@@ -372,9 +379,9 @@ func TestParseReadable(t *testing.T) {
 			Expanded: "",
 			LineNo:   19,
 		},
-		"{fred} :label: Fred": {
+		"{fred} :set: Fred": {
 			Label:    "{fred}",
-			Op:       " :label: ",
+			Op:       " :set: ",
 			Source:   "Fred",
 			Expanded: "",
 			LineNo:   20,
@@ -386,16 +393,16 @@ func TestParseReadable(t *testing.T) {
 			Expanded: "",
 			LineNo:   21,
 		},
-		"{one} :label: 1": {
+		"{one} :set: 1": {
 			Label:    "{one}",
-			Op:       " :label: ",
+			Op:       " :set: ",
 			Source:   "1",
 			Expanded: "",
 			LineNo:   22,
 		},
-		"{two} :label: 2": {
+		"{two} :set: 2": {
 			Label:    "{two}",
-			Op:       " :label: ",
+			Op:       " :set: ",
 			Source:   "2",
 			Expanded: "",
 			LineNo:   23,
@@ -428,46 +435,70 @@ func TestParseReadable(t *testing.T) {
 	i := 1
 	for s, ex := range validData {
 		sm := vm.Parse(s, i)
-		ok(t, strings.Compare(sm.Label, ex.Label) == 0, fmt.Sprintf("%d %q Label should match %q ? %q", i, s, sm.Label, ex.Label))
-		ok(t, strings.Compare(sm.Op, ex.Op) == 0, fmt.Sprintf("%d %q Op should match %q ? %q", i, s, sm.Op, ex.Op))
-		ok(t, strings.Compare(sm.Source, ex.Source) == 0, fmt.Sprintf("%d %q Source should match %q ? %q", i, s, sm.Source, ex.Source))
-		ok(t, strings.Compare(sm.Expanded, ex.Expanded) == 0, fmt.Sprintf("%d %q Source should match %q ? %q", i, s, sm.Source, ex.Source))
+		if notOk(strings.Compare(sm.Label, ex.Label) == 0) {
+			t.Errorf("%d %q Label should match %q ? %q", i, s, sm.Label, ex.Label)
+		}
+		if notOk(strings.Compare(sm.Op, ex.Op) == 0) {
+			t.Errorf("%d %q Op should match %q ? %q", i, s, sm.Op, ex.Op)
+		}
+		if notOk(strings.Compare(sm.Source, ex.Source) == 0) {
+			t.Errorf("%d %q Source should match %q ? %q", i, s, sm.Source, ex.Source)
+		}
+		if notOk(strings.Compare(sm.Expanded, ex.Expanded) == 0) {
+			t.Errorf("%d %q Source should match %q ? %q", i, s, sm.Source, ex.Source)
+		}
 		i++
 	}
 }
 
-// TestEvalGlyph
-func TestEvalGlyph(t *testing.T) {
+// TestEval
+func TestEval(t *testing.T) {
 	testData := []string{
-		"@now :=: $(date)",                        // 0
-		"this :=: a valid assignment",             // 1
-		"this; :=: is a valid assignment",         // 2
-		"now; :=: $(date +\"%H:%M\");",            // 3
-		"@here :=<: testdata/testme.md",           // 4
-		"@there :{<: testdata/testme.md",          // 5
-		"{here} :=<: testdata/testme.md",          // 6
-		"{{here}} :=<: testdata/testme.md",        // 7
-		"This is not an assignment",               // 8
-		"this:=: is not a valid assignment",       // 9
-		"nor :=:is this a valid assignment",       // 10
-		"and not : =:is this a valid assignment",  // 11
-		"also not := :is this a valid assignment", // 12
+		"@now :set: $(date)",                        // 0
+		"this :set: a valid assignment",             // 1
+		"this; :set: is a valid assignment",         // 2
+		"now; :set: $(date +\"%H:%M\");",            // 3
+		"@here :import-text: testdata/testme.md",    // 4
+		"@there :import: testdata/testme.md",        // 5
+		"{here} :import-text: testdata/testme.md",   // 6
+		"{{here}} :import-text: testdata/testme.md", // 7
+		"This is not an assignment",                 // 8
+		"this:set: is not a valid assignment",       // 9
+		"nor :set:is this a valid assignment",       // 10
+		"and not : =:is this a valid assignment",    // 11
+		"also not := :is this a valid assignment",   // 12
 	}
 	vm := New()
 	for i, src := range testData {
 		eSM := vm.Parse(src, i)
 		s, err := vm.Eval(src, i)
 		sm := vm.Symbols.GetSymbol(eSM.Label)
-		ok(t, err == nil, fmt.Sprintf("err should be nill: %s", err))
+		if notOk(err == nil) {
+			fmt.Sprintf("err should be nill: %s", err)
+		}
 		if eSM.Label == "" && eSM.Op == "" {
-			ok(t, s != "", "glyph not an assignment so should be non-empty: "+s)
-			ok(t, s == vm.Expand(s), "glyph expected '"+vm.Expand(s)+"' got "+s)
+			if notOk(s != "") {
+				t.Errorf("not an assignment so should be non-empty: %q", s)
+			}
+			if notOk(s == vm.Expand(s)) {
+				t.Errorf("expected %q, got %q", vm.Expand(s), s)
+			}
 		} else {
-			ok(t, eSM.LineNo == sm.LineNo, fmt.Sprintf("glyph expected line no. %d got %d", eSM.LineNo, sm.LineNo))
-			ok(t, eSM.Source == sm.Source, "glyph expected source '"+eSM.Source+"' got "+sm.Source)
-			ok(t, eSM.Label == sm.Label, "glyph expected label '"+eSM.Label+"' got "+sm.Label)
-			ok(t, eSM.Op == sm.Op, "glyph expected op '"+eSM.Op+"' got "+sm.Op)
-			ok(t, sm.Expanded != "", "glyph expected some expansion, got "+sm.Expanded)
+			if notOk(eSM.LineNo == sm.LineNo) {
+				t.Errorf("expected line no. %d got %d", eSM.LineNo, sm.LineNo)
+			}
+			if notOk(eSM.Source == sm.Source) {
+				t.Errorf("expected source %q, got %q", eSM.Source, sm.Source)
+			}
+			if notOk(eSM.Label == sm.Label) {
+				t.Errorf("expected label %q, got %q", eSM.Label, sm.Label)
+			}
+			if notOk(eSM.Op == sm.Op) {
+				t.Errorf("expected op %q, %q", eSM.Op, sm.Op)
+			}
+			if notOk(sm.Expanded != "") {
+				t.Errorf("expected some expansion, got %q", sm.Expanded)
+			}
 		}
 		i++
 	}
@@ -476,17 +507,17 @@ func TestEvalGlyph(t *testing.T) {
 // TestEvalReadable
 func TestEvalReadable(t *testing.T) {
 	testData := []string{
-		"@now :label: $(date)",                        // 0
-		"this :label: a valid assignment",             // 1
-		"this; :label: is a valid assignment",         // 2
-		"now; :label: $(date +\"%H:%M\");",            // 3
+		"@now :set: $(date)",                          // 0
+		"this :set: a valid assignment",               // 1
+		"this; :set: is a valid assignment",           // 2
+		"now; :set: $(date +\"%H:%M\");",              // 3
 		"@here :import-text: testdata/testme.md",      // 4
 		"@there :import: testdata/testme.md",          // 5
 		"{here} :import-text: testdata/testme.md",     // 6
 		"{{here}} :import-text: testdata/testme.md",   // 7
 		"This is not an assignment",                   // 8
-		"this:label: is not a valid assignment",       // 9
-		"nor :label:is this a valid assignment",       // 10
+		"this:set: is not a valid assignment",         // 9
+		"nor :set:is this a valid assignment",         // 10
 		"and not : label:is this a valid assignment",  // 11
 		"also not :label :is this a valid assignment", // 12
 	}
@@ -495,48 +526,89 @@ func TestEvalReadable(t *testing.T) {
 		eSM := vm.Parse(src, i)
 		s, err := vm.Eval(src, i)
 		sm := vm.Symbols.GetSymbol(eSM.Label)
-		ok(t, err == nil, fmt.Sprintf("err should be nill: %s", err))
+		if notOk(err == nil) {
+			t.Errorf("err should be nill: %s", err)
+		}
 		if eSM.Label == "" && eSM.Op == "" {
-			ok(t, s != "", "Not an assignment so should be non-empty: "+s)
-			ok(t, s == vm.Expand(s), "expected '"+vm.Expand(s)+"' got "+s)
+			if notOk(s != "") {
+				t.Errorf("Not an assignment so should be non-empty: %q ", s)
+			}
+			if notOk(s == vm.Expand(s)) {
+				t.Errorf("expected %q, got %q", vm.Expand(s), s)
+			}
 		} else {
-			ok(t, eSM.LineNo == sm.LineNo, fmt.Sprintf("expected line no. %d got %d", eSM.LineNo, sm.LineNo))
-			ok(t, eSM.Source == sm.Source, "expected source '"+eSM.Source+"' got "+sm.Source)
-			ok(t, eSM.Label == sm.Label, "expected label '"+eSM.Label+"' got "+sm.Label)
-			ok(t, eSM.Op == sm.Op, "expected op '"+eSM.Op+"' got "+sm.Op)
-			ok(t, sm.Expanded != "", "expected some expansion, got "+sm.Expanded)
+			if notOk(eSM.LineNo == sm.LineNo) {
+				t.Errorf("expected line no. %d got %d", eSM.LineNo, sm.LineNo)
+			}
+			if notOk(eSM.Source == sm.Source) {
+				t.Errorf("expected source %q, got %q", eSM.Source, sm.Source)
+			}
+			if notOk(eSM.Label == sm.Label) {
+				t.Errorf("expected label %q, got %q", eSM.Label, sm.Label)
+			}
+			if notOk(eSM.Op == sm.Op) {
+				t.Errorf("expected op %q, got %q", eSM.Op, sm.Op)
+			}
+			if notOk(sm.Expanded != "") {
+				t.Errorf("expected some expansion, got %q", sm.Expanded)
+			}
 		}
 		i++
 	}
 }
+
 func TestSymbolTable(t *testing.T) {
 	vm := New()
 	st := new(SymbolTable)
-	ok(t, len(st.entries) == 0, "st.entries should be zero")
-	ok(t, len(st.labels) == 0, "st.labels should be zero too")
+	if notOk(len(st.entries) == 0) {
+		t.Errorf("st.entries should be zero")
+	}
+	if notOk(len(st.labels) == 0) {
+		t.Errorf("st.labels should be zero too")
+	}
 
 	sm1 := st.GetSymbol("@missing")
-	ok(t, sm1.LineNo == -1, "Should fail with an empty symbol table")
-	sm1 = vm.Parse("@now :=: This is now.", 1)
+	if notOk(sm1.LineNo == -1) {
+		t.Errorf("Should fail with an empty symbol table")
+	}
+	sm1 = vm.Parse("@now :set: This is now.", 1)
 	i := st.SetSymbol(sm1)
-	ok(t, i == 0, "Expected i to be zero as first element in symbol table")
+	if notOk(i == 0) {
+		t.Errorf("Expected i to be zero as first element in symbol table")
+	}
 	sm2 := st.GetSymbol("@now")
-	ok(t, sm1.Label == sm2.Label, "expected label '"+sm1.Label+"' got "+sm2.Label)
-	ok(t, sm1.Op == sm2.Op, "expected op '"+sm1.Op+"' got "+sm2.Op)
-	ok(t, sm1.Source == sm2.Source, "expected source '"+sm1.Source+"' got "+sm2.Source)
-	ok(t, sm1.Expanded == sm2.Expanded, "expected expanded '"+sm1.Expanded+"' got "+sm2.Expanded)
-	ok(t, sm1.LineNo == sm2.LineNo, "expected expanded '"+sm1.Expanded+"' got "+sm2.Expanded)
+	if notOk(sm1.Label == sm2.Label) {
+		t.Errorf("expected label %q, got %q", sm1.Label, sm2.Label)
+	}
+	if notOk(sm1.Op == sm2.Op) {
+		t.Errorf("expected op %q, got %q", sm1.Op, sm2.Op)
+	}
+	if notOk(sm1.Source == sm2.Source) {
+		t.Errorf("expected source %q, got %q", sm1.Source, sm2.Source)
+	}
+	if notOk(sm1.Expanded == sm2.Expanded) {
+		t.Errorf("expected expanded %q, got %q'", sm1.Expanded, sm2.Expanded)
+	}
+	if notOk(sm1.LineNo == sm2.LineNo) {
+		t.Errorf("expected expanded %q, got %q", sm1.Expanded, sm2.Expanded)
+	}
 
-	vm.Eval("@now :=: This is now.", 1)
+	vm.Eval("@now :set: This is now.", 1)
 	resultText := vm.Expand("This is '@now'")
-	ok(t, resultText == "This is 'This is now.'", "Should have an expansion. ["+resultText+"]")
+	if notOk(resultText == "This is 'This is now.'") {
+		t.Errorf("Should have an expansion. [%s]", resultText)
+	}
 }
 
 // Test Expand
 func TestExpand(t *testing.T) {
 	vm := New()
-	ok(t, len(vm.Symbols.entries) == 0, "vm.Symbols.entries should be zero")
-	ok(t, len(vm.Symbols.labels) == 0, "vm.Symbols.labels should be zero too")
+	if notOk(len(vm.Symbols.entries) == 0) {
+		t.Errorf("vm.Symbols.entries should be zero")
+	}
+	if notOk(len(vm.Symbols.labels) == 0) {
+		t.Errorf("vm.Symbols.labels should be zero too")
+	}
 
 	text := `
 		   @me
@@ -556,8 +628,8 @@ func TestExpand(t *testing.T) {
 
 		   This "now" should not change. This "me" should not change.`
 
-	vm.Eval("@me :=: Fred", 1)
-	vm.Eval("@now :=: 9:00", 2)
+	vm.Eval("@me :set: Fred", 1)
+	vm.Eval("@now :set: 9:00", 2)
 	result := vm.Expand(text)
 	if result != expected {
 		t.Fatalf("Expected:\n\n" + expected + "\n\nReceived:\n\n" + result)
@@ -567,34 +639,60 @@ func TestExpand(t *testing.T) {
 // Test include file
 func TestInclude(t *testing.T) {
 	vm := New()
-	ok(t, len(vm.Symbols.entries) == 0, "vm.Symbols.entries should be zero")
-	ok(t, len(vm.Symbols.labels) == 0, "vm.Symbols.labels should be zero too")
+	if notOk(len(vm.Symbols.entries) == 0) {
+		t.Errorf("vm.Symbols.entries should be zero")
+	}
+	if notOk(len(vm.Symbols.labels) == 0) {
+		t.Errorf("vm.Symbols.labels should be zero too")
+	}
 
 	buf, err := ioutil.ReadFile("testdata/testme.md")
-	ok(t, err == nil, fmt.Sprintf("Should be able to read testdata/testme.md: %s", err))
+	if notOk(err == nil) {
+		t.Errorf("Should be able to read testdata/testme.md: %s", err)
+	}
 
 	text := string(buf)
-	_, err = vm.Eval("@TESTME :=<: testdata/testme.md", 1)
-	ok(t, err == nil, "Should not get error of Eval assignment")
+	_, err = vm.Eval("@TESTME :import-text: testdata/testme.md", 1)
+	if notOk(err == nil) {
+		t.Errorf("Should not get error of Eval assignment")
+	}
 	resultText, err := vm.Eval("@TESTME", 1)
-	ok(t, err == nil, "Should not get error on eval expand")
-	ok(t, strings.Compare(text, resultText) == 0, "Should get same text for @TESTME")
+	if notOk(err == nil) {
+		t.Errorf("Should not get error on eval expand")
+	}
+	if notOk(strings.Compare(text, resultText) == 0) {
+		t.Errorf("Should get same text for @TESTME")
+	}
 
 	l := len(text)
-	ok(t, len(resultText) >= l, fmt.Sprintf("Should %d have got %d results: %s", l, len(resultText), resultText))
-	ok(t, strings.Contains(resultText, "A nimble webserver"), fmt.Sprintf("Should have 'A nimble webserver' in %s", resultText))
-	ok(t, strings.Contains(resultText, "JSON"), fmt.Sprintf("Should have 'JSON' in %s", resultText))
+	if notOk(len(resultText) >= l) {
+		t.Errorf("Should %d have got %d results: %s", l, len(resultText), resultText)
+	}
+	if notOk(strings.Contains(resultText, "A nimble webserver")) {
+		t.Errorf("Should have 'A nimble webserver' in %s", resultText)
+	}
+	if notOk(strings.Contains(resultText, "JSON")) {
+		t.Errorf("Should have 'JSON' in %s", resultText)
+	}
 }
 
 func TestShellAssignment(t *testing.T) {
 	vm := New()
-	s, err := vm.Eval("@ECHO :!: echo -n 'Hello World!'", 1)
-	ok(t, err == nil, fmt.Sprintf("assignment should not have an error: %s", err))
-	ok(t, s == "", "Assignment should yield an empty string "+s)
+	s, err := vm.Eval("@ECHO :bash: echo -n 'Hello World!'", 1)
+	if notOk(err == nil) {
+		t.Errorf("assignment should not have an error: %s", err)
+	}
+	if notOk(s == "") {
+		t.Errorf("Assignment should yield an empty string %q", s)
+	}
 
 	s, err = vm.Eval("@ECHO", 2)
-	ok(t, err == nil, fmt.Sprintf("Expansion should not have an error: %s", err))
-	ok(t, s == "Hello World!", "Should have @ECHO assignment: "+s)
+	if notOk(err == nil) {
+		t.Errorf("Expansion should not have an error: %s", err)
+	}
+	if notOk(s == "Hello World!") {
+		t.Errorf("Should have @ECHO assignment: %q", s)
+	}
 }
 
 func TestExpandedAssignment(t *testing.T) {
@@ -603,12 +701,16 @@ func TestExpandedAssignment(t *testing.T) {
 	dateFormat := "2006-01-02"
 	now := time.Now()
 	// Date will generate a LF so the text will also contain it. So we'll test against a Trim later.
-	vm.Eval(`@now :!: date +%Y-%m-%d`, 1)
-	vm.Eval("@title :{: This is a title with date: @now", 2)
+	vm.Eval(`@now :bash: date +%Y-%m-%d`, 1)
+	vm.Eval("@title :expand: This is a title with date: @now", 2)
 	resultText, err := vm.Eval("@title", 3)
-	ok(t, err == nil, fmt.Sprintf("Expanded title should not have an error %s\n", err))
+	if notOk(err == nil) {
+		t.Errorf("Expanded title should not have an error %s\n", err)
+	}
 	expectedText := fmt.Sprintf("This is a title with date: %s\n", now.Format(dateFormat))
-	ok(t, resultText == expectedText, "expected '"+expectedText+"' got '"+resultText+"'")
+	if notOk(resultText == expectedText) {
+		t.Errorf("expected %q, got %q", expectedText, resultText)
+	}
 
 	// Now test a label that holds multiple lines that need expanding.
 	text := `
@@ -616,22 +718,34 @@ func TestExpandedAssignment(t *testing.T) {
 			@two this is also a line
 			@three this is the last line`
 
-	vm.Eval("@one :=: 1", 1)
-	vm.Eval("@two :=: 2", 2)
-	vm.Eval("@three :=: 3", 3)
-	vm.Eval("@text :=: "+text, 4)
+	vm.Eval("@one :set: 1", 1)
+	vm.Eval("@two :set: 2", 2)
+	vm.Eval("@three :set: 3", 3)
+	vm.Eval("@text :set: "+text, 4)
 	resultText = vm.Expand("@text")
 
-	ok(t, strings.Contains(resultText, "@one this is a line"), "Should have line @one ["+resultText+"]")
-	ok(t, strings.Contains(resultText, "@two this is also a line"), "Should have line @two "+resultText+"]")
-	ok(t, strings.Contains(resultText, "@three this is the last line"), "Should have line @three "+resultText+"]")
+	if notOk(strings.Contains(resultText, "@one this is a line")) {
+		t.Errorf("Should have line @one [%s]", resultText)
+	}
+	if notOk(strings.Contains(resultText, "@two this is also a line")) {
+		t.Errorf("Should have line @two %q", resultText)
+	}
+	if notOk(strings.Contains(resultText, "@three this is the last line")) {
+		t.Errorf("Should have line @three %q", resultText)
+	}
 
-	vm.Eval("@out :{{: @text", 5)
+	vm.Eval("@out :expand-expansion: @text", 5)
 	resultText = vm.Expand("@out")
 
-	ok(t, strings.Contains(resultText, "1 this is a line"), "Should have line 1 "+resultText)
-	ok(t, strings.Contains(resultText, "2 this is also a line"), "Should have line 2 "+resultText)
-	ok(t, strings.Contains(resultText, "3 this is the last line"), "Should have line 3 "+resultText)
+	if notOk(strings.Contains(resultText, "1 this is a line")) {
+		t.Errorf("Should have line 1 %q", resultText)
+	}
+	if notOk(strings.Contains(resultText, "2 this is also a line")) {
+		t.Errorf("Should have line 2 %q", resultText)
+	}
+	if notOk(strings.Contains(resultText, "3 this is the last line")) {
+		t.Errorf("Should have line 3 %q", resultText)
+	}
 }
 
 func TestImport(t *testing.T) {
@@ -644,15 +758,23 @@ func TestImport(t *testing.T) {
 	atGreeting := "Hello World"
 
 	// Now test evaluating a shorthand file
-	_, err := vm.Eval("#T# :}<: testdata/test1.shorthand", 1)
-	ok(t, err == nil, "Should be able to import testdata/test1.shorthand")
+	_, err := vm.Eval("#T# :import-shorthand: testdata/test1.shorthand", 1)
+	if notOk(err == nil) {
+		t.Errorf("Should be able to import testdata/test1.shorthand")
+	}
 
 	result := vm.Expand("@now")
-	ok(t, result == atNow, "Should have @now "+result)
+	if notOk(result == atNow) {
+		t.Errorf("Should have @now %q", result)
+	}
 	result = vm.Expand("@title")
-	ok(t, result == atTitle, "Should have @title "+result)
+	if notOk(result == atTitle) {
+		t.Errorf("Should have @title %q", result)
+	}
 	result = vm.Expand("@greeting")
-	ok(t, result == atGreeting, "Should have @greeting "+result)
+	if notOk(result == atGreeting) {
+		t.Errorf("Should have @greeting %q", result)
+	}
 
 	shorthandText := `
 		@title @now
@@ -660,9 +782,15 @@ func TestImport(t *testing.T) {
 		`
 
 	result = vm.Expand(shorthandText)
-	ok(t, strings.Contains(result, atTitle), "Should have title: "+atTitle)
-	ok(t, strings.Contains(result, atNow), "Should have name: "+atNow)
-	ok(t, strings.Contains(result, atGreeting), "Should have greeting: "+atGreeting)
+	if notOk(strings.Contains(result, atTitle)) {
+		t.Errorf("Should have title: %q", atTitle)
+	}
+	if notOk(strings.Contains(result, atNow)) {
+		t.Errorf("Should have name: %q", atNow)
+	}
+	if notOk(strings.Contains(result, atGreeting)) {
+		t.Errorf("Should have greeting: %q", atGreeting)
+	}
 }
 
 func TestExpandingSourcesToFile(t *testing.T) {
@@ -682,33 +810,38 @@ func TestExpandingSourcesToFile(t *testing.T) {
 	vm := New()
 
 	testData := []string{
-		"@hello_world :=: Hello World",
-		"@max :!: echo -n 'Hello Max'",
-		"@hello_world :>: testdata/expansion1.txt",
-		"_ :@>: testdata/expansion2.txt",
+		"@hello_world :set: Hello World",
+		"@max :bash: echo -n 'Hello Max'",
+		"@hello_world :export: testdata/expansion1.txt",
+		"_ :export-all: testdata/expansion2.txt",
 	}
 
 	for i, data := range testData {
 		_, err := vm.Eval(data, i)
-		ok(t, err == nil, fmt.Sprintf("error for %s -> %s", data, err))
+		if notOk(err == nil) {
+			t.Errorf("error for %s -> %s", data, err)
+		}
 	}
 
 	for fname, expectedText := range testFiles {
 		buf, err := ioutil.ReadFile(fname)
-		ok(t, err == nil, fmt.Sprintf("%s error: %s", fname, err))
+		if notOk(err == nil) {
+			t.Errorf("%s error: %s", fname, err)
+		}
 		resultText := string(buf)
 		terms := strings.Split(expectedText, "\n")
 		for _, term := range terms {
-			ok(t, strings.Contains(resultText, term),
-				fmt.Sprintf("%s expected '%s' got '%s'", fname, term, resultText))
+			if notOk(strings.Contains(resultText, term)) {
+				t.Errorf("%s expected '%s' got '%s'", fname, term, resultText)
+			}
 		}
 	}
 }
 
 func TestExportAssignments(t *testing.T) {
 	testFiles := map[string]string{
-		"testdata/assigned1.txt": "@hello_world :=: Hello World",
-		"testdata/assigned2.txt": "@hello_world :=: Hello World\n@max :!: echo -n 'Hello Max'\n",
+		"testdata/assigned1.txt": "@hello_world :set: Hello World",
+		"testdata/assigned2.txt": "@hello_world :set: Hello World\n@max :bash: echo -n 'Hello Max'\n",
 	}
 	for fname := range testFiles {
 		if _, err := os.Stat(fname); err != nil {
@@ -719,25 +852,30 @@ func TestExportAssignments(t *testing.T) {
 	vm := New()
 
 	testData := []string{
-		`@hello_world :=: Hello World`,
-		`@max :!: echo -n 'Hello Max'`,
-		`@hello_world :}>: testdata/assigned1.txt`,
-		`_ :@}>: testdata/assigned2.txt`,
+		`@hello_world :set: Hello World`,
+		`@max :bash: echo -n 'Hello Max'`,
+		`@hello_world :export-shorthand: testdata/assigned1.txt`,
+		`_ :export-all-assignments: testdata/assigned2.txt`,
 	}
 
 	for i, src := range testData {
 		_, err := vm.Eval(src, i)
-		ok(t, err == nil, fmt.Sprintf("%d %s error: %s", i, src, err))
+		if notOk(err == nil) {
+			t.Errorf("%d %s error: %s", i, src, err)
+		}
 	}
 
 	for fname, text := range testFiles {
 		buf, err := ioutil.ReadFile(fname)
-		ok(t, err == nil, "Should beable to read "+fname)
+		if notOk(err == nil) {
+			t.Errorf("Should beable to read %q", fname)
+		}
 		resultText := string(buf)
 		terms := strings.Split(text, "\n")
 		for _, term := range terms {
-			ok(t, strings.Contains(resultText, term),
-				fmt.Sprintf("%s expected '%s' got '%s'", fname, text, resultText))
+			if notOk(strings.Contains(resultText, term)) {
+				t.Errorf("%s expected '%s' got '%s'", fname, text, resultText)
+			}
 		}
 	}
 }
@@ -752,59 +890,86 @@ func TestMarkdownSupport(t *testing.T) {
 
 	i := 0
 	for src, expected := range testData {
-		vm.Eval(fmt.Sprintf("@test :[: %s", src), i)
+		vm.Eval(fmt.Sprintf("@test :markdown: %s", src), i)
 		result := vm.Expand("@test")
-		ok(t, expected == result, fmt.Sprintf("%s -> %s", expected, result))
+		if notOk(expected == result) {
+			t.Errorf("%s -> %s", expected, result)
+		}
 		i++
 	}
 
-	vm.Eval("@link :=: my link", i)
+	vm.Eval("@link :set: my link", i)
 	i++
-	vm.Eval("@url :=: http://example.com", i)
+	vm.Eval("@url :set: http://example.com", i)
 	i++
-	vm.Eval("@html :{[: [@link](@url)", i)
+	vm.Eval("@html :expand-markdown: [@link](@url)", i)
 	i++
 	expected := "<p><a href=\"http://example.com\">my link</a></p>\n"
 	result := vm.Expand("@html")
-	ok(t, strings.Compare(expected, result) == 0, fmt.Sprintf("%s != %s", expected, result))
+	if notOk(strings.Compare(expected, result) == 0) {
+		t.Errorf("%s != %s", expected, result)
+	}
 
-	_, err := vm.Eval("@page :[<: testdata/test.md", i)
+	_, err := vm.Eval("@page :import-markdown: testdata/test.md", i)
 	i++
-	ok(t, err == nil, fmt.Sprintf("%d testdata/test.md error: %s", i, err))
+	if notOk(err == nil) {
+		t.Errorf("%d testdata/test.md error: %s", i, err)
+	}
 	result = vm.Expand("@page")
-	ok(t, strings.Contains(result, "<h2>Another H2</h2>"), "Should have a h2 from test.md"+result)
+	if notOk(strings.Contains(result, "<h2>Another H2</h2>")) {
+		t.Errorf("Should have a h2 from test.md,  %q", result)
+	}
 
-	_, err = vm.Eval("H2 :=: heading two element", i)
+	_, err = vm.Eval("H2 :set: heading two element", i)
 	i++
-	ok(t, err == nil, fmt.Sprintf("Should be able to assign string to 'H2': %s", err))
+	if notOk(err == nil) {
+		t.Errorf("Should be able to assign string to 'H2': %s", err)
+	}
 	result = vm.Expand("H2")
-	ok(t, result == "heading two element", fmt.Sprintf("Should be able to expand 'H2': %s", result))
+	if notOk(result == "heading two element") {
+		t.Errorf("Should be able to expand 'H2': %s", result)
+	}
 
-	_, err = vm.Eval("@page :{[<: testdata/test.md", i)
+	_, err = vm.Eval("@page :import-expand-markdown: testdata/test.md", i)
 	i++
-	ok(t, err == nil, fmt.Sprintf("%d testdata/test.md error: %s", i, err))
+	if notOk(err == nil) {
+		t.Errorf("%d testdata/test.md error: %s", i, err)
+	}
 	result = vm.Expand("@page")
-	ok(t, strings.Contains(result, "<h2>Another heading two element</h2>"), "Should have another heading two element from test.md"+result)
+	if notOk(strings.Contains(result, "<h2>Another heading two element</h2>")) {
+		t.Errorf("Should have another heading two element from test.md, %q", result)
+	}
 
 	// Re-read testdata/test.md and process the maarkdown
-	_, err = vm.Eval("H2 :=: heading two element", i)
+	_, err = vm.Eval("H2 :set: heading two element", i)
 	i++
-	ok(t, err == nil, fmt.Sprintf("Should be able to assign string to 'H2': %s", err))
-	_, err = vm.Eval("@page :{[<: testdata/test.md", i)
+	if notOk(err == nil) {
+		t.Errorf("Should be able to assign string to 'H2': %s", err)
+	}
+	_, err = vm.Eval("@page :import-expand-markdown: testdata/test.md", i)
 	i++
-	ok(t, err == nil, fmt.Sprintf("%d testdata/test.md error: %s", i, err))
-	_, err = vm.Eval("@page :>: testdata/test.html", i)
-	ok(t, err == nil, fmt.Sprintf("%d write testdata/test.html error: %s", i, err))
+	if notOk(err == nil) {
+		t.Errorf("%d testdata/test.md error: %s", i, err)
+	}
+	_, err = vm.Eval("@page :export: testdata/test.html", i)
+	if notOk(err == nil) {
+		t.Errorf("%d write testdata/test.html error: %s", i, err)
+	}
 	i++
 
 	_, err = os.Stat("testdata/test.html")
-	ok(t, err == nil, "testdata/test.html should exist.")
+	if notOk(err == nil) {
+		t.Errorf("testdata/test.html should exist.")
+	}
 
 	buf, err := ioutil.ReadFile("testdata/test.html")
-	ok(t, err == nil, "should be able to read testdata/test.html.")
+	if notOk(err == nil) {
+		t.Errorf("should be able to read testdata/test.html.")
+	}
 	result2 := string(buf)
-	ok(t, strings.Compare(result, result2) == 0, fmt.Sprintf("Should have same results: '%s' <> '%s'", result, result2))
-
+	if notOk(strings.Compare(result, result2) == 0) {
+		t.Errorf("Should have same results: '%s' <> '%s'", result, result2)
+	}
 }
 
 func TestRun(t *testing.T) {
@@ -813,12 +978,16 @@ func TestRun(t *testing.T) {
 		t.Error("vm was not created by New()")
 	}
 	fp, err := os.Open("testdata/run1.shorthand")
-	ok(t, err == nil, "Should be able to open testdata/run1.shorthand")
+	if notOk(err == nil) {
+		t.Errorf("Should be able to open testdata/run1.shorthand")
+	}
 
 	reader := bufio.NewReader(fp)
 
 	fmt.Println("Starting vm.Run()")
 	cnt := vm.Run(reader, false)
-	ok(t, cnt == 3, fmt.Sprintf("Exited int wrong : %d", cnt))
+	if notOk(cnt == 3) {
+		t.Errorf("Exited int wrong : %d", cnt)
+	}
 	fmt.Println("Success.")
 }
