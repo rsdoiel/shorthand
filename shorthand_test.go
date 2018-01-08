@@ -855,7 +855,7 @@ func TestExportAssignments(t *testing.T) {
 		`@hello_world :set: Hello World`,
 		`@max :bash: echo -n 'Hello Max'`,
 		`@hello_world :export-shorthand: testdata/assigned1.txt`,
-		`_ :export-all-assignments: testdata/assigned2.txt`,
+		`_ :export-all-shorthand: testdata/assigned2.txt`,
 	}
 
 	for i, src := range testData {

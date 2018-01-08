@@ -1,6 +1,0 @@
-H2 :=: second level header element
-@page :{[<: testdata/test.md
-@page
-
-See testdata/test.html for results
-@page :>: testdata/test.html
