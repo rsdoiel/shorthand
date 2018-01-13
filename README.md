@@ -41,9 +41,9 @@ If the content of the markdown file _testdata/report.md_ was
 From the command line you can do something like this
 
 ```shell
-    shorthand -e '@now :bash: date' \
-        -e "@report :import-text: testdata/report.md" \
-        -e "@html :markdown: @report" \
+    shorthand -e ':bash: @now date' \
+        -e ":import-text: @report testdata/report.md" \
+        -e ":markdown: @html @report" \
         -e "@html" \
         -e ':exit:' > testdata/report.html
 ```
