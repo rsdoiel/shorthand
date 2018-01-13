@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shorthand - ideas and background</title>
-    <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
+    <title><no value></title>
     <link href="/css/site.css" rel="stylesheet" />
-<head>
+</head>
 <body>
-    <header>
-        <h1>Shorthand - ideas and background</h1>
-    </header>
-    <section><h1>Shorthand prototype</h1>
+<header>
+<no value>
+</header>
+<section>
+<h1>Shorthand prototype</h1>
 
 <h2>Basic ideas</h2>
 
@@ -27,21 +27,21 @@
 <li>If the line is not an assignment it is an expansion written to stdout
 
 <ul>
-<li>expansion (is a string with any labels in string resolved to their previously computed value)</li>
+<li>expansion (is a string with any labels in string resolved to their previously assigned value)</li>
 </ul></li>
 </ul></li>
 <li>A assignment statement is a triple (three cells of a tuple)
 
 <ul>
-<li>label (the receiver of the results)</li>
 <li>op (the assignment operation to be performed)</li>
+<li>label (the receiver of the results)</li>
 <li>value (the thing being operated on)</li>
 </ul></li>
 <li>In memory it is represented as a five-tuple
 
 <ul>
-<li>label</li>
 <li>op</li>
+<li>label</li>
 <li>value</li>
 <li>expansion</li>
 <li>line number</li>
@@ -52,29 +52,33 @@
 <li>this allows labels to mutate but the prior version of the label still exists in memory and can be written out to a file</li>
 </ul></li>
 <li>An expansion is a string with zero or more labels expanded</li>
-<li>By defaut shorthand works on standard in and standard out</li>
+<li>By defaut shorthand works on standard in and standard out
+
+<ul>
+<li>but the VM in shorthand package contains an Eval for embedding in other projects</li>
+</ul></li>
 <li>Operators (functions whos results are assigned to labels)
 
 <ul>
-<li>begin and end with colons and cannot contain spaces (e.g. &ldquo; :label: &ldquo;, &rdquo; :import-text: &ldquo;)</li>
+<li>begin and end with colons and cannot contain spaces (e.g. &ldquo;:set:&ldquo;, :&ldquo;import-text:&ldquo;)</li>
 <li>internal inputs
 
 <ul>
 <li>assign a string to a label</li>
 <li>assign an expansion result to a label</li>
-<li>assign an expansion or another expansion</li>
+<li>assign an expanded result to another expansion</li>
 <li>assign a markdown processed string to a label</li>
-<li>assign a expansion markdown processed string to a label</li>
+<li>assign a expanded markdown processed string to a label</li>
 </ul></li>
 <li>external inputs
 
 <ul>
 <li>assign the contents of a file to a label</li>
-<li>assign the expanded contents fo a file to a label</li>
+<li>assign the expanded contents of a file to a label</li>
 <li>assign the output of a Bash command to a label</li>
-<li>expands the command sent to Bash, assign the output to a label</li>
+<li>expand the command sent to Bash, assign the output to a label</li>
 <li>assign a markdown processed file to a label</li>
-<li>assign an expansion markdown processed file to a label</li>
+<li>assign an expanded markdown processed file to a label</li>
 </ul></li>
 <li>special form
 
@@ -86,7 +90,7 @@
 <ul>
 <li>write to a file the expansion for a label</li>
 <li>write to a file all the expansions for all labels (order not guaranteed)</li>
-<li>write to a file an assignment state for a label</li>
+<li>write to a file an assignment statement for a label</li>
 <li>write to a file all assignment statements (order by parse sequence)</li>
 </ul></li>
 </ul></li>
@@ -103,12 +107,10 @@
 </ul></li>
 <li>there is only one type - a string</li>
 <li>there are no built in data structures</li>
-<li>there is no comments though you could treat the output to stnout as comments</li>
-<li>there is no interactive though you could synthesize this from Bash</li>
+<li>there is no comments though you could treat the output to standard out as comments</li>
 <li>shorthand could be expanded to use another interpretive environment but Bash is very convientent</li>
-<li>A &ldquo;compiler&rdquo; could be built generating a go program that then could be compiled and run</li>
 <li>text is UTF-8</li>
-<li>operators begin with a space and colon, end with the next space</li>
+<li>operators begin and end with a colon</li>
 <li>assignments are a single line (terminated with a \n)</li>
 </ul>
 
@@ -175,8 +177,10 @@
 <li>Lorem Ipsum in Golang: <a href="https://github.com/drhodes/golorem">Golorem</a>, other version are probably out there too</li>
 </ul></li>
 </ul>
+
 </section>
-    <nav><ul>
+<nav>
+<ul>
 <li><a href="/">Home</a></li>
 <li><a href="index.html">README</a></li>
 <li><a href="docs/shorthand/">Documentation</a></li>
@@ -185,13 +189,12 @@
 <li><a href="tutorials/">Tutorials</a></li>
 <li><a href="ideas.html">Ideas and Background</a></li>
 </ul>
-</nav>
-    <footer>
-    shorthand v0.0.11, Sun Jan  7 19:51:36 PST 2018
-<p><p>copyright &copy; 2015 all rights reserved.
-Released under the BSD 2-Clause license
-See: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a></p>
 
-    </footer>
+</nav>
+<footer>
+copyright (c) 2015, 2016 all rights reserved.
+Released under the BSD 3-Clause license
+See: http://opensource.org/licenses/BSD-3-Clause
+</footer>
 </body>
 </html>
