@@ -1,46 +1,46 @@
 Getting the current year:
 
-    @year :! date +%Y
+    :bash: @year date +%Y
 
 We need a doctype statement with a newline. We'll leverage Unix echo command for this.
 
-    @doctype :! echo "<!DOCTYPE html>"
+    :bash: @doctype echo "<!DOCTYPE html>"
 
 HTML pages have a head element so lets build that.
 
-    @headBlock := <head><title>@pageTitle</title>
+    :set: @headBlock <head><title>@pageTitle</title>
 
 Inside the body of a page HTML 5 supports a header element.
 
-    @headerBlock := <header><h1>@blogTitle</h1></header>
+    :set: @headerBlock <header><h1>@blogTitle</h1></header>
 
 Likewise we have a footer that needs to be built.
 
-    @footerBlock := <footer>copyright &copy @year</footer>
+    :set: @footerBlock <footer>copyright &copy @year</footer>
 
 Now let's use template.md as a page template converting it from markdown
 into HTML.
 
-    @pageTemplate :=[ template.md
+    :import-markdown: @pageTemplate template.md
 
 Now its time to populate the data elements in the page.
 
-    @dateString :! date +%Y-%m-%d
-    @blogTitle :=  My Blog
-    @pageTitle := A Post
-    @contentBlock :=[ post.md
+    :bash: @dateString date +%Y-%m-%d
+    :set: @blogTitle My Blog
+    :set: @pageTitle A Post
+    :import-markdown: @contentBlock post.md
 
 Ok, we're ready to finally build the page. First we're going to 
 expand some labels to generate our full HTML markup.
 
-    @output :{ @doctype<html>@headBlock<body>@headerBlock@pageTemplate@footerBlock</body></html>
+    :expand: @output @doctype<html>@headBlock<body>@headerBlock@pageTemplate@footerBlock</body></html>
 
 Here is what the markup looks like:
 
 @output
 
-Not we will write it out to a file. That file will be called post.html
+Now we will write it out to a file. That file will be called post.html
 
-    @output :> post.html
+    :export: post.html @output
 
 Take a look at post.html and see the results.

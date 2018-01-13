@@ -9,14 +9,14 @@
     + Assignments exist on a single line in the form of label, operator and value
         + assignments (attaching a value or expansion to a label)
     + If the line is not an assignment it is an expansion written to stdout
-        + expansion (is a string with any labels in string resolved to their previously computed value)
+        + expansion (is a string with any labels in string resolved to their previously assigned value)
 + A assignment statement is a triple (three cells of a tuple)
-    + label (the receiver of the results)
     + op (the assignment operation to be performed)
+    + label (the receiver of the results)
     + value (the thing being operated on)
 + In memory it is represented as a five-tuple
-    + label
     + op
+    + label
     + value
     + expansion
     + line number
@@ -24,27 +24,28 @@
     + this allows labels to mutate but the prior version of the label still exists in memory and can be written out to a file
 + An expansion is a string with zero or more labels expanded
 + By defaut shorthand works on standard in and standard out
+    + but the VM in shorthand package contains an Eval for embedding in other projects
 + Operators (functions whos results are assigned to labels)
-    + begin and end with colons and cannot contain spaces (e.g. " :label: ", " :import-text: ")
+    + begin and end with colons and cannot contain spaces (e.g. ":set:", :"import-text:")
     + internal inputs
         + assign a string to a label
         + assign an expansion result to a label
-        + assign an expansion or another expansion
+        + assign an expanded result to another expansion
         + assign a markdown processed string to a label
-        + assign a expansion markdown processed string to a label
+        + assign a expanded markdown processed string to a label
     + external inputs
         + assign the contents of a file to a label
-        + assign the expanded contents fo a file to a label
+        + assign the expanded contents of a file to a label
         + assign the output of a Bash command to a label
-        + expands the command sent to Bash, assign the output to a label
+        + expand the command sent to Bash, assign the output to a label
         + assign a markdown processed file to a label
-        + assign an expansion markdown processed file to a label 
+        + assign an expanded markdown processed file to a label 
     + special form
         + read a file for assignments nothing is assigned to the label
     + outputs
         + write to a file the expansion for a label
         + write to a file all the expansions for all labels (order not guaranteed)
-        + write to a file an assignment state for a label
+        + write to a file an assignment statement for a label
         + write to a file all assignment statements (order by parse sequence)
 + two factors prevent shorthand from being a full "language"
     + it does not support a control statements (you might be able to synthesize this via Bash)
@@ -53,12 +54,10 @@
     + but the prior version to the mutation still exists in the queue of assignments and can be played back by dumping to a file.
 + there is only one type - a string
 + there are no built in data structures
-+ there is no comments though you could treat the output to stnout as comments
-+ there is no interactive though you could synthesize this from Bash
++ there is no comments though you could treat the output to standard out as comments
 + shorthand could be expanded to use another interpretive environment but Bash is very convientent
-+ A "compiler" could be built generating a go program that then could be compiled and run
 + text is UTF-8
-+ operators begin with a space and colon, end with the next space
++ operators begin and end with a colon
 + assignments are a single line (terminated with a \n)
 
 

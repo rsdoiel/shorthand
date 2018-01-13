@@ -22,7 +22,7 @@ import (
 )
 
 // Version nummber of library and utility
-const Version = "v0.0.12"
+const Version = "v0.0.13-dev"
 
 // HowItWorks is a help text describing shorthand.
 var HowItWorks = `
@@ -46,7 +46,7 @@ not written to stdout output.
 
 operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :set:                    | Assign String                            | {{name}} :set: Freda
+ :set:                      | Assign String                            | {{name}} :set: Freda
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :import-text:              | Assign the contents of a file            | {{content}} :import-text: myfile.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -58,7 +58,7 @@ operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :import:                   | Include a file, procesisng the shorthand | {{nav}} :import: mynav.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :bash:                     | Assign Shell output                      | {{date}} :bash: date +%Y-%m-%d
+ :bash:                     | Assign Shell output                      | {{date}} :bash: date +%Y-%m-%%d
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :expand-and-bash:          | Assign Expand then gete Shell output     | {{entry}} :expand-and-bash: cat header.txt @filename footer.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -86,15 +86,15 @@ operator                    | meaning                                  | example
 Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment 
 statements to a file.
 
-The spaces surrounding " :set: ", " :import-text: ", " :bash: ", " :expand: ", " :export: ", etc. are required.
+The spaces following surrounding ":set:", ":import-text:", ":bash:", ":expand:", ":export:", etc. are required.
 
 
 EXAMPLE
 
 In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label {{NOW}}.
 
-    {{PREAMBLE}} :import-text: /home/me/preamble.text
-    {{NOW}} :set: 3:30
+    :import-text: {{PREAMBLE}} /home/me/preamble.text
+	:set: {{NOW}} 3:30
 
     At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.
 
@@ -108,8 +108,8 @@ Notice the lines containing the assignments are not included in the output and t
 substituted labels.
 
 + Assign shorthand expansions to a LABEL
-    + LABEL :expand: SHORTHAND_TO_BE_EXPANDED
-    + @content@ :expand: @report_name@ @report_date@
+    + :expand: LABEL SHORTHAND_TO_BE_EXPANDED
+	+ :expand: @content@ @report_name@ @report_date@
         + this would concatenate report name and date
 
 
@@ -156,15 +156,15 @@ The following assumes you are in the _shorthand_ repl.
 
 Load the mardkown file and transform it into HTML with embedded shorthand labels
 
-    @doctype :bash: echo "<!DOCTYPE html>"
-    @headBlock :set: <head><title>@pageTitle</title>
-    @pageTemplate :import-markdown: post-template.md
-    @dateString :bash: date
-    @blogTitle :set:  My Blog
-    @pageTitle :set: A Post
-    @contentBlock :import-markdown: a-post.md
-    @output :expand-expansion: @doctype<html>@headBlock<body>@pageTemplate</body></html>
-    @output :export: post.html
+    :bash: @doctype echo "<!DOCTYPE html>"
+	:set: @headBlock <head><title>@pageTitle</title>
+	:import-markdown: @pageTemplate post-template.md
+	:bash: @dateString date
+	:set: @blogTitle My Blog
+	:set: @pageTitle A Post
+	:import-markdown: @contentBlock a-post.md
+	:expand-expansion: @output @doctype<html>@headBlock<body>@pageTemplate</body></html>
+	:export: @output post.html
 
 `
 
@@ -234,27 +234,27 @@ func New() *VirtualMachine {
 	vm.Help = make(map[string]string)
 
 	// Register the built-in operators (readable versions)
-	vm.RegisterOp(" :set: ", AssignString, "Assign a string to label")
-	vm.RegisterOp(" :import-text: ", AssignInclude, "Include content and assign to label")
-	vm.RegisterOp(" :import-shorthand: ", ImportAssignments, "Import assignments from a shorthand file")
+	vm.RegisterOp(":set:", AssignString, "Assign a string to label")
+	vm.RegisterOp(":import-text:", AssignInclude, "Include content and assign to label")
+	vm.RegisterOp(":import-shorthand:", ImportAssignments, "Import assignments from a shorthand file")
 
-	vm.RegisterOp(" :expand: ", AssignExpansion, "Expand and assign to label")
-	vm.RegisterOp(" :expand-expansion: ", AssignExpandExpansion, "Expand and expansion and assign to label")
-	vm.RegisterOp(" :import: ", IncludeExpansion, "Include a file, evaluate the shorthand")
+	vm.RegisterOp(":expand:", AssignExpansion, "Expand and assign to label")
+	vm.RegisterOp(":expand-expansion:", AssignExpandExpansion, "Expand and expansion and assign to label")
+	vm.RegisterOp(":import:", IncludeExpansion, "Include a file, evaluate the shorthand")
 
-	vm.RegisterOp(" :bash: ", AssignShell, "Assign the output of a Bash command to label")
-	vm.RegisterOp(" :expand-and-bash: ", AssignExpandShell, "Expand and then assign the results of a Bash command to label")
+	vm.RegisterOp(":bash:", AssignShell, "Assign the output of a Bash command to label")
+	vm.RegisterOp(":expand-and-bash:", AssignExpandShell, "Expand and then assign the results of a Bash command to label")
 
-	vm.RegisterOp(" :markdown: ", AssignMarkdown, "Convert markdown and assign to label")
-	vm.RegisterOp(" :expand-markdown: ", AssignExpandMarkdown, "Expand and convert markdown and assign to label")
-	vm.RegisterOp(" :import-markdown: ", IncludeMarkdown, "Include and convert markdown and assign to label")
-	vm.RegisterOp(" :import-expand-markdown: ", IncludeExpandMarkdown, "Include an expansion, convert with Markdown and assign to label")
+	vm.RegisterOp(":markdown:", AssignMarkdown, "Convert markdown and assign to label")
+	vm.RegisterOp(":expand-markdown:", AssignExpandMarkdown, "Expand and convert markdown and assign to label")
+	vm.RegisterOp(":import-markdown:", IncludeMarkdown, "Include and convert markdown and assign to label")
+	vm.RegisterOp(":import-expand-markdown:", IncludeExpandMarkdown, "Include an expansion, convert with Markdown and assign to label")
 
-	vm.RegisterOp(" :export: ", OutputExpansion, "Write an the contents of an label to a file")
-	vm.RegisterOp(" :export-all: ", OutputExpansions, "Write all label contents to a (order not guaranteed)")
+	vm.RegisterOp(":export:", OutputExpansion, "Write an the contents of an label to a file")
+	vm.RegisterOp(":export-all:", OutputExpansions, "Write all label contents to a (order not guaranteed)")
 
-	vm.RegisterOp(" :export-shorthand: ", ExportAssignment, "Export assignment to a file")
-	vm.RegisterOp(" :export-all-shorthand: ", ExportAssignments, "Expand all assignments (order not guaranteed)")
+	vm.RegisterOp(":export-shorthand:", ExportAssignment, "Export assignment to a file")
+	vm.RegisterOp(":export-all-shorthand:", ExportAssignments, "Expand all assignments (order not guaranteed)")
 
 	return vm
 }
@@ -283,12 +283,13 @@ func (vm *VirtualMachine) RegisterOp(op string, callback func(*VirtualMachine, S
 func (vm *VirtualMachine) Parse(s string, lineNo int) SourceMap {
 	for _, op := range vm.Ops {
 		if strings.Contains(s, op) {
-			parts := strings.SplitN(strings.TrimSpace(s), op, 2)
-			if len(parts) == 2 {
-				return SourceMap{Label: parts[0], Op: op, Source: parts[1], LineNo: lineNo, Expanded: ""}
+			// NOTE: I've changed to a VERB SUBJECT OBJECT from SUBJECT VERB OBJECT form
+			parts := strings.SplitN(strings.TrimSpace(s), " ", 3)
+			if len(parts) == 3 {
+				return SourceMap{Label: parts[1], Op: op, Source: parts[2], LineNo: lineNo, Expanded: ""}
 			}
-			if len(parts) == 1 {
-				return SourceMap{Label: parts[0], Op: op, Source: "", LineNo: lineNo, Expanded: ""}
+			if len(parts) == 2 {
+				return SourceMap{Label: parts[1], Op: op, Source: "", LineNo: lineNo, Expanded: ""}
 			}
 			return SourceMap{Label: "", Op: op, Source: "", LineNo: lineNo, Expanded: ""}
 		}

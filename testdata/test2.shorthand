@@ -1,6 +1,6 @@
-H2 :set second level header element
-@page :import-markdown: testdata/test.md
+:set: H2 second level header element
+:import-markdown: @page testdata/test.md
 @page
 
 See testdata/test.html for results
-@page :export: testdata/test.html
+:export: @page testdata/test.html

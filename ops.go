@@ -171,7 +171,7 @@ var OutputExpansions = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error)
 // ExportAssignment write the assignment to a file
 var ExportAssignment = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	oSM := vm.Symbols.GetSymbol(sm.Label)
-	out := fmt.Sprintf("%s%s%s", oSM.Label, oSM.Op, oSM.Source)
+	out := fmt.Sprintf("%s %s %s", oSM.Op, oSM.Label, oSM.Source)
 	fname := sm.Source
 	err := ioutil.WriteFile(fname, []byte(out), 0666)
 	if err != nil {
@@ -189,7 +189,7 @@ var ExportAssignments = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error
 	defer fp.Close()
 	symbols := vm.Symbols.GetSymbols()
 	for _, oSM := range symbols {
-		fmt.Fprintf(fp, "%s%s%s\n", oSM.Label, oSM.Op, oSM.Source)
+		fmt.Fprintf(fp, "%s %s %s\n", oSM.Op, oSM.Label, oSM.Source)
 	}
 	return sm, nil
 }
