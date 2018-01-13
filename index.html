@@ -50,9 +50,9 @@ options.</p>
 
 <p>From the command line you can do something like this</p>
 
-<pre><code class="language-shell">    shorthand -e '@now :bash: date' \
-        -e &quot;@report :import-text: testdata/report.md&quot; \
-        -e &quot;@html :markdown: @report&quot; \
+<pre><code class="language-shell">    shorthand -e ':bash: @now date' \
+        -e &quot;:import-text: @report testdata/report.md&quot; \
+        -e &quot;:markdown: @html @report&quot; \
         -e &quot;@html&quot; \
         -e ':exit:' &gt; testdata/report.html
 </code></pre>
