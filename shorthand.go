@@ -320,20 +320,24 @@ func (vm *VirtualMachine) Eval(s string, lineNo int) (string, error) {
 	if sm.Label == "" && sm.Op == "" {
 		return fmt.Sprintf("%s", vm.Expand(s)), nil
 	}
+	return "", vm.EvalSymbol(sm)
+}
 
+// EvalSymbol accepts a symbol (i.e. SourceMap), applies a callback and updates the symbol table
+func (vm *VirtualMachine) EvalSymbol(sm SourceMap) error {
 	callback, ok := vm.Operators[sm.Op]
 	if ok == false {
-		return "", fmt.Errorf("ERROR (%d): %s is not a supported assignment.\n", lineNo, s)
+		return fmt.Errorf("ERROR (%d): `%s %s %s` is not a supported assignment.\n", sm.LineNo, sm.Op, sm.Label, sm.Source)
 	}
 
 	// Make the associated assignment and save the symbol to the symbol table.
 	newSM, err := callback(vm, sm)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	vm.Symbols.SetSymbol(newSM)
-	return "", nil
+	return nil
 }
 
 // Apply takes a byte array, and processes it returning a byte array. It is
