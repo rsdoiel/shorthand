@@ -50,7 +50,7 @@ not written to stdout output.
 
 operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :label:                    | Assign String                            | {{name}} :label: Freda
+ :set:                      | Assign String                            | {{name}} :set: Freda
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :import-text:              | Assign the contents of a file            | {{content}} :import-text: myfile.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -62,7 +62,7 @@ operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :import:                   | Include a file, procesisng the shorthand | {{nav}} :import: mynav.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :bash:                     | Assign Shell output                      | {{date}} :bash: date +%Y-%m-%d
+ :bash:                     | Assign Shell output                      | {{date}} :bash: date +%Y-%m-%%d
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :expand-and-bash:          | Assign Expand then gete Shell output     | {{entry}} :expand-and-bash: cat header.txt @filename footer.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -78,9 +78,9 @@ operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :export-all:               | Output all assigned Expansions           | _ :export-all: contents.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-label:             | Output Assignment                        | {{content}} :export-label: content.shorthand
+ :export-shorthand:             | Output Assignment                        | {{content}} :export-shorthand: content.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-all-labels:        | Output all Assignments                   | _ :export-all-labels: contents.shorthand
+ :export-all-shorthand:        | Output all shorthand assignments      | _ :export-all-shorthand: contents.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :exit:                     | Exit the shorthand repl                  | :exit:
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -90,15 +90,15 @@ operator                    | meaning                                  | example
 Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment 
 statements to a file.
 
-The spaces surrounding " :label: ", " :import-text: ", " :bash: ", " :expand: ", " :export: ", etc. are required.
+The spaces following surrounding ":set:", ":import-text:", ":bash:", ":expand:", ":export:", etc. are required.
 
 
 EXAMPLE
 
 In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label {{NOW}}.
 
-    {{PREAMBLE}} :import-text: /home/me/preamble.text
-    {{NOW}} :label: 3:30
+    :import-text: {{PREAMBLE}} /home/me/preamble.text
+	:set: {{NOW}} 3:30
 
     At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.
 
@@ -112,8 +112,8 @@ Notice the lines containing the assignments are not included in the output and t
 substituted labels.
 
 + Assign shorthand expansions to a LABEL
-    + LABEL :expand: SHORTHAND_TO_BE_EXPANDED
-    + @content@ :expand: @report_name@ @report_date@
+    + :expand: LABEL SHORTHAND_TO_BE_EXPANDED
+	+ :expand: @content@ @report_name@ @report_date@
         + this would concatenate report name and date
 
 
@@ -160,16 +160,16 @@ The following assumes you are in the _shorthand_ repl.
 
 Load the mardkown file and transform it into HTML with embedded shorthand labels
 
-    @doctype :bash: echo "<!DOCTYPE html>"
-    @headBlock :label: <head><title>@pageTitle</title>
-    @pageTemplate :import-markdown: post-template.md
-    @dateString :bash: date
-    @blogTitle :label:  My Blog
-    @pageTitle :label A Post
-    @contentBlock :import-markdown: a-post.md
-    @output :expand-expansion: @doctype<html>@headBlock<body>@pageTemplate</body></html>
-    @output :export: post.html
+    :bash: @doctype echo "<!DOCTYPE html>"
+	:set: @headBlock <head><title>@pageTitle</title>
+	:import-markdown: @pageTemplate post-template.md
+	:bash: @dateString date
+	:set: @blogTitle My Blog
+	:set: @pageTitle A Post
+	:import-markdown: @contentBlock a-post.md
+	:expand-expansion: @output @doctype<html>@headBlock<body>@pageTemplate</body></html>
+	:export: @output post.html
 
 
 
-shorthand v0.0.11
+shorthand v0.0.13-dev

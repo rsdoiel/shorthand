@@ -19,37 +19,37 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 
 operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :label:                    | Assign String                            | {{name}} :label: Freda
+ :set:                      | Assign String                            | :set: {{name}} Freda
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-text:              | Assign the contents of a file            | {{content}} :import-text: myfile.txt
+ :import-text:              | Assign the contents of a file            | :import-text: {{content}} myfile.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-shorthand:         | Get assignments from a file              | _ :import-shorthand: myfile.shorthand
+ :import-shorthand:         | Get assignments from a file              | :import-shorthand: _ myfile.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand:                   | Assign an expansion                      | $reportTitle$ :expand: Report: @title for @date
+ :expand:                   | Assign an expansion                      | :expand: $reportTitle$ Report: @title for @date
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand-expansion:         | Assign expanded expansion                | {{reportHeading}} :expand-expansion: @reportTitle
+ :expand-expansion:         | Assign expanded expansion                | :expand-expansion: {{reportHeading}} @reportTitle
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-expansion:         | Include Expansion                        | @nav@ :import-expansion: mynav.html
+ :import-expansion:         | Include Expansion                        | :import-expansion: @nav@ mynav.html
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :bash:                     | Assign Shell output                      | {{date}} :bash: date +%Y-%m-%d
+ :bash:                     | Assign Shell output                      | :bash: {{date}} date +%Y-%m-%d
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand-and-bash:          | Assign Expand then gete Shell output     | {{entry}} :expand-and-bash: cat header.txt @filename footer.txt
+ :expand-and-bash:          | Assign Expand then gete Shell output     | :expand-and-bash: {{entry}} cat header.txt @filename footer.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :markdown:                 | Assign Markdown processed text           | {div} :markdown: # My h1 for a Div
+ :markdown:                 | Assign Markdown processed text           | :markdown: {div} # My h1 for a Div
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand-markdown:          | Assign Expanded Markdown                 | {{div}} :expand-markdown: Greetings **@name**
+ :expand-markdown:          | Assign Expanded Markdown                 | :expand-markdown: {{div}} Greetings **@name**
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-markdown:          | Include Markdown processed text          | $nav$ :import-markdown: mynav.md
+ :import-markdown:          | Include Markdown processed text          | :import-markdown: $nav$ mynav.md
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-expanded-markdown: | Include Expanded Markdown processed text | {nav} :import-expanded-markdown: mynav.md
+ :import-expanded-markdown: | Include Expanded Markdown processed text | :import-expanded-markdown: {nav} mynav.md
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-expansion:         | Output Assigned Expansion                | {{content}} :export-expansion: content.txt
+ :export-expansion:         | Output Assigned Expansion                | :export-expansion: {{content}} content.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-all-expansions:    | Output all assigned Expansions           | _ :export-all-expansions: contents.txt
+ :export-all-expansions:    | Output all assigned Expansions           | :export-all-expansions: _ contents.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-label:             | Output Assignment                        | {{content}} :export-label: content.shorthand
+ :export-label:             | Output Assignment                        | :export-label: {{content}} content.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-all-labels:        | Output all Assignments                   | _ :export-all-labels: contents.shorthand
+ :export-all-labels:        | Output all Assignments                   | :export-all-labels: _ contents.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :exit:                     | Exit the shorthand repl                  | :exit:
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -65,8 +65,8 @@ The spaces surrounding " :label: ", " :import-text: ", " :bash: ", " :expand: ",
 
 In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label @NOW.  
 ```text
-    {{PREAMBLE}} :import-text: /home/me/preamble.text
-    {{NOW}} :label: 3:30
+    :import-text: {{PREAMBLE}} /home/me/preamble.text
+    :set: {{NOW}} 3:30
 
     At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.
 ```
@@ -80,8 +80,8 @@ If the file preamble.txt contained the phrase "Hello World" (including the quote
 
 Notice the lines containing the assignments are not included in the output and that no carriage returns or line feeds are added the the substituted labels.
 + Assign shorthand expansions to a LABEL
-    + LABEL :expand: SHORTHAND_TO_BE_EXPANDED
-    + @content@ :expand: @report_name@ @report_date@
+    + :expand: LABEL SHORTHAND_TO_BE_EXPANDED
+    + :expand: @content@ @report_name@ @report_date@
         + this would concatenate report name and date
 
 ### Processing Markdown pages
@@ -132,15 +132,15 @@ The following assumes you are in the _shorthand_ repl.
 Load the mardkown file and transform it into HTML with embedded shorthand labels
 
 ```shell
-    @doctype :bash: echo "<!DOCTYPE html>"
-    @headBlock :label: <head><title>@pageTitle</title>
-    @pageTemplate :import-markdown: post-template.md
-    @dateString :bash: date
-    @blogTitle :label:  My Blog
-    @pageTitle :label A Post
-    @contentBlock :import-markdown: a-post.md
-    @output :expand-expansion: @doctype<html>@headBlock<body>@pageTemplate</body></html>
-    @output :export-expansion: post.html
+    :bash: @doctype echo "<!DOCTYPE html>"
+    :set: @headBlock <head><title>@pageTitle</title>
+    :import-markdown: @pageTemplate post-template.md
+    :bash: @dateString date
+    :label: @blogTitle My Blog
+    :label: @pageTitle A Post
+    :import-markdown: @contentBlock a-post.md
+    :expand-expansion: @output @doctype<html>@headBlock<body>@pageTemplate</body></html>
+    :export-expansion: @output post.html
 ```
 
 

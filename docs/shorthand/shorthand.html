@@ -68,9 +68,9 @@ not written to stdout output.</p>
 
 <tbody>
 <tr>
-<td>:label:</td>
+<td>:set:</td>
 <td>Assign String</td>
-<td>{{name}} :label: Freda</td>
+<td>{{name}} :set: Freda</td>
 </tr>
 
 <tr>
@@ -142,7 +142,7 @@ not written to stdout output.</p>
 <tr>
 <td>:bash:</td>
 <td>Assign Shell output</td>
-<td>{{date}} :bash: date +%Y-%m-%d</td>
+<td>{{date}} :bash: date +%Y-%m-%%d</td>
 </tr>
 
 <tr>
@@ -236,9 +236,9 @@ not written to stdout output.</p>
 </tr>
 
 <tr>
-<td>:export-label:</td>
+<td>:export-shorthand:</td>
 <td>Output Assignment</td>
-<td>{{content}} :export-label: content.shorthand</td>
+<td>{{content}} :export-shorthand: content.shorthand</td>
 </tr>
 
 <tr>
@@ -248,9 +248,9 @@ not written to stdout output.</p>
 </tr>
 
 <tr>
-<td>:export-all-labels:</td>
-<td>Output all Assignments</td>
-<td>_ :export-all-labels: contents.shorthand</td>
+<td>:export-all-shorthand:</td>
+<td>Output all shorthand assignments</td>
+<td>_ :export-all-shorthand: contents.shorthand</td>
 </tr>
 
 <tr>
@@ -276,14 +276,14 @@ not written to stdout output.</p>
 <p>Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment
 statements to a file.</p>
 
-<p>The spaces surrounding &ldquo; :label: &ldquo;, &rdquo; :import-text: &ldquo;, &rdquo; :bash: &ldquo;, &rdquo; :expand: &ldquo;, &rdquo; :export: &ldquo;, etc. are required.</p>
+<p>The spaces following surrounding &ldquo;:set:&ldquo;, &ldquo;:import-text:&ldquo;, &ldquo;:bash:&ldquo;, &ldquo;:expand:&ldquo;, &ldquo;:export:&ldquo;, etc. are required.</p>
 
 <p>EXAMPLE</p>
 
 <p>In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label {{NOW}}.</p>
 
-<pre><code>{{PREAMBLE}} :import-text: /home/me/preamble.text
-{{NOW}} :label: 3:30
+<pre><code>:import-text: {{PREAMBLE}} /home/me/preamble.text
+:set: {{NOW}} 3:30
 
 At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.
 </code></pre>
@@ -301,8 +301,8 @@ substituted labels.</p>
 <li>Assign shorthand expansions to a LABEL
 
 <ul>
-<li>LABEL :expand: SHORTHAND_TO_BE_EXPANDED</li>
-<li>@content@ :expand: @report_name@ @report_date@
+<li>:expand: LABEL SHORTHAND_TO_BE_EXPANDED</li>
+<li>:expand: @content@ @report_name@ @report_date@
 
 <ul>
 <li>this would concatenate report name and date</li>
@@ -355,18 +355,18 @@ ready for an assignment or expansion.</p>
 
 <p>Load the mardkown file and transform it into HTML with embedded shorthand labels</p>
 
-<pre><code>@doctype :bash: echo &quot;&lt;!DOCTYPE html&gt;&quot;
-@headBlock :label: &lt;head&gt;&lt;title&gt;@pageTitle&lt;/title&gt;
-@pageTemplate :import-markdown: post-template.md
-@dateString :bash: date
-@blogTitle :label:  My Blog
-@pageTitle :label A Post
-@contentBlock :import-markdown: a-post.md
-@output :expand-expansion: @doctype&lt;html&gt;@headBlock&lt;body&gt;@pageTemplate&lt;/body&gt;&lt;/html&gt;
-@output :export: post.html
+<pre><code>:bash: @doctype echo &quot;&lt;!DOCTYPE html&gt;&quot;
+:set: @headBlock &lt;head&gt;&lt;title&gt;@pageTitle&lt;/title&gt;
+:import-markdown: @pageTemplate post-template.md
+:bash: @dateString date
+:set: @blogTitle My Blog
+:set: @pageTitle A Post
+:import-markdown: @contentBlock a-post.md
+:expand-expansion: @output @doctype&lt;html&gt;@headBlock&lt;body&gt;@pageTemplate&lt;/body&gt;&lt;/html&gt;
+:export: @output post.html
 </code></pre>
 
-<p>shorthand v0.0.11</p>
+<p>shorthand v0.0.13-dev</p>
 
 </section>
 <nav>

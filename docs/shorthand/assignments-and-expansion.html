@@ -40,9 +40,9 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 
 <tbody>
 <tr>
-<td>:label:</td>
+<td>:set:</td>
 <td>Assign String</td>
-<td>{{name}} :label: Freda</td>
+<td>:set: {{name}} Freda</td>
 </tr>
 
 <tr>
@@ -54,7 +54,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:import-text:</td>
 <td>Assign the contents of a file</td>
-<td>{{content}} :import-text: myfile.txt</td>
+<td>:import-text: {{content}} myfile.txt</td>
 </tr>
 
 <tr>
@@ -66,7 +66,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:import-shorthand:</td>
 <td>Get assignments from a file</td>
-<td>_ :import-shorthand: myfile.shorthand</td>
+<td>:import-shorthand: _ myfile.shorthand</td>
 </tr>
 
 <tr>
@@ -78,7 +78,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:expand:</td>
 <td>Assign an expansion</td>
-<td>$reportTitle$ :expand: Report: @title for @date</td>
+<td>:expand: $reportTitle$ Report: @title for @date</td>
 </tr>
 
 <tr>
@@ -90,7 +90,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:expand-expansion:</td>
 <td>Assign expanded expansion</td>
-<td>{{reportHeading}} :expand-expansion: @reportTitle</td>
+<td>:expand-expansion: {{reportHeading}} @reportTitle</td>
 </tr>
 
 <tr>
@@ -102,7 +102,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:import-expansion:</td>
 <td>Include Expansion</td>
-<td>@nav@ :import-expansion: mynav.html</td>
+<td>:import-expansion: @nav@ mynav.html</td>
 </tr>
 
 <tr>
@@ -114,7 +114,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:bash:</td>
 <td>Assign Shell output</td>
-<td>{{date}} :bash: date +%Y-%m-%d</td>
+<td>:bash: {{date}} date +%Y-%m-%d</td>
 </tr>
 
 <tr>
@@ -126,7 +126,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:expand-and-bash:</td>
 <td>Assign Expand then gete Shell output</td>
-<td>{{entry}} :expand-and-bash: cat header.txt @filename footer.txt</td>
+<td>:expand-and-bash: {{entry}} cat header.txt @filename footer.txt</td>
 </tr>
 
 <tr>
@@ -138,7 +138,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:markdown:</td>
 <td>Assign Markdown processed text</td>
-<td>{div} :markdown: # My h1 for a Div</td>
+<td>:markdown: {div} # My h1 for a Div</td>
 </tr>
 
 <tr>
@@ -150,7 +150,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:expand-markdown:</td>
 <td>Assign Expanded Markdown</td>
-<td>{{div}} :expand-markdown: Greetings <strong>@name</strong></td>
+<td>:expand-markdown: {{div}} Greetings <strong>@name</strong></td>
 </tr>
 
 <tr>
@@ -162,7 +162,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:import-markdown:</td>
 <td>Include Markdown processed text</td>
-<td>$nav$ :import-markdown: mynav.md</td>
+<td>:import-markdown: $nav$ mynav.md</td>
 </tr>
 
 <tr>
@@ -174,7 +174,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:import-expanded-markdown:</td>
 <td>Include Expanded Markdown processed text</td>
-<td>{nav} :import-expanded-markdown: mynav.md</td>
+<td>:import-expanded-markdown: {nav} mynav.md</td>
 </tr>
 
 <tr>
@@ -186,7 +186,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:export-expansion:</td>
 <td>Output Assigned Expansion</td>
-<td>{{content}} :export-expansion: content.txt</td>
+<td>:export-expansion: {{content}} content.txt</td>
 </tr>
 
 <tr>
@@ -198,7 +198,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:export-all-expansions:</td>
 <td>Output all assigned Expansions</td>
-<td>_ :export-all-expansions: contents.txt</td>
+<td>:export-all-expansions: _ contents.txt</td>
 </tr>
 
 <tr>
@@ -210,7 +210,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:export-label:</td>
 <td>Output Assignment</td>
-<td>{{content}} :export-label: content.shorthand</td>
+<td>:export-label: {{content}} content.shorthand</td>
 </tr>
 
 <tr>
@@ -222,7 +222,7 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 <tr>
 <td>:export-all-labels:</td>
 <td>Output all Assignments</td>
-<td>_ :export-all-labels: contents.shorthand</td>
+<td>:export-all-labels: _ contents.shorthand</td>
 </tr>
 
 <tr>
@@ -253,8 +253,8 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 
 <p>In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label @NOW.</p>
 
-<pre><code class="language-text">    {{PREAMBLE}} :import-text: /home/me/preamble.text
-    {{NOW}} :label: 3:30
+<pre><code class="language-text">    :import-text: {{PREAMBLE}} /home/me/preamble.text
+    :set: {{NOW}} 3:30
 
     At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.
 </code></pre>
@@ -267,8 +267,8 @@ and cannot be in the pattern of space, colon, string, colon and space.  An assig
 
 <p>Notice the lines containing the assignments are not included in the output and that no carriage returns or line feeds are added the the substituted labels.
 + Assign shorthand expansions to a LABEL
-    + LABEL :expand: SHORTHAND_TO_BE_EXPANDED
-    + @content@ :expand: @report_name@ @report_date@
+    + :expand: LABEL SHORTHAND_TO_BE_EXPANDED
+    + :expand: @content@ @report_name@ @report_date@
         + this would concatenate report name and date</p>
 
 <h3>Processing Markdown pages</h3>
@@ -318,15 +318,15 @@ it will display &ldquo;? &rdquo; to indicate it is ready for an assignment or ex
 
 <p>Load the mardkown file and transform it into HTML with embedded shorthand labels</p>
 
-<pre><code class="language-shell">    @doctype :bash: echo &quot;&lt;!DOCTYPE html&gt;&quot;
-    @headBlock :label: &lt;head&gt;&lt;title&gt;@pageTitle&lt;/title&gt;
-    @pageTemplate :import-markdown: post-template.md
-    @dateString :bash: date
-    @blogTitle :label:  My Blog
-    @pageTitle :label A Post
-    @contentBlock :import-markdown: a-post.md
-    @output :expand-expansion: @doctype&lt;html&gt;@headBlock&lt;body&gt;@pageTemplate&lt;/body&gt;&lt;/html&gt;
-    @output :export-expansion: post.html
+<pre><code class="language-shell">    :bash: @doctype echo &quot;&lt;!DOCTYPE html&gt;&quot;
+    :set: @headBlock &lt;head&gt;&lt;title&gt;@pageTitle&lt;/title&gt;
+    :import-markdown: @pageTemplate post-template.md
+    :bash: @dateString date
+    :label: @blogTitle My Blog
+    :label: @pageTitle A Post
+    :import-markdown: @contentBlock a-post.md
+    :expand-expansion: @output @doctype&lt;html&gt;@headBlock&lt;body&gt;@pageTemplate&lt;/body&gt;&lt;/html&gt;
+    :export-expansion: @output post.html
 </code></pre>
 
 </section>
