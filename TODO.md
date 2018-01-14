@@ -9,6 +9,10 @@
 
 ## Think about ideas
 
++ [ ] Adding S-expression support
++ [ ] Adding multi line assigments to a label
++ [ ] Defining based on prefix/suffixes matching and allow space inside the label text.
+
 ## Completed
 
 + [x] Need to switch notation from infix to prefix for assignment ops
