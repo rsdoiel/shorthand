@@ -30,7 +30,7 @@ from standard input and writes to standard output.`
 
 	license = `%s %s
 
-copyright (c) 2015 all rights reserved.
+copyright (c) 2018 all rights reserved.
 Released under the BSD 2-Clause license.
 See: http://opensource.org/licenses/BSD-2-Clause`
 
