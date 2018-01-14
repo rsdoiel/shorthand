@@ -5,14 +5,14 @@
 
 ## Next
 
-+ [ ] Need to switch notation from infix to prefix for assignment ops
-
 ## Someday maybe
 
 ## Think about ideas
 
 ## Completed
 
++ [x] Need to switch notation from infix to prefix for assignment ops
++ [x] Added EvalSymbol which lets you construct your own Symbol and send it to the VM (like Eval without the parse step)
 + [x] need an EvalString function that takes a function table, symbol table and input string and either writes a string to stdout, make a new assignment or emits an error message with line number
 + [x] need a RegisterOp function that takes a string and a function and stores the result in a function table
 + [x] make a decision about labels being immutable or not.

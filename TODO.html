@@ -15,10 +15,6 @@
 
 <h2>Next</h2>
 
-<ul>
-<li>[ ] Need to switch notation from infix to prefix for assignment ops</li>
-</ul>
-
 <h2>Someday maybe</h2>
 
 <h2>Think about ideas</h2>
@@ -26,6 +22,8 @@
 <h2>Completed</h2>
 
 <ul>
+<li>[x] Need to switch notation from infix to prefix for assignment ops</li>
+<li>[x] Added EvalSymbol which lets you construct your own Symbol and send it to the VM (like Eval without the parse step)</li>
 <li>[x] need an EvalString function that takes a function table, symbol table and input string and either writes a string to stdout, make a new assignment or emits an error message with line number</li>
 <li>[x] need a RegisterOp function that takes a string and a function and stores the result in a function table</li>
 <li>[x] make a decision about labels being immutable or not.

@@ -172,4 +172,4 @@ Load the mardkown file and transform it into HTML with embedded shorthand labels
 
 
 
-shorthand v0.0.13-dev
+shorthand v0.1.0
