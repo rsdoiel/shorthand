@@ -46,37 +46,37 @@ not written to stdout output.
 
 operator                    | meaning                                  | example
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :set:                      | Assign String                            | {{name}} :set: Freda
+ :set:                      | Assign String                            | :set: {{name}} Freda
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-text:              | Assign the contents of a file            | {{content}} :import-text: myfile.txt
+ :import-text:              | Assign the contents of a file            | :import-text: {{content}} myfile.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-shorthand:         | Get assignments from a file              | _ :import-shorthand: myfile.shorthand
+ :import-shorthand:         | Get assignments from a file              | :import-shorthand: _ myfile.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand:                   | Assign an expansion                      | {{reportTitle}} :expand: Report: @title for @date
+ :expand:                   | Assign an expansion                      | :expand: {{reportTitle}} Report: @title for @date
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand-expansion:         | Assign expanded expansion                | {{reportHeading}} :expand-expansion: @reportTitle
+ :expand-expansion:         | Assign expanded expansion                | :expand-expansion: {{reportHeading}} @reportTitle
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import:                   | Include a file, procesisng the shorthand | {{nav}} :import: mynav.shorthand
+ :import:                   | Include a file, procesisng the shorthand | :import: {{nav}} mynav.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :bash:                     | Assign Shell output                      | {{date}} :bash: date +%Y-%m-%%d
+ :bash:                     | Assign Shell output                      | :bash: {{date}} date +%Y-%m-%%d
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand-and-bash:          | Assign Expand then gete Shell output     | {{entry}} :expand-and-bash: cat header.txt @filename footer.txt
+ :expand-and-bash:          | Assign Expand then gete Shell output     | :expand-and-bash: {{entry}} cat header.txt @filename footer.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :markdown:                 | Assign Markdown processed text           | {{div}} :markdown: # My h1 for a Div
+ :markdown:                 | Assign Markdown processed text           | :markdown: {{div}} # My h1 for a Div
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand-markdown:          | Assign Expanded Markdown                 | {{div}} :expand-markdown: Greetings **@name**
+ :expand-markdown:          | Assign Expanded Markdown                 | :expand-markdown: {{div}} Greetings **@name**
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-markdown:          | Include Markdown processed text          | {{nav}} :import-markdown: mynav.md
+ :import-markdown:          | Include Markdown processed text          | :import-markdown: {{nav}} mynav.md
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-expanded-markdown: | Include Expanded Markdown processed text | {{nav}} :import-expanded-markdown: mynav.md
+ :import-expanded-markdown: | Include Expanded Markdown processed text | :import-expanded-markdown: {{nav}} mynav.md
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export:                   | Output a label's value to a file         | {{content}} :export: content.txt
+ :export:                   | Output a label's value to a file         | :export: {{content}} content.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-all:               | Output all assigned Expansions           | _ :export-all: contents.txt
+ :export-all:               | Output all assigned Expansions           | :export-all: _ contents.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-shorthand:             | Output Assignment                        | {{content}} :export-shorthand: content.shorthand
+ :export-shorthand:             | Output Assignment                        | :export-shorthand: {{content}} content.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-all-shorthand:        | Output all shorthand assignments      | _ :export-all-shorthand: contents.shorthand
+ :export-all-shorthand:        | Output all shorthand assignments      | :export-all-shorthand: _ contents.shorthand
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :exit:                     | Exit the shorthand repl                  | :exit:
 ----------------------------|------------------------------------------|---------------------------------------------------------------------

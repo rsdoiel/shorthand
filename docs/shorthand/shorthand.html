@@ -70,7 +70,7 @@ not written to stdout output.</p>
 <tr>
 <td>:set:</td>
 <td>Assign String</td>
-<td>{{name}} :set: Freda</td>
+<td>:set: {{name}} Freda</td>
 </tr>
 
 <tr>
@@ -82,7 +82,7 @@ not written to stdout output.</p>
 <tr>
 <td>:import-text:</td>
 <td>Assign the contents of a file</td>
-<td>{{content}} :import-text: myfile.txt</td>
+<td>:import-text: {{content}} myfile.txt</td>
 </tr>
 
 <tr>
@@ -94,7 +94,7 @@ not written to stdout output.</p>
 <tr>
 <td>:import-shorthand:</td>
 <td>Get assignments from a file</td>
-<td>_ :import-shorthand: myfile.shorthand</td>
+<td>:import-shorthand: _ myfile.shorthand</td>
 </tr>
 
 <tr>
@@ -106,7 +106,7 @@ not written to stdout output.</p>
 <tr>
 <td>:expand:</td>
 <td>Assign an expansion</td>
-<td>{{reportTitle}} :expand: Report: @title for @date</td>
+<td>:expand: {{reportTitle}} Report: @title for @date</td>
 </tr>
 
 <tr>
@@ -118,7 +118,7 @@ not written to stdout output.</p>
 <tr>
 <td>:expand-expansion:</td>
 <td>Assign expanded expansion</td>
-<td>{{reportHeading}} :expand-expansion: @reportTitle</td>
+<td>:expand-expansion: {{reportHeading}} @reportTitle</td>
 </tr>
 
 <tr>
@@ -130,7 +130,7 @@ not written to stdout output.</p>
 <tr>
 <td>:import:</td>
 <td>Include a file, procesisng the shorthand</td>
-<td>{{nav}} :import: mynav.shorthand</td>
+<td>:import: {{nav}} mynav.shorthand</td>
 </tr>
 
 <tr>
@@ -142,7 +142,7 @@ not written to stdout output.</p>
 <tr>
 <td>:bash:</td>
 <td>Assign Shell output</td>
-<td>{{date}} :bash: date +%Y-%m-%%d</td>
+<td>:bash: {{date}} date +%Y-%m-%%d</td>
 </tr>
 
 <tr>
@@ -154,7 +154,7 @@ not written to stdout output.</p>
 <tr>
 <td>:expand-and-bash:</td>
 <td>Assign Expand then gete Shell output</td>
-<td>{{entry}} :expand-and-bash: cat header.txt @filename footer.txt</td>
+<td>:expand-and-bash: {{entry}} cat header.txt @filename footer.txt</td>
 </tr>
 
 <tr>
@@ -166,7 +166,7 @@ not written to stdout output.</p>
 <tr>
 <td>:markdown:</td>
 <td>Assign Markdown processed text</td>
-<td>{{div}} :markdown: # My h1 for a Div</td>
+<td>:markdown: {{div}} # My h1 for a Div</td>
 </tr>
 
 <tr>
@@ -178,7 +178,7 @@ not written to stdout output.</p>
 <tr>
 <td>:expand-markdown:</td>
 <td>Assign Expanded Markdown</td>
-<td>{{div}} :expand-markdown: Greetings <strong>@name</strong></td>
+<td>:expand-markdown: {{div}} Greetings <strong>@name</strong></td>
 </tr>
 
 <tr>
@@ -190,7 +190,7 @@ not written to stdout output.</p>
 <tr>
 <td>:import-markdown:</td>
 <td>Include Markdown processed text</td>
-<td>{{nav}} :import-markdown: mynav.md</td>
+<td>:import-markdown: {{nav}} mynav.md</td>
 </tr>
 
 <tr>
@@ -202,7 +202,7 @@ not written to stdout output.</p>
 <tr>
 <td>:import-expanded-markdown:</td>
 <td>Include Expanded Markdown processed text</td>
-<td>{{nav}} :import-expanded-markdown: mynav.md</td>
+<td>:import-expanded-markdown: {{nav}} mynav.md</td>
 </tr>
 
 <tr>
@@ -214,7 +214,7 @@ not written to stdout output.</p>
 <tr>
 <td>:export:</td>
 <td>Output a label&rsquo;s value to a file</td>
-<td>{{content}} :export: content.txt</td>
+<td>:export: {{content}} content.txt</td>
 </tr>
 
 <tr>
@@ -226,7 +226,7 @@ not written to stdout output.</p>
 <tr>
 <td>:export-all:</td>
 <td>Output all assigned Expansions</td>
-<td>_ :export-all: contents.txt</td>
+<td>:export-all: _ contents.txt</td>
 </tr>
 
 <tr>
@@ -238,7 +238,7 @@ not written to stdout output.</p>
 <tr>
 <td>:export-shorthand:</td>
 <td>Output Assignment</td>
-<td>{{content}} :export-shorthand: content.shorthand</td>
+<td>:export-shorthand: {{content}} content.shorthand</td>
 </tr>
 
 <tr>
@@ -250,7 +250,7 @@ not written to stdout output.</p>
 <tr>
 <td>:export-all-shorthand:</td>
 <td>Output all shorthand assignments</td>
-<td>_ :export-all-shorthand: contents.shorthand</td>
+<td>:export-all-shorthand: _ contents.shorthand</td>
 </tr>
 
 <tr>
