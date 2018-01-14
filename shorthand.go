@@ -22,7 +22,7 @@ import (
 )
 
 // Version nummber of library and utility
-const Version = "v0.0.13-dev"
+const Version = "v0.1.0"
 
 // HowItWorks is a help text describing shorthand.
 var HowItWorks = `
