@@ -23,10 +23,12 @@ import (
 )
 
 var (
-	description = `%s is a command line utility to expand labels based on their
-assigned definitions. The render output is the transformed text 
-and without the shorthand definitions themselves. %s reads 
-from standard input and writes to standard output.`
+	synopsis = `%s a simple label expander and markdown utility`
+
+	description = `%s is a command line utility to expand labels 
+based on their assigned definitions. The render output is the 
+transformed text and without the shorthand definitions themselves. 
+%s reads from standard input and writes to standard output.`
 
 	license = `%s %s
 
@@ -47,6 +49,7 @@ See: http://opensource.org/licenses/BSD-2-Clause`
 	outputFName          string
 	quiet                bool
 	generateMarkdownDocs bool
+	generateManPage      bool
 
 	// Application Options
 	prompt                  string
@@ -88,6 +91,7 @@ func main() {
 
 	// Add some help texts
 	app.AddHelp("welcome", []byte(welcome))
+	app.AddHelp("synopsis", []byte(fmt.Sprintf(synopsis, appName)))
 	app.AddHelp("description", []byte(fmt.Sprintf(description, appName, appName)))
 	app.AddHelp("examples", []byte(shorthand.HowItWorks))
 	app.AddHelp("license", []byte(fmt.Sprintf(license, appName)))
@@ -101,6 +105,7 @@ func main() {
 	app.StringVar(&outputFName, "o,output", "", "output filename")
 	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
 	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
+	app.BoolVar(&generateManPage, "generate-manpage", false, "output manpage")
 
 	// Application Options
 	app.StringVar(&prompt, "p,prompt", "=> ", "Output a prompt for interactive processing")
@@ -126,6 +131,10 @@ func main() {
 	// Handle options
 	if generateMarkdownDocs {
 		app.GenerateMarkdownDocs(app.Out)
+		os.Exit(0)
+	}
+	if generateManPage {
+		app.GenerateManPage(app.Out)
 		os.Exit(0)
 	}
 	if showHelp == true {
