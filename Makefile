@@ -8,7 +8,7 @@
 #
 PROJECT = shorthand
 
-VERSION = $(shell grep -m1 'Version = ' $(PROJECT).go | cut -d\"  -f 2)
+VERSION = $(shell grep -m1 'Version = ' $(PROJECT).go | cut -d\`  -f 2)
 
 BRANCH = $(shell git branch | cut -d\  -f 2)
 
