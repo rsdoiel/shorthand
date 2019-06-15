@@ -23,7 +23,7 @@ import (
 
 // Version nummber of library and utility
 const (
-	Version = `v0.1.0`
+	Version = `v0.1.1`
 )
 
 // HowItWorks is a help text describing shorthand.
