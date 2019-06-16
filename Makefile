@@ -95,8 +95,8 @@ distrubute_docs:
 release: distrubute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7 dist/linux-arm64
 
 website:
-	./mk-website.bash
+	./mk-website.py
 
 publish:
-	./mk-website.bash
+	./mk-website.py
 	./publish.bash
