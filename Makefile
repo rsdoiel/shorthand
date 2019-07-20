@@ -8,7 +8,7 @@
 #
 PROJECT = shorthand
 
-VERSION = $(shell grep -m1 'Version = ' $(PROJECT).go | cut -d\"  -f 2)
+VERSION = $(shell grep -m1 'Version = ' $(PROJECT).go | cut -d\`  -f 2)
 
 BRANCH = $(shell git branch | cut -d\  -f 2)
 
@@ -41,6 +41,11 @@ save:
 clean:
 	if [ -d bin ]; then rm -fR bin; fi
 	if [ -d dist ]; then rm -fR dist; fi
+	if [ -d man ]; then rm -fR man; fi
+
+man: build
+	mkdir -p man/man1
+	bin/shorthand -generate-manpage | nroff -Tutf8 -man > man/man1/shorthand.1
 
 install:
 	GOBIN=$(HOME)/bin go install cmd/shorthand/shorthand.go
@@ -90,8 +95,8 @@ distrubute_docs:
 release: distrubute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7 dist/linux-arm64
 
 website:
-	./mk-website.bash
+	./mk_website.py
 
 publish:
-	./mk-website.bash
+	./mk_website.py
 	./publish.bash

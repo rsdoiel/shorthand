@@ -4,7 +4,7 @@
 // shorthand definitions.
 //
 // @author R. S. Doiel, <rsdoiel@gmail.com>
-// copyright (c) 2015 all rights reserved.
+// copyright (c) 2019 all rights reserved.
 // Released under the BSD 2-Clause license.
 // See: http://opensource.org/licenses/BSD-2-Clause
 //
@@ -23,10 +23,12 @@ import (
 )
 
 var (
-	description = `%s is a command line utility to expand labels based on their
-assigned definitions. The render output is the transformed text 
-and without the shorthand definitions themselves. %s reads 
-from standard input and writes to standard output.`
+	synopsis = `%s a simple label expander and markdown utility`
+
+	description = `%s is a command line utility to expand labels 
+based on their assigned definitions. The render output is the 
+transformed text and without the shorthand definitions themselves. 
+%s reads from standard input and writes to standard output.`
 
 	license = `%s %s
 
@@ -39,14 +41,15 @@ See: http://opensource.org/licenses/BSD-2-Clause`
   Use ':exit:' to quit the repl, ':help:' to get a list of supported operators.
 `
 	// Standard Options
-	showHelp             bool
-	showLicense          bool
-	showVersion          bool
-	showExamples         bool
-	inputFName           string
-	outputFName          string
-	quiet                bool
-	generateMarkdownDocs bool
+	showHelp         bool
+	showLicense      bool
+	showVersion      bool
+	showExamples     bool
+	inputFName       string
+	outputFName      string
+	quiet            bool
+	generateMarkdown bool
+	generateManPage  bool
 
 	// Application Options
 	prompt                  string
@@ -84,10 +87,11 @@ func main() {
 	appName := app.AppName()
 
 	// Describe expexted non-option parameters
-	app.AddParams("[SHORTHAND_FILES]")
+	app.SetParams("[SHORTHAND_FILES]")
 
 	// Add some help texts
 	app.AddHelp("welcome", []byte(welcome))
+	app.AddHelp("synopsis", []byte(fmt.Sprintf(synopsis, appName)))
 	app.AddHelp("description", []byte(fmt.Sprintf(description, appName, appName)))
 	app.AddHelp("examples", []byte(shorthand.HowItWorks))
 	app.AddHelp("license", []byte(fmt.Sprintf(license, appName)))
@@ -100,7 +104,8 @@ func main() {
 	app.StringVar(&inputFName, "i,input", "", "input filename")
 	app.StringVar(&outputFName, "o,output", "", "output filename")
 	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
-	app.BoolVar(&generateMarkdownDocs, "generate-markdown-docs", false, "output documentation in Markdown")
+	app.BoolVar(&generateMarkdown, "generate-markdown", false, "output documentation in Markdown")
+	app.BoolVar(&generateManPage, "generate-manpage", false, "output manpage")
 
 	// Application Options
 	app.StringVar(&prompt, "p,prompt", "=> ", "Output a prompt for interactive processing")
@@ -124,8 +129,12 @@ func main() {
 	defer cli.CloseFile(outputFName, app.Out)
 
 	// Handle options
-	if generateMarkdownDocs {
-		app.GenerateMarkdownDocs(app.Out)
+	if generateMarkdown {
+		app.GenerateMarkdown(app.Out)
+		os.Exit(0)
+	}
+	if generateManPage {
+		app.GenerateManPage(app.Out)
 		os.Exit(0)
 	}
 	if showHelp == true {

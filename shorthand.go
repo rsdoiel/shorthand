@@ -5,7 +5,7 @@
 // as shorthand when a template language is too much.
 //
 // @author R. S. Doiel, <rsdoiel@gmail.com>
-// copyright (c) 2015 all rights reserved.
+// copyright (c) 2019 all rights reserved.
 // Released under the BSD 2-Clause license
 // See: http://opensource.org/licenses/BSD-2-Clause
 //
@@ -22,7 +22,9 @@ import (
 )
 
 // Version nummber of library and utility
-const Version = "v0.1.0"
+const (
+	Version = `v0.1.1`
+)
 
 // HowItWorks is a help text describing shorthand.
 var HowItWorks = `
