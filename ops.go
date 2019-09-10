@@ -20,9 +20,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-
-	// 3rd party packages
-	"github.com/russross/blackfriday"
 )
 
 //AssignString take the Source and copy to Expanded
@@ -109,14 +106,14 @@ var AssignExpandShell = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error
 
 // AssignMarkdown process Source with Blackfriday and copy
 var AssignMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	expanded := string(blackfriday.MarkdownCommon([]byte(sm.Source)))
+	expanded := string(MarkdownToHTML([]byte(sm.Source)))
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
 // AssignExpandMarkdown process source, expand witi BlackFriday and copy
 var AssignExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	tmp := vm.Expand(sm.Source)
-	expanded := string(blackfriday.MarkdownCommon([]byte(tmp)))
+	expanded := string(MarkdownToHTML([]byte(tmp)))
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
@@ -127,7 +124,7 @@ var IncludeMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) 
 		return sm, err
 	}
 	tmp := string(buf)
-	expanded := string(blackfriday.MarkdownCommon([]byte(tmp)))
+	expanded := string(MarkdownToHTML([]byte(tmp)))
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
@@ -138,7 +135,7 @@ var IncludeExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, e
 		return sm, err
 	}
 	tmp := vm.Expand(string(buf))
-	expanded := string(blackfriday.MarkdownCommon([]byte(tmp)))
+	expanded := string(MarkdownToHTML([]byte(tmp)))
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 

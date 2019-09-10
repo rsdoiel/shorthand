@@ -22,9 +22,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
-	// 3rd Party packages
-	"github.com/russross/blackfriday"
 )
 
 // notOk is similar to assertError true
@@ -886,8 +883,8 @@ func TestMarkdownSupport(t *testing.T) {
 	vm := New()
 
 	testData := map[string]string{
-		"[my link](http://example.org)": string(blackfriday.MarkdownCommon([]byte("[my link](http://example.org)"))),
-		"**strong**":                    string(blackfriday.MarkdownCommon([]byte("**strong**"))),
+		"[my link](http://example.org)": string(MarkdownToHTML([]byte("[my link](http://example.org)"))),
+		"**strong**":                    string(MarkdownToHTML([]byte("**strong**"))),
 	}
 
 	i := 0
@@ -906,10 +903,10 @@ func TestMarkdownSupport(t *testing.T) {
 	i++
 	vm.Eval(":expand-markdown: @html [@link](@url)", i)
 	i++
-	expected := "<p><a href=\"http://example.com\">my link</a></p>\n"
+	expected := "<p><a href=\"http://example.com\" target=\"_blank\">my link</a></p>\n"
 	result := vm.Expand("@html")
 	if notOk(strings.Compare(expected, result) == 0) {
-		t.Errorf("%s != %s", expected, result)
+		t.Errorf("%q != %q", expected, result)
 	}
 
 	_, err := vm.Eval(":import-markdown: @page testdata/test.md", i)

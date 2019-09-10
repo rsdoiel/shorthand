@@ -16,18 +16,16 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	// 3rd Party packages
-	"github.com/russross/blackfriday"
 )
 
 // Version nummber of library and utility
 const (
-	Version = `v0.1.1`
+	Version = `v0.2.0`
 )
 
 // HowItWorks is a help text describing shorthand.
-var HowItWorks = `
+var (
+	HowItWorks = `
 
 ASSIGNMENTS AND EXPANSIONS
 
@@ -117,7 +115,7 @@ substituted labels.
 
 PROCESSING MARKDOWN PAGES
 
-_shorthand_ also provides a markdown processor. It uses the [blackfriday](https://github.com/russross/blackfriday) markdown library. 
+_shorthand_ also provides a markdown processor. It uses the [gomarkdown](https://github.com/gomarkdown/markdown) markdown library. 
 This is both a convience and also allows you to treat markdown with shorthand assignments as a template that renders HTML or HTML with 
 shorthand ready for expansion. It is a poorman's text rendering engine.
 
@@ -169,6 +167,7 @@ Load the mardkown file and transform it into HTML with embedded shorthand labels
 	:export: @output post.html
 
 `
+)
 
 // SourceMap holds the source and value of an assignment
 type SourceMap struct {
@@ -357,7 +356,7 @@ func (vm *VirtualMachine) Apply(src []byte, postProcessWithMarkdown bool) ([]byt
 			return nil, fmt.Errorf("line (%d): %s\n", lineNo, err)
 		}
 		if postProcessWithMarkdown == true {
-			r = string(blackfriday.MarkdownCommon([]byte(r)))
+			r = string(MarkdownToHTML([]byte(r)))
 		}
 		out = append(out, r)
 	}
@@ -383,7 +382,7 @@ func (vm *VirtualMachine) Run(in *bufio.Reader, postProcessWithMarkdown bool) in
 		}
 		out, err := vm.Eval(src, lineNo)
 		if postProcessWithMarkdown == true {
-			out = string(blackfriday.MarkdownCommon([]byte(out)))
+			out = string(MarkdownToHTML([]byte(out)))
 		}
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "ERROR (%d): %s\n", lineNo, err)
