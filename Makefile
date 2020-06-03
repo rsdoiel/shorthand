@@ -21,7 +21,6 @@ endif
 
 build:
 	go build -o bin/shorthand$(EXT) cmd/shorthand/shorthand.go
-	bin/shorthand$(EXT) build.shorthand
 
 lint:
 	gofmt -w shorthand.go && golint shorthand.go

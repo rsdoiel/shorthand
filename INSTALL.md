@@ -1,67 +1,11 @@
----
-title: Shorthand - installation
----
     
-
 # Shorthand - installation
 
----
-title: Shorthand - installation
----
-    
-
-# Shorthand - installation
-
----
-title = "Shorthand - installation"
----
-    
-
-# Shorthand - installation
-
-{
-    "title": "Shorthand - installation",
-}
-    
-
-# Shorthand - installation
-
-{
-    "title": "Shorthand - installation",
-}
-    
-<header>
-# Shorthand - installation
-</header>
-
-<section>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Shorthand - installation</title>
-    <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
-    <link href="/css/site.css" rel="stylesheet" />
-<head>
-<body>
-    <header>
-        <h1>Shorthand - installation</h1>
-    </header>
-    <section><!DOCTYPE html>
-<html>
-<head>
-    <title>Shorthand - installation</title>
-    <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
-    <link href="/css/site.css" rel="stylesheet" />
-<head>
-<body>
-    <header>
-        <h1>Shorthand - installation</h1>
-    </header>
-    <section>
 # Installation
 
-*shorthand* is a command line program run from a shell like Bash.  You can find compiled
-version in the [releases](https://github.com/rsdoiel/shorthand/releases/latest) 
+*shorthand* is a command line program run from a shell like Bash.  
+You can find compiled version in the 
+[releases](https://github.com/rsdoiel/shorthand/releases/latest) 
 
 ## Compiled version
 
@@ -109,15 +53,15 @@ For all the released version go to the project page on Github and click latest r
 4. Make sure the new location in in our path
 5. Test
 
-Here's an example of the commands run in the Terminal App after downloading the 
-zip file.
+Here's an example of the commands run in the Terminal App after 
+downloading the zip file.
 
 ```shell
     cd Downloads/
     unzip shorthand-*-macosx-amd64.zip
-    mkdir -p $HOME/bin
-    cp -v bin/* $HOME/bin/
-    export PATH=$HOME/bin:$PATH
+    mkdir -p "$HOME/bin"
+    cp -v bin/* "$HOME/bin/"
+    export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
 
@@ -128,15 +72,15 @@ zip file.
 3. Copy the executables to $HOME/bin (or a folder in your path)
 4. Test
 
-Here's an example of the commands run in from the Bash shell on Windows 10 after
-downloading the zip file.
+Here's an example of the commands run in from the Bash shell on 
+Windows 10 after downloading the zip file.
 
 ```shell
     cd Downloads/
     unzip shorthand-*-windows-amd64.zip
-    mkdir -p $HOME/bin
-    cp -v bin/* $HOME/bin/
-    export PATH=$HOME/bin:$PATH
+    mkdir -p "$HOME/bin"
+    cp -v bin/* "$HOME/bin/"
+    export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
 
@@ -154,9 +98,9 @@ downloading the zip file.
 ```shell
     cd Downloads/
     unzip shorthand-*-linux-amd64.zip
-    mkdir -p $HOME/bin
-    cp -v bin/* $HOME/bin/
-    export PATH=$HOME/bin:$PATH
+    mkdir -p "$HOME/bin"
+    cp -v bin/* "$HOME/bin/"
+    export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
 
@@ -176,9 +120,9 @@ downloading the zip file.
 ```shell
     cd Downloads/
     unzip shorthand-*-raspbian-arm7.zip
-    mkdir -p $HOME/bin
-    cp -v bin/* $HOME/bin/
-    export PATH=$HOME/bin:$PATH
+    mkdir -p "$HOME/bin"
+    cp -v bin/* "$HOME/bin/"
+    export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
 
@@ -202,141 +146,4 @@ Or clone the repstory and then compile
     make test
     make install
 ```
-
-
-</section>
-    <nav>
-+ [Home](/)
-+ [README](index.html)
-+ [Documentation](docs/shorthand/)
-+ [Installation](install.html)
-+ [License](license.html)
-+ [Tutorials](tutorials/)
-+ [Ideas and Background](ideas.html)
-</nav>
-    <footer>
-    shorthand v0.2.0, Wed Jun  3 15:50:22 PDT 2020
-<p>copyright (c) 2019 all rights reserved.
-Released under the BSD 2-Clause license
-See: http://opensource.org/licenses/BSD-2-Clause
-
-    </footer>
-</body>
-</html>
-</section>
-    <nav>
-+ [Home](/)
-+ [README](index.html)
-+ [Documentation](docs/shorthand/)
-+ [Installation](install.html)
-+ [License](license.html)
-+ [Tutorials](tutorials/)
-+ [Ideas and Background](ideas.html)
-</nav>
-    <footer>
-    shorthand v0.2.0, Wed Jun  3 15:53:44 PDT 2020
-<p>copyright (c) 2019 all rights reserved.
-Released under the BSD 2-Clause license
-See: http://opensource.org/licenses/BSD-2-Clause
-
-    </footer>
-</body>
-</html>
-
-</section>
-<nav>
-+ [Home](/)
-+ [README](index.html)
-+ [Documentation](docs/shorthand/)
-+ [Installation](install.html)
-+ [License](license.html)
-+ [Tutorials](tutorials/)
-+ [Ideas and Background](ideas.html)
-</nav>
-<footer>
-shorthand v0.2.0, Wed Jun  3 15:55:53 PDT 2020
-<p>copyright (c) 2019 all rights reserved.
-Released under the BSD 2-Clause license
-See: http://opensource.org/licenses/BSD-2-Clause
-
-</footer>
-
-
-
-
-+ [Home](/)
-+ [README](index.html)
-+ [Documentation](docs/shorthand/)
-+ [Installation](install.html)
-+ [License](license.html)
-+ [Tutorials](tutorials/)
-+ [Ideas and Background](ideas.html)
-
-
-shorthand v0.2.0, Wed Jun  3 15:57:37 PDT 2020
-
-
-copyright (c) 2019 all rights reserved.
-Released under the BSD 2-Clause license
-See: http://opensource.org/licenses/BSD-2-Clause
-
-
-
-
-
-+ [Home](/)
-+ [README](index.html)
-+ [Documentation](docs/shorthand/)
-+ [Installation](install.html)
-+ [License](license.html)
-+ [Tutorials](tutorials/)
-+ [Ideas and Background](ideas.html)
-
-
-shorthand v0.2.0, Wed Jun  3 15:58:06 PDT 2020
-
-
-copyright (c) 2019 all rights reserved.
-Released under the BSD 2-Clause license
-See: http://opensource.org/licenses/BSD-2-Clause
-
-
-
-
-
-+ [Home](/)
-+ [README](index.html)
-+ [Documentation](docs/shorthand/)
-+ [Installation](install.html)
-+ [License](license.html)
-+ [Tutorials](tutorials/)
-+ [Ideas and Background](ideas.html)
-
-
-shorthand v0.2.0, Wed Jun  3 16:03:53 PDT 2020
-
-
-copyright (c) 2019 all rights reserved.
-Released under the BSD 2-Clause license
-See: http://opensource.org/licenses/BSD-2-Clause
-
-
-
-
-
-+ [Home](/)
-+ [README](index.html)
-+ [Documentation](docs/shorthand/)
-+ [Installation](install.html)
-+ [License](license.html)
-+ [Tutorials](tutorials/)
-+ [Ideas and Background](ideas.html)
-
-
-shorthand v0.2.0, Wed Jun  3 16:04:27 PDT 2020
-
-
-copyright (c) 2019 all rights reserved.
-Released under the BSD 2-Clause license
-See: http://opensource.org/licenses/BSD-2-Clause
 
