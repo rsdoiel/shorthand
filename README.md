@@ -3,7 +3,7 @@
 
 # shorthand
 
-A simple label expander and markdown utility
+A simple label or macro expander
 
 Example use cases:
 
@@ -44,26 +44,25 @@ From the command line you can do something like this
 
 ```shell
     shorthand -e ':bash: @now date' \
-        -e ":import-text: @report testdata/report.md" \
-        -e ":markdown: @html @report" \
-        -e "@html" \
-        -e ':exit:' > testdata/report.html
+        -e ":import: @report testdata/report.md" \
+        -e "@report" \
+        -e ':exit:' | pandoc -s > testdata/report.html
 ```
 
 What this command does is launch the _shorthand_ interpreter and it
 replaces all occurrences of "@now" in the markdown document with the
 output from the Unix program _date_. 
 
-The output would look something like
+The output (before piping to Pandoc) would look something like
 
 ```html
-    <p>Report Date: Sat Aug 29 11:25:48 PDT 2015</p>
+    Report Date: Sat Aug 29 11:25:48 PDT 2015
 
-    <h1>Topic: The current local time.</h1>
+    # Topic: The current local time.
 
-    <p>This report highlights the current local time of rendering this document</p>
+    This report highlights the current local time of rendering this document
 
-    <p>The current local time is Sat Aug 29 11:25:48 PDT 2015</p>
+    The current local time is Sat Aug 29 11:25:48 PDT 2015
 ```
 
 Notice that both "@now" are replace with the same date information.
@@ -89,7 +88,7 @@ markdown itself. with something like
 That makes the command line a little shorter
 
 ```shell
-    shorthand -markdown testdata/report.md > testdata/report.html
+    shorthand testdata/report.md | pandoc -s > testdata/report.html
 ```
 
 

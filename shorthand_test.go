@@ -98,20 +98,6 @@ func TestParseOps(t *testing.T) {
 			Expanded: "",
 			LineNo:   9,
 		},
-		":markdown: @now6 **strong words**": {
-			Label:    "@now6",
-			Op:       ":markdown:",
-			Source:   "**strong words**",
-			Expanded: "",
-			LineNo:   10,
-		},
-		":import-markdown: @now7 test.md": {
-			Label:    "@now7",
-			Op:       ":import-markdown:",
-			Source:   "test.md",
-			Expanded: "",
-			LineNo:   11,
-		},
 		":export: @label0 label0.txt": {
 			Label:    "@label0",
 			Op:       ":export:",
@@ -175,13 +161,6 @@ func TestParseOps(t *testing.T) {
 			Expanded: "",
 			LineNo:   20,
 		},
-		":markdown: {{strong}} **strong words**": {
-			Label:    "{{strong}}",
-			Op:       ":markdown:",
-			Source:   "**strong words**",
-			Expanded: "",
-			LineNo:   21,
-		},
 		":set: {one} 1": {
 			Label:    "{one}",
 			Op:       ":set:",
@@ -202,13 +181,6 @@ func TestParseOps(t *testing.T) {
 			Source:   "{one} {two}",
 			Expanded: "",
 			LineNo:   24,
-		},
-		":import-markdown: {{html}} testdata/test.md": {
-			Label:    "{{html}}",
-			Op:       ":import-markdown:",
-			Source:   "testdata/test.md",
-			Expanded: "",
-			LineNo:   25,
 		},
 		":import-text: {helloWorldTxT} testdata/helloworld.txt": {
 			Label:    "{helloWorldTxT}",
@@ -306,20 +278,6 @@ func TestParseReadable(t *testing.T) {
 			Expanded: "",
 			LineNo:   9,
 		},
-		":markdown: @now6 **strong words**": {
-			Label:    "@now6",
-			Op:       ":markdown:",
-			Source:   "**strong words**",
-			Expanded: "",
-			LineNo:   10,
-		},
-		":import-markdown: @now7 test.md": {
-			Label:    "@now7",
-			Op:       ":import-markdown:",
-			Source:   "test.md",
-			Expanded: "",
-			LineNo:   11,
-		},
 		":export: @label0 label0.txt": {
 			Label:    "@label0",
 			Op:       ":export:",
@@ -383,13 +341,6 @@ func TestParseReadable(t *testing.T) {
 			Expanded: "",
 			LineNo:   20,
 		},
-		":markdown: {{strong}} **strong words**": {
-			Label:    "{{strong}}",
-			Op:       ":markdown:",
-			Source:   "**strong words**",
-			Expanded: "",
-			LineNo:   21,
-		},
 		":set: {one} 1": {
 			Label:    "{one}",
 			Op:       ":set:",
@@ -410,13 +361,6 @@ func TestParseReadable(t *testing.T) {
 			Source:   "{one} {two}",
 			Expanded: "",
 			LineNo:   24,
-		},
-		":import-markdown: {{html}} testdata/test.md": {
-			Label:    "{{html}}",
-			Op:       ":import-markdown:",
-			Source:   "testdata/test.md",
-			Expanded: "",
-			LineNo:   25,
 		},
 		":import-text: {helloWorldTxT} testdata/helloworld.txt": {
 			Label:    "{helloWorldTxT}",
@@ -879,98 +823,6 @@ func TestExportAssignments(t *testing.T) {
 	}
 }
 
-func TestMarkdownSupport(t *testing.T) {
-	vm := New()
-
-	testData := map[string]string{
-		"[my link](http://example.org)": string(MarkdownToHTML([]byte("[my link](http://example.org)"))),
-		"**strong**":                    string(MarkdownToHTML([]byte("**strong**"))),
-	}
-
-	i := 0
-	for src, expected := range testData {
-		vm.Eval(fmt.Sprintf(":markdown: @test %s", src), i)
-		result := vm.Expand("@test")
-		if notOk(expected == result) {
-			t.Errorf("%s -> %s", expected, result)
-		}
-		i++
-	}
-
-	vm.Eval(":set: @link my link", i)
-	i++
-	vm.Eval(":set: @url http://example.com", i)
-	i++
-	vm.Eval(":expand-markdown: @html [@link](@url)", i)
-	i++
-	expected := "<p><a href=\"http://example.com\" target=\"_blank\">my link</a></p>\n"
-	result := vm.Expand("@html")
-	if notOk(strings.Compare(expected, result) == 0) {
-		t.Errorf("%q != %q", expected, result)
-	}
-
-	_, err := vm.Eval(":import-markdown: @page testdata/test.md", i)
-	i++
-	if notOk(err == nil) {
-		t.Errorf("%d testdata/test.md error: %s", i, err)
-	}
-	result = vm.Expand("@page")
-	if notOk(strings.Contains(result, "<h2>Another H2</h2>")) {
-		t.Errorf("Should have a h2 from test.md,  %q", result)
-	}
-
-	_, err = vm.Eval(":set: H2 heading two element", i)
-	i++
-	if notOk(err == nil) {
-		t.Errorf("Should be able to assign string to 'H2': %s", err)
-	}
-	result = vm.Expand("H2")
-	if notOk(result == "heading two element") {
-		t.Errorf("Should be able to expand 'H2': %s", result)
-	}
-
-	_, err = vm.Eval(":import-expand-markdown: @page testdata/test.md", i)
-	i++
-	if notOk(err == nil) {
-		t.Errorf("%d testdata/test.md error: %s", i, err)
-	}
-	result = vm.Expand("@page")
-	if notOk(strings.Contains(result, "<h2>Another heading two element</h2>")) {
-		t.Errorf("Should have another heading two element from test.md, %q", result)
-	}
-
-	// Re-read testdata/test.md and process the maarkdown
-	_, err = vm.Eval(":set: H2 heading two element", i)
-	i++
-	if notOk(err == nil) {
-		t.Errorf("Should be able to assign string to 'H2': %s", err)
-	}
-	_, err = vm.Eval(":import-expand-markdown: @page testdata/test.md", i)
-	i++
-	if notOk(err == nil) {
-		t.Errorf("%d testdata/test.md error: %s", i, err)
-	}
-	_, err = vm.Eval(":export: @page testdata/test.html", i)
-	if notOk(err == nil) {
-		t.Errorf("%d write testdata/test.html error: %s", i, err)
-	}
-	i++
-
-	_, err = os.Stat("testdata/test.html")
-	if notOk(err == nil) {
-		t.Errorf("testdata/test.html should exist.")
-	}
-
-	buf, err := ioutil.ReadFile("testdata/test.html")
-	if notOk(err == nil) {
-		t.Errorf("should be able to read testdata/test.html.")
-	}
-	result2 := string(buf)
-	if notOk(strings.Compare(result, result2) == 0) {
-		t.Errorf("Should have same results: '%s' <> '%s'", result, result2)
-	}
-}
-
 func TestRun(t *testing.T) {
 	vm := New()
 	if vm == nil {
@@ -984,7 +836,7 @@ func TestRun(t *testing.T) {
 	reader := bufio.NewReader(fp)
 
 	fmt.Println("Starting vm.Run()")
-	cnt := vm.Run(reader, false)
+	cnt := vm.Run(reader)
 	if notOk(cnt == 3) {
 		t.Errorf("Exited int wrong : %d", cnt)
 	}

@@ -52,11 +52,10 @@ See: http://opensource.org/licenses/BSD-2-Clause`
 	generateManPage  bool
 
 	// Application Options
-	prompt                  string
-	noprompt                bool
-	vm                      *shorthand.VirtualMachine
-	lineNo                  int
-	postProcessWithMarkdown bool
+	prompt   string
+	noprompt bool
+	vm       *shorthand.VirtualMachine
+	lineNo   int
 )
 
 var helpShorthand = func(vm *shorthand.VirtualMachine, sm shorthand.SourceMap) (shorthand.SourceMap, error) {
@@ -110,7 +109,6 @@ func main() {
 	// Application Options
 	app.StringVar(&prompt, "p,prompt", "=> ", "Output a prompt for interactive processing")
 	app.BoolVar(&noprompt, "n,no-prompt", false, "Turn off the prompt for interactive processing")
-	app.BoolVar(&postProcessWithMarkdown, "m,markdown", false, "Run final output through markdown processor")
 
 	app.Parse()
 	args := app.Args()
@@ -175,7 +173,7 @@ func main() {
 		}
 		defer fp.Close()
 		reader := bufio.NewReader(fp)
-		vm.Run(reader, postProcessWithMarkdown)
+		vm.Run(reader)
 	}
 
 	// If a filename is provided on the command line use it instead of standard input.
@@ -188,7 +186,7 @@ func main() {
 			}
 			defer fp.Close()
 			reader := bufio.NewReader(fp)
-			vm.Run(reader, postProcessWithMarkdown)
+			vm.Run(reader)
 		}
 	} else {
 		// Run as repl
@@ -197,6 +195,6 @@ func main() {
 			fmt.Println(welcome)
 		}
 		reader := bufio.NewReader(app.In)
-		vm.Run(reader, false)
+		vm.Run(reader)
 	}
 }

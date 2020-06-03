@@ -20,7 +20,7 @@ import (
 
 // Version nummber of library and utility
 const (
-	Version = `v0.2.0`
+	Version = `v0.3.0`
 )
 
 // HowItWorks is a help text describing shorthand.
@@ -61,14 +61,6 @@ operator                    | meaning                                  | example
  :bash:                     | Assign Shell output                      | :bash: {{date}} date +%Y-%m-%%d
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :expand-and-bash:          | Assign Expand then gete Shell output     | :expand-and-bash: {{entry}} cat header.txt @filename footer.txt
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :markdown:                 | Assign Markdown processed text           | :markdown: {{div}} # My h1 for a Div
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand-markdown:          | Assign Expanded Markdown                 | :expand-markdown: {{div}} Greetings **@name**
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-markdown:          | Include Markdown processed text          | :import-markdown: {{nav}} mynav.md
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-expanded-markdown: | Include Expanded Markdown processed text | :import-expanded-markdown: {{nav}} mynav.md
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
  :export:                   | Output a label's value to a file         | :export: {{content}} content.txt
 ----------------------------|------------------------------------------|---------------------------------------------------------------------
@@ -115,15 +107,16 @@ substituted labels.
 
 PROCESSING MARKDOWN PAGES
 
-_shorthand_ also provides a markdown processor. It uses the [gomarkdown](https://github.com/gomarkdown/markdown) markdown library. 
-This is both a convience and also allows you to treat markdown with shorthand assignments as a template that renders HTML or HTML with 
-shorthand ready for expansion. It is a poorman's text rendering engine.
+_shorthand_ is a label expander or light weight macro expande. It
+can be combined with programs like *pandoc* as a pre-processor.
 
-In this example we'll build a HTML page with shorthand labels from markdown text. Then
-we will use the render HTML as a template for a blog page entry.
+In this example we'll build a HTML page with shorthand labels from 
+a couple markdown documents. Then we will use the render HTML as a 
+template for a blog page entry.
 
-Our markdown file serving as a template will be call "post-template.md". It should contain
-the outline of the structure of the page plus some shorthand labels we'll expand later.
+Our markdown file serving as a template will be call "post-template.md". 
+It should contain the outline of the structure of the page plus some 
+shorthand labels we'll expand later.
 
 
     # @blogTitle
@@ -135,8 +128,10 @@ the outline of the structure of the page plus some shorthand labels we'll expand
     @contentBlocks
 
 
-For the purposes of this exercise we'll use _shorthand_ as a repl and just enter the assignments sequencly.  Also rather than use 
-the output of shorthand directly we'll build up the content for the page in a label and use shorthand itself to write the final page out.
+For the purposes of this exercise we'll use _shorthand_ as a repl 
+and just enter the assignments sequencly.  Also rather than use 
+the output of shorthand directly we'll build up the content for the 
+page in a label and use shorthand itself to write the final page out.
 
 The steps we'll follow will be to 
 
@@ -156,16 +151,17 @@ The following assumes you are in the _shorthand_ repl.
 
 Load the mardkown file and transform it into HTML with embedded shorthand labels
 
-    :bash: @doctype echo "<!DOCTYPE html>"
-	:set: @headBlock <head><title>@pageTitle</title>
-	:import-markdown: @pageTemplate post-template.md
+	:import: @pageTemplate post-template.md
 	:bash: @dateString date
 	:set: @blogTitle My Blog
 	:set: @pageTitle A Post
-	:import-markdown: @contentBlock a-post.md
-	:expand-expansion: @output @doctype<html>@headBlock<body>@pageTemplate</body></html>
-	:export: @output post.html
+	:import: @contentBlock a-post.md
+	:export: @output post.md
+	:exit:
 
+Then we can run the following command to pipe it through Pandoc.
+
+    cat post.md | pandoc -s > post.html
 `
 )
 
@@ -245,11 +241,6 @@ func New() *VirtualMachine {
 
 	vm.RegisterOp(":bash:", AssignShell, "Assign the output of a Bash command to label")
 	vm.RegisterOp(":expand-and-bash:", AssignExpandShell, "Expand and then assign the results of a Bash command to label")
-
-	vm.RegisterOp(":markdown:", AssignMarkdown, "Convert markdown and assign to label")
-	vm.RegisterOp(":expand-markdown:", AssignExpandMarkdown, "Expand and convert markdown and assign to label")
-	vm.RegisterOp(":import-markdown:", IncludeMarkdown, "Include and convert markdown and assign to label")
-	vm.RegisterOp(":import-expand-markdown:", IncludeExpandMarkdown, "Include an expansion, convert with Markdown and assign to label")
 
 	vm.RegisterOp(":export:", OutputExpansion, "Write an the contents of an label to a file")
 	vm.RegisterOp(":export-all:", OutputExpansions, "Write all label contents to a (order not guaranteed)")
@@ -343,7 +334,7 @@ func (vm *VirtualMachine) EvalSymbol(sm SourceMap) error {
 
 // Apply takes a byte array, and processes it returning a byte array. It is
 // like Run but for embedded uses of Shorthand.
-func (vm *VirtualMachine) Apply(src []byte, postProcessWithMarkdown bool) ([]byte, error) {
+func (vm *VirtualMachine) Apply(src []byte) ([]byte, error) {
 	vm.SetPrompt("")
 
 	out := []string{}
@@ -355,9 +346,6 @@ func (vm *VirtualMachine) Apply(src []byte, postProcessWithMarkdown bool) ([]byt
 		if err != nil {
 			return nil, fmt.Errorf("line (%d): %s\n", lineNo, err)
 		}
-		if postProcessWithMarkdown == true {
-			r = string(MarkdownToHTML([]byte(r)))
-		}
 		out = append(out, r)
 	}
 	return []byte(strings.Join(out, "\n")), nil
@@ -366,7 +354,7 @@ func (vm *VirtualMachine) Apply(src []byte, postProcessWithMarkdown bool) ([]byt
 // Run takes a reader (e.g. os.Stdin), and two writers (e.g. os.Stdout and os.Stderr)
 // It reads until EOF, :exit:, or :quit: operation is encountered
 // returns the number of lines processed.
-func (vm *VirtualMachine) Run(in *bufio.Reader, postProcessWithMarkdown bool) int {
+func (vm *VirtualMachine) Run(in *bufio.Reader) int {
 	lineNo := 0
 	for {
 		if vm.prompt != "" {
@@ -381,9 +369,6 @@ func (vm *VirtualMachine) Run(in *bufio.Reader, postProcessWithMarkdown bool) in
 			break
 		}
 		out, err := vm.Eval(src, lineNo)
-		if postProcessWithMarkdown == true {
-			out = string(MarkdownToHTML([]byte(out)))
-		}
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "ERROR (%d): %s\n", lineNo, err)
 		}

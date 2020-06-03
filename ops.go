@@ -84,7 +84,7 @@ var IncludeExpansion = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error)
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
-// AssignShell pass Source to shell and copy stdout to Expanded
+// AssignShell pass Source to bash and copy stdout to Expanded
 var AssignShell = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
 	buf, err := exec.Command("bash", "-c", sm.Source).Output()
 	if err != nil {
@@ -101,41 +101,6 @@ var AssignExpandShell = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error
 		return sm, err
 	}
 	expanded := string(buf)
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
-}
-
-// AssignMarkdown process Source with Blackfriday and copy
-var AssignMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	expanded := string(MarkdownToHTML([]byte(sm.Source)))
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
-}
-
-// AssignExpandMarkdown process source, expand witi BlackFriday and copy
-var AssignExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	tmp := vm.Expand(sm.Source)
-	expanded := string(MarkdownToHTML([]byte(tmp)))
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
-}
-
-// IncludeMarkdown run through markdown then assign
-var IncludeMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	buf, err := ioutil.ReadFile(sm.Source)
-	if err != nil {
-		return sm, err
-	}
-	tmp := string(buf)
-	expanded := string(MarkdownToHTML([]byte(tmp)))
-	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
-}
-
-// IncludeExpandMarkdown expand then include the markdown processed source
-var IncludeExpandMarkdown = func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
-	buf, err := ioutil.ReadFile(sm.Source)
-	if err != nil {
-		return sm, err
-	}
-	tmp := vm.Expand(string(buf))
-	expanded := string(MarkdownToHTML([]byte(tmp)))
 	return SourceMap{Label: sm.Label, Op: sm.Op, Source: sm.Source, Expanded: expanded, LineNo: sm.LineNo}, nil
 }
 
