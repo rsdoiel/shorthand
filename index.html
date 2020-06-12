@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>index.html</title>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header>
+&nbsp;
+</header>
+<nav>
+<ul>
+<li>
+<a href="/">Home</a>
+</li>
+<li>
+<a href="index.html">README</a>
+</li>
+<li>
+<a href="docs/shorthand/">Documentation</a>
+</li>
+<li>
+<a href="install.html">Installation</a>
+</li>
+<li>
+<a href="license.html">License</a>
+</li>
+<li>
+<a href="tutorials/">Tutorials</a>
+</li>
+<li>
+<a href="ideas.html">Ideas and Background</a>
+</li>
+</ul>
+</nav>
+
+<section>
+<p>
+<a href="https://www.repostatus.org/#wip"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." /></a>
+</p>
+<h1 id="shorthand">
+shorthand
+</h1>
+<p>
+A simple label or macro expander
+</p>
+<p>
+Example use cases:
+</p>
+<ul>
+<li>
+label or abbreviation expansion in Markdown files
+</li>
+<li>
+build html templates from markdown files
+</li>
+<li>
+compose pages from multiple markdown files
+</li>
+</ul>
+<p>
+The supported command line options can be listed using the <em>–help</em> options.
+</p>
+<pre class="shell"><code>    shorthand --help</code></pre>
+<p>
+Source code can be found at <a href="https://github.com/rsdoiel/shorthand">github.com/rsdoiel/shorthand</a>
+</p>
+<p>
+The project website is <a href="http://rsdoiel.github.io/shorthand">rsdoiel.github.io/shorthand</a>
+</p>
+<h2 id="tutorial">
+Tutorial
+</h2>
+<h3 id="timestamp-in-markdown-file">
+Timestamp in Markdown file
+</h3>
+<p>
+If the content of the markdown file <em>testdata/report.md</em> was
+</p>
+<div id="cb2" class="sourceCode">
+<pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2"></a>    Report Date: @now</span>
+<span id="cb2-3"><a href="#cb2-3"></a></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="in">    # Topic: The current local time.</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="in">    This report highlights the current local time of rendering this document</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="in">    The current local time is @now</span></span></code></pre>
+</div>
+<p>
+From the command line you can do something like this
+</p>
+<pre class="shell"><code>    shorthand -e &#39;:bash: @now date&#39; \
+        -e &quot;:import: @report testdata/report.md&quot; \
+        -e &quot;@report&quot; \
+        -e &#39;:exit:&#39; | pandoc -s &gt; testdata/report.html</code></pre>
+<p>
+What this command does is launch the <em>shorthand</em> interpreter and it replaces all occurrences of “<span class="citation" data-cites="now"><span class="citation" data-cites="now">@now</span></span>” in the markdown document with the output from the Unix program <em>date</em>.
+</p>
+<p>
+The output (before piping to Pandoc) would look something like
+</p>
+<div id="cb4" class="sourceCode">
+<pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1"></a>    Report Date: Sat Aug 29 11:25:48 PDT 2015</span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a>    # Topic: The current local time.</span>
+<span id="cb4-4"><a href="#cb4-4"></a></span>
+<span id="cb4-5"><a href="#cb4-5"></a>    This report highlights the current local time of rendering this document</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>    The current local time is Sat Aug 29 11:25:48 PDT 2015</span></code></pre>
+</div>
+<p>
+Notice that both “<span class="citation" data-cites="now"><span class="citation" data-cites="now">@now</span></span>” are replace with the same date information.
+</p>
+<h3 id="embedding-shorthand-definitions">
+embedding shorthand definitions
+</h3>
+<p>
+You could also embed the shorthand definitions command straight in the markdown itself. with something like
+</p>
+<div id="cb5" class="sourceCode">
+<pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1"></a><span class="in">    @now :bash: date</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="in">    Report Date: @now</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="in">    # Topic: The current local time.</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="in">    This report highlights the current local time of rendering this document</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="in">    The current local time is @now</span></span></code></pre>
+</div>
+<p>
+That makes the command line a little shorter
+</p>
+<pre class="shell"><code>    shorthand testdata/report.md | pandoc -s &gt; testdata/report.html</code></pre>
+<h2 id="installation">
+Installation
+</h2>
+<p>
+<em>shorthand</em> can be installed with the <em>go get</em> command.
+</p>
+<pre><code>    go get github.com/rsdoiel/shorthand/...</code></pre>
+</section>
+
+<footer>
+copyright (c) 2019 all rights reserved.
+Released under the BSD 2-Clause license
+See: http://opensource.org/licenses/BSD-2-Clause
+</footer>
+</body>
+</html>
