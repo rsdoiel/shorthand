@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{- .title -}}</title>
-    <link href="/css/site.css" rel="stylesheet" />
+    <title>$title$</title>
+    <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
 <header>
-{{ .title }}
+&nbsp;
 </header>
-<section>
-{{ .content }}
-</section>
 <nav>
-{{ .nav }}
+$nav$
 </nav>
+
+<section>
+$content$
+</section>
+
 <footer>
-copyright (c) 2018 all rights reserved.
+copyright (c) 2019 all rights reserved.
 Released under the BSD 2-Clause license
 See: http://opensource.org/licenses/BSD-2-Clause
 </footer>

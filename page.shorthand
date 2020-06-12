@@ -1,15 +1,23 @@
----
-title: {{pageTitle}}
----
-    
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{pageTitle}}</title>
+</head>
+<body>
 
-# {{pageTitle}}
+<h1>{{pageTitle}}</h1>
 
+<section>
 {{pageContent}}
+</section>
 
-
+<nav>
 {{nav}}
+</nav>
 
+<footer>
 {{sitebuilt}}
-
 {{copyright}}
+</footer>
+</body>
+</html>

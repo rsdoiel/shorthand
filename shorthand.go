@@ -20,7 +20,7 @@ import (
 
 // Version nummber of library and utility
 const (
-	Version = `v0.3.0`
+	Version = `v0.2.1`
 )
 
 // HowItWorks is a help text describing shorthand.
@@ -114,9 +114,10 @@ In this example we'll build a HTML page with shorthand labels from
 a couple markdown documents. Then we will use the render HTML as a 
 template for a blog page entry.
 
-Our markdown file serving as a template will be call "post-template.md". 
-It should contain the outline of the structure of the page plus some 
-shorthand labels we'll expand later.
+Our markdown file serving as a template will be call 
+"post-template.md".  It should contain the outline of the 
+structure of the page plus some shorthand labels we'll expand 
+later.
 
 
     # @blogTitle
@@ -161,7 +162,7 @@ Load the mardkown file and transform it into HTML with embedded shorthand labels
 
 Then we can run the following command to pipe it through Pandoc.
 
-    cat post.md | pandoc -s > post.html
+    pandoc -s -t html post.md > post.html
 `
 )
 

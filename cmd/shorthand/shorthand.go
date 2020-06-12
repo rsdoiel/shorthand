@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	synopsis = `%s a simple label expander and markdown utility`
+	synopsis = `%s a simple label expander`
 
 	description = `%s is a command line utility to expand labels 
 based on their assigned definitions. The render output is the 
@@ -37,7 +37,7 @@ Released under the BSD 2-Clause license.
 See: http://opensource.org/licenses/BSD-2-Clause`
 
 	welcome = `
-  Welcome to shorthand the simple label expander and markdown processor.
+  Welcome to shorthand the simple label expander.
   Use ':exit:' to quit the repl, ':help:' to get a list of supported operators.
 `
 	// Standard Options
@@ -49,7 +49,6 @@ See: http://opensource.org/licenses/BSD-2-Clause`
 	outputFName      string
 	quiet            bool
 	generateMarkdown bool
-	generateManPage  bool
 
 	// Application Options
 	prompt   string
@@ -104,7 +103,6 @@ func main() {
 	app.StringVar(&outputFName, "o,output", "", "output filename")
 	app.BoolVar(&quiet, "quiet", false, "suppress error messages")
 	app.BoolVar(&generateMarkdown, "generate-markdown", false, "output documentation in Markdown")
-	app.BoolVar(&generateManPage, "generate-manpage", false, "output manpage")
 
 	// Application Options
 	app.StringVar(&prompt, "p,prompt", "=> ", "Output a prompt for interactive processing")
@@ -129,10 +127,6 @@ func main() {
 	// Handle options
 	if generateMarkdown {
 		app.GenerateMarkdown(app.Out)
-		os.Exit(0)
-	}
-	if generateManPage {
-		app.GenerateManPage(app.Out)
 		os.Exit(0)
 	}
 	if showHelp == true {

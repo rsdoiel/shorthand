@@ -35,51 +35,34 @@ For all the released version go to the project page on Github and click latest r
 
 ## The basic recipe
 
-+ Find the Zip file listed matching the architecture you're running and download it
-    + (e.g. if you're on a Windows 10 laptop/Surface with a amd64 style CPU you'd choose the Zip file with "windows-amd64" in the name).
-+ Download the zip file and unzip the file.  
-+ Copy the contents of the folder named "bin" to a folder that is in your path 
-    + (e.g. "$HOME/bin" is common).
-+ Adjust your PATH if needed
-    + (e.g. `export PATH="$HOME/bin:$PATH"`)
-+ Test
+1. Download the zip file using your web browser
+2. Change to your HOME directory in your shell, command shell or terminal application
+3. Unzip the files in the bin folder of the zip archive
+4. Make sure the bin folder location is in our path
+5. Test
+
 
 
 ### Mac OS X
 
-1. Download the zip file
-2. Unzip the zip file
-3. Copy the executables to $HOME/bin (or a folder in your path)
-4. Make sure the new location in in our path
-5. Test
-
 Here's an example of the commands run in the Terminal App after 
-downloading the zip file.
+downloading the zip file in to your "Downloads" folder.
 
 ```shell
-    cd Downloads/
-    unzip shorthand-*-macosx-amd64.zip
-    mkdir -p "$HOME/bin"
-    cp -v bin/* "$HOME/bin/"
+    cd 
+    unzip Downloads/shorthand-*-macosx-amd64.zip bin/*
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
 
 ### Windows
 
-1. Download the zip file
-2. Unzip the zip file
-3. Copy the executables to $HOME/bin (or a folder in your path)
-4. Test
-
 Here's an example of the commands run in from the Bash shell on 
 Windows 10 after downloading the zip file.
 
 ```shell
-    cd Downloads/
-    unzip shorthand-*-windows-amd64.zip
-    mkdir -p "$HOME/bin"
-    cp -v bin/* "$HOME/bin/"
+    cd 
+    unzip Downloads/shorthand-*-windows-amd64.zip bin/*
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
@@ -87,19 +70,12 @@ Windows 10 after downloading the zip file.
 
 ### Linux 
 
-1. Download the zip file
-2. Unzip the zip file
-3. Copy the executables to $HOME/bin (or a folder in your path)
-4. Test
-
 Here's an example of the commands run in from the Bash shell after
 downloading the zip file.
 
 ```shell
-    cd Downloads/
-    unzip shorthand-*-linux-amd64.zip
-    mkdir -p "$HOME/bin"
-    cp -v bin/* "$HOME/bin/"
+    cd
+    unzip Downloads/shorthand-*-linux-amd64.zip bin/*
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
@@ -110,18 +86,17 @@ downloading the zip file.
 Released version is for a Raspberry Pi 2 or later use (i.e. requires ARM 7 support).
 
 1. Download the zip file
-2. Unzip the zip file
-3. Copy the executables to $HOME/bin (or a folder in your path)
-4. Test
+2. Change to your HOME directory
+3. Unzip the files in bin folder of the zip archive
+4. Make sure the new location is in our path
+5. Test
 
 Here's an example of the commands run in from the Bash shell after
 downloading the zip file.
 
 ```shell
-    cd Downloads/
-    unzip shorthand-*-raspbian-arm7.zip
-    mkdir -p "$HOME/bin"
-    cp -v bin/* "$HOME/bin/"
+    cd 
+    unzip Downloads/shorthand-*-raspbian-arm7.zip bin/*
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
@@ -136,7 +111,7 @@ as well as _shorthand_'s source code.
     go get -u github.com/rsdoiel/shorthand/...
 ```
 
-Or clone the repstory and then compile
+Or clone the repository and then compile
 
 ```shell
     cd

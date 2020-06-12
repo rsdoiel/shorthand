@@ -1,47 +1,48 @@
 
-This is an example build shorthand. It orchestrates the build of 
-the Markdown documents that can be translated with Pandoc into HTML pages.
-It uses other shorthand files as templates and markdown documents 
-for content.
+This is an example building pages with shorthand. It 
+orchestrates the build of the HTML pages for the shorthand 
+project website. It uses a shorthand file as a template, 
+with markdown documents for content and Pandoc 2.9.x to render 
+the HTML.
 
 Reading shorthand version, copyright and build dates.
 :bash: @start date
 :bash: @version echo -n "$(shorthand --version)"
-:import: {{nav}} nav.md
-:import: {{copyright}} copyright.md
+:bash: {{nav}} pandoc -t html nav.md
+:bash: {{copyright}} pandoc -t html copyright.md
 :expand: {{sitebuilt}} @version, @start
 
 Reading in title and content for index.html...
-:set: {{pageTitle}} Shorthand - a simple label or macro expander
-:import: {{pageContent}} README.md
+:set: {{pageTitle}} Shorthand - a simple label expander and markdown processor
+:bash: {{pageContent}} pandoc -t html README.md
 
-Reading in template and writing out index.md
-:import: MD page.shorthand
-:export: MD index.markdown
+Reading in template and writing out index.html
+:import: HTML page.shorthand
+:export: HTML index.html
 
-Setting up title and content for shorthand.md...
+Setting up title and content for shorthand.html...
 :set: {{pageTitle}} Shorthand - the gory details
-:import: {{pageContent}} docs/shorthand/shorthand.md
+:bash: {{pageContent}} pandoc -t html docs/shorthand/shorthand.md
 
-Reading in template and writing out shorthand.md
-:import: MD page.shorthand
-:export: MD docs/shorthand/shorthand.markdown
+Reading in template and writing out shorthand.html
+:import: HTML page.shorthand
+:export: HTML docs/shorthand/shorthand.html
 
-Reading in title and content for install.md...
+Reading in title and content for install.html...
 :set: {{pageTitle}} Shorthand - installation
-:import: {{pageContent}} INSTALL.md
+:bash: {{pageContent}} pandoc -t html INSTALL.md
 
-Reading in template and writing out install.md
-:import: MD page.shorthand
-:export: MD INSTALL.markdown
+Reading in template and writing out install.html
+:import: HTML page.shorthand
+:export: HTML install.html
 
 Reading in title and content for ideas.html...
 :set: {{pageTitle}} Shorthand - ideas and background
-:import: {{pageContent}} ideas.md
+:bash: {{pageContent}} pandoc -t html ideas.md
 
-Reading in template and writing out ideas.md
-:import: MD page.shorthand
-:export: MD ideas.markdown
+Reading in template and writing out ideas.html
+:import: HTML page.shorthand
+:export: HTML ideas.html
 
 :bash: @finished date
 Started: @start
