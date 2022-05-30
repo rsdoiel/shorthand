@@ -14,6 +14,9 @@ BRANCH = $(shell git branch | cut -d\  -f 2)
 
 OS = $(shell uname)
 
+#PREFIX = /usr/local
+PREFIX = $(HOME)
+
 EXT =
 ifeq ($(OS), Windows)
     EXT = .exe
@@ -47,10 +50,10 @@ man: build
 	bin/shorthand -generate-manpage | nroff -Tutf8 -man > man/man1/shorthand.1
 
 install:
-	GOBIN=$(HOME)/bin go install cmd/shorthand/shorthand.go
+	GOBIN=$(PREFIX)/bin go install cmd/shorthand/shorthand.go
 
 uninstall:
-	if [ -f $(GOBIN)/shorthand ]; then rm $(GOBIN)/shorthand; fi
+	if [ -f $(PREFIX)/bin/shorthand ]; then rm $(PREFIX)/bin/shorthand; fi
 
 doc:
 	shorthand build.shorthand
