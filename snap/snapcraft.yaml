@@ -16,6 +16,8 @@ apps:
     command: bin/shorthand
     plugs:
       - home
+      - removeable-media
+      - desktop
 
 parts:
   shorthand:
@@ -23,6 +25,6 @@ parts:
     plugin: go
     go-channel: stable
     build-environment:
-        - "CGO_ENABLED" : "0"
+        - "CGO_ENABLED" : "1"
     source-type: git
     source: https://github.com/rsdoiel/shorthand
