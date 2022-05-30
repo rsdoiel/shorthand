@@ -1,3 +1,4 @@
+
 name: shorthand # you probably want to 'snapcraft register <name>'
 base: core20 # the base snap is the execution environment for this snap
 version: '0.2.1' # just for humans, typically '1.2+git' or '1.3.2'
@@ -9,15 +10,7 @@ description: |
   See https://github.com/rsdoiel/shorthand for details.
 
 grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
-
-apps:
-  shorthand:
-    command: bin/shorthand
-    plugs:
-      - home
-      - desktop
-      - removeable-media
+confinement: strict # use 'strict' once you have the right plugs and slots
 
 parts:
   shorthand:
@@ -28,3 +21,12 @@ parts:
       - "CGO_ENABLED" : "1"
     source-type: git
     source: https://github.com/rsdoiel/shorthand
+
+apps:
+  shorthand:
+    command: bin/shorthand
+    plugs:
+      - home
+      - desktop
+      - removeable-media
+
