@@ -1,21 +1,23 @@
----
-title: Shorthand - the gory details
----
+% shorthand(1) shorthand user manual
+% R. S. Doiel
+% August 4, 2022
 
-# Shorthand - the gory details
+# NAME
 
-# USAGE
+shorthand - a text label expander
 
-	shorthand [OPTIONS] [SHORTHAND_FILES]
+# SYNOPSIS
 
-## SYNOPSIS
+shorthand [OPTIONS] [SHORTHAND_FILES]
+
+# DESCRIPTION
 
 shorthand is a command line utility to expand labels based on their
 assigned definitions. The render output is the transformed text 
 and without the shorthand definitions themselves. shorthand reads 
 from standard input and writes to standard output.
 
-## OPTIONS
+# OPTIONS
 
 ```
     -examples                 display examples
@@ -32,9 +34,7 @@ from standard input and writes to standard output.
 ```
 
 
-## EXAMPLES
-
-
+# EXAMPLES
 
 ASSIGNMENTS AND EXPANSIONS
 
@@ -90,7 +90,7 @@ statements to a file.
 The spaces following surrounding ":set:", ":import-text:", ":bash:", ":expand:", ":export:", etc. are required.
 
 
-EXAMPLE
+# EXAMPLES
 
 In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label {{NOW}}.
 
@@ -127,6 +127,7 @@ Our markdown file serving as a template will be call "post-template.md". It shou
 the outline of the structure of the page plus some shorthand labels we'll expand later.
 
 
+```
     # @blogTitle
 
     ## @pageTitle
@@ -134,6 +135,7 @@ the outline of the structure of the page plus some shorthand labels we'll expand
     ### @dateString
 
     @contentBlocks
+```
 
 
 For the purposes of this exercise we'll use _shorthand_ as a repl and just enter the assignments sequencly.  Also rather than use 
@@ -148,7 +150,9 @@ The steps we'll follow will be to
 
 Start the repl with this version of the shorthand command:
 
+```shell
     shorthand -p "? "
+```
 
 The _-p_ option tells _shorthand_ to use the value "? " as the prompt. When _shorthand_ starts it will display "? " to indicate it is 
 ready for an assignment or expansion.
@@ -157,6 +161,7 @@ The following assumes you are in the _shorthand_ repl.
 
 Load the mardkown file and transform it into HTML with embedded shorthand labels
 
+```
     :bash: @doctype echo "<!DOCTYPE html>"
 	:set: @headBlock <head><title>@pageTitle</title>
 	:import-markdown: @pageTemplate post-template.md
@@ -166,5 +171,12 @@ Load the mardkown file and transform it into HTML with embedded shorthand labels
 	:import-markdown: @contentBlock a-post.md
 	:expand-expansion: @output @doctype<html>@headBlock<body>@pageTemplate</body></html>
 	:export: @output post.html
+```
 
+
+# ALSO SEE
+
+- [shorthand-syntax](shorthand-syntax.html)
+- [shorthand-tutorial](shorthand-tutorial.html)
+- Website [https://rsdoiel.github.io/shorthand/](https://rsdoiel.github.io/shorthand/)
 

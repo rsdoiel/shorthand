@@ -102,4 +102,7 @@ _shorthand_ can be installed with the *go get* command.
     go get github.com/rsdoiel/shorthand/...
 ```
 
+## Documentation
 
+- [shorthand](shorthand.html)
+- [shorthand syntax](shorthand-syntax)

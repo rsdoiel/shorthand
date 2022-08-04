@@ -1,5 +1,12 @@
+% shorthand-syntax(1) shorthand user manual
+% R. S. Doiel
+% August 4, 2022
 
-# Assignments and Expansions
+# NAME
+
+shorthand - syntax
+
+# DESCRIPTION
 
 Shorthand is a simple label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions
 
@@ -61,7 +68,7 @@ Notes: Using an underscore as a LABEL means the label will be ignored. There are
 The spaces surrounding " :label: ", " :import-text: ", " :bash: ", " :expand: ", " :export-expansion: ", etc. are required.
 
 
-## Example
+# EXAMPLES
 
 In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label @NOW.  
 ```text
@@ -143,4 +150,9 @@ Load the mardkown file and transform it into HTML with embedded shorthand labels
     :export-expansion: @output post.html
 ```
 
+# ALSO SEE
+
+- [shorthand](shorthand.html)
+- [shorthand-tutorial](shorthand-tutorial.html)
+- Website [https://rsdoiel.github.io/shorthand/](https://rsdoiel.github.io/shorthand/)
 

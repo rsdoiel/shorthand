@@ -8,30 +8,148 @@
 #
 PROJECT = shorthand
 
-VERSION = $(shell grep -m1 'Version = ' $(PROJECT).go | cut -d\`  -f 2)
+VERSION = $(shell grep '"version":' codemeta.json | cut -d\"  -f 4)
 
-BRANCH = $(shell git branch | cut -d\  -f 2)
+BRANCH = $(shell git branch | grep '* ' | cut -d\  -f 2)
+
+CODEMETA2CFF = $(shell which codemeta2cff)
+
+PROGRAMS = $(shell ls -1 cmd)
+
+PACKAGE = $(shell ls -1 *.go | grep -v 'version.go')
+
+SUBPACKAGES = $(shell ls -1 */*.go)
+
+#PREFIX = /usr/local/bin
+PREFIX = $(HOME)
+
+ifneq ($(prefix),)
+        PREFIX = $(prefix)
+endif
 
 OS = $(shell uname)
 
-#PREFIX = /usr/local
-PREFIX = $(HOME)
-
-EXT =
+EXT = 
 ifeq ($(OS), Windows)
-    EXT = .exe
+	EXT = .exe
 endif
 
-build:
-	go build -o bin/shorthand$(EXT) cmd/shorthand/shorthand.go
+DIST_FOLDERS = bin/*
 
-lint:
-	gofmt -w shorthand.go && golint shorthand.go
-	gofmt -w shorthand_test.go && golint shorthand_test.go
-	gofmt -w cmd/shorthand/shorthand.go && golint cmd/shorthand/shorthand.go
+build: version.go $(PROGRAMS) CITATION.cff man
 
-test:
+version.go: .FORCE
+	@echo "package $(PROJECT)" >version.go
+	@echo '' >>version.go
+	@echo '// Version of package' >>version.go
+	@echo 'const Version = "$(VERSION)"' >>version.go
+	@echo '' >>version.go
+	@git add version.go
+
+CITATION.cff: .FORCE
+	@if [ -f $(CODEMETA2CFF) ]; then $(CODEMETA2CFF) codemeta.json CITATION.cff; fi
+
+about.md: codemeta.json $(PROGRAMS)
+	pdtk prep -i codemeta.json -- --template codemeta-md.tmpl >about.md
+	
+
+$(PROGRAMS): cmd/*/*.go $(PACKAGE)
+	@mkdir -p bin
+	go build -o bin/$@$(EXT) cmd/$@/*.go
+
+# NOTE: on macOS you must use "mv" instead of "cp" to avoid problems
+install: build man .FORCE
+	@if [ ! -d $(PREFIX)/bin ]; then mkdir -p $(PREFIX)/bin; fi
+	@echo "Installing programs in $(PREFIX)/bin"
+	@for FNAME in $(PROGRAMS); do if [ -f ./bin/$$FNAME ]; then mv -v ./bin/$$FNAME $(PREFIX)/bin/$$FNAME; fi; done
+	@echo ""
+	@echo "Make sure $(PREFIX)/bin is in your PATH"
+	@echo ""
+	@if [ ! -d $(PREFIX)/man/man1 ]; then mkdir -p $(PREFIX)/man/man1; fi
+	@cp -v man/man1/shorthand.1 $(PREFIX)/man/man1/
+	@cp -v man/man1/shorthand-syntax.1 $(PREFIX)/man/man1/
+	@echo ""
+	@echo "Make sure $(PREFIX)/man is in your MANPATH"
+	@echo ""
+
+uninstall: .FORCE
+	@echo "Removing programs in $(PREFIX)/bin"
+	-for FNAME in $(PROGRAMS); do if [ -f $(PREFIX)/bin/$$FNAME ]; then rm -v $(PREFIX)/bin/$$FNAME; fi; done
+	-rm $(PREFIX)/man/man1/shorthand.1
+	-rm $(PREFIX)/man/man1/shorthand-syntax.1
+
+man: man/man1/shorthand.1 man/man1/shorthand-syntax.1 .FORCE
+	git add man
+
+man/man1/shorthand.1: docs/shorthand.md
+	mkdir -p man/man1
+	pandoc docs/shorthand.md -s -t man -o man/man1/shorthand.1
+
+man/man1/shorthand-syntax.1: docs/shorthand-syntax.md
+	mkdir -p man/man1
+	pandoc docs/shorthand-syntax.md -s -t man -o man/man1/shorthand-syntax.1
+
+check: .FORCE
+	go vet *.go
+
+test: clean build
 	go test
+
+cleanweb:
+	@if [ -f index.html ]; then rm *.html; fi
+
+clean: 
+	@if [ -d bin ]; then rm -fR bin; fi
+	@if [ -d dist ]; then rm -fR dist; fi
+	@if [ -d testout ]; then rm -fR testout; fi
+	@if [ -f man/man1/shorthand.1 ]; then rm man/man1/shorthand.1; fi
+	@if [ -f man/man1/shorthand-syntax.1 ]; then rm man/man1/shorthand-syntax.1; fi
+
+dist/linux-amd64:
+	@mkdir -p dist/bin
+	@for FNAME in $(PROGRAMS); do env  GOOS=linux GOARCH=amd64 go build -o dist/bin/$$FNAME cmd/$$FNAME/*.go; done
+	@cd dist && zip -r $(PROJECT)-v$(VERSION)-linux-amd64.zip LICENSE codemeta.json CITATION.cff *.md $(DIST_FOLDERS)
+	@rm -fR dist/bin
+
+dist/macos-amd64:
+	@mkdir -p dist/bin
+	@for FNAME in $(PROGRAMS); do env GOOS=darwin GOARCH=amd64 go build -o dist/bin/$$FNAME cmd/$$FNAME/*.go; done
+	@cd dist && zip -r $(PROJECT)-v$(VERSION)-macos-amd64.zip LICENSE codemeta.json CITATION.cff *.md $(DIST_FOLDERS)
+	@rm -fR dist/bin
+
+dist/macos-arm64:
+	@mkdir -p dist/bin
+	@for FNAME in $(PROGRAMS); do env GOOS=darwin GOARCH=arm64 go build -o dist/bin/$$FNAME cmd/$$FNAME/*.go; done
+	@cd dist && zip -r $(PROJECT)-v$(VERSION)-macos-arm64.zip LICENSE codemeta.json CITATION.cff *.md $(DIST_FOLDERS)
+	@rm -fR dist/bin
+
+dist/windows-amd64:
+	@mkdir -p dist/bin
+	@for FNAME in $(PROGRAMS); do env GOOS=windows GOARCH=amd64 go build -o dist/bin/$$FNAME.exe cmd/$$FNAME/*.go; done
+	@cd dist && zip -r $(PROJECT)-v$(VERSION)-windows-amd64.zip LICENSE codemeta.json CITATION.cff *.md $(DIST_FOLDERS)
+	@rm -fR dist/bin
+
+dist/raspbian-arm7:
+	@mkdir -p dist/bin
+	@for FNAME in $(PROGRAMS); do env GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/$$FNAME cmd/$$FNAME/*.go; done
+	@cd dist && zip -r $(PROJECT)-v$(VERSION)-rasperry-pi-os-arm7.zip LICENSE codemeta.json CITATION.cff *.md $(DIST_FOLDERS)
+	@rm -fR dist/bin
+
+distribute_docs:
+	if [ -d dist ]; then rm -fR dist; fi
+	mkdir -p dist
+	cp -v codemeta.json dist/
+	cp -v CITATION.cff dist/
+	cp -v README.md dist/
+	cp -v LICENSE dist/
+	cp -vR man dist/
+	cp -v INSTALL.md dist/
+
+update_version:
+	$(EDITOR) codemeta.json
+	codemeta2cff codemeta.json CITATION.cff
+
+release: CITATION.cff clean version.go distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macos-amd64 dist/macos-arm64 dist/raspbian-arm7
 
 status:
 	git status
@@ -40,65 +158,10 @@ save:
 	if [ "$(msg)" != "" ]; then git commit -am "$(msg)"; else git commit -am "Quick Save"; fi
 	git push origin $(BRANCH)
 
-clean:
-	if [ -d bin ]; then rm -fR bin; fi
-	if [ -d dist ]; then rm -fR dist; fi
-	if [ -d man ]; then rm -fR man; fi
+website: about.md
+	make -f website.mak
 
-man: build
-	mkdir -p man/man1
-	bin/shorthand -generate-manpage | nroff -Tutf8 -man > man/man1/shorthand.1
+publish: build website
+	bash publish.bash
 
-install:
-	GOBIN=$(PREFIX)/bin go install cmd/shorthand/shorthand.go
-
-uninstall:
-	if [ -f $(PREFIX)/bin/shorthand ]; then rm $(PREFIX)/bin/shorthand; fi
-
-doc:
-	shorthand build.shorthand
-
-dist/linux-amd64:
-	mkdir -p dist/bin
-	env GOOS=linux GOARCH=amd64 go build -o dist/bin/shorthand cmd/shorthand/shorthand.go
-	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-amd64.zip README.md LICENSE INSTALL.md bin/*
-	rm -fR dist/bin
-
-dist/macosx-amd64:
-	mkdir -p dist/bin
-	env GOOS=darwin	GOARCH=amd64 go build -o dist/bin/shorthand cmd/shorthand/shorthand.go
-	cd dist && zip -r $(PROJECT)-$(VERSION)-macosx-amd64.zip README.md LICENSE INSTALL.md bin/*
-	rm -fR dist/bin
-
-dist/windows-amd64:
-	mkdir -p dist/bin
-	env GOOS=windows GOARCH=amd64 go build -o dist/bin/shorthand.exe cmd/shorthand/shorthand.go
-	cd dist && zip -r $(PROJECT)-$(VERSION)-windows-amd64.zip README.md LICENSE INSTALL.md bin/*
-	rm -fR dist/bin
-
-dist/raspbian-arm7:
-	mkdir -p dist/bin
-	env GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/shorthand cmd/shorthand/shorthand.go
-	cd dist && zip -r $(PROJECT)-$(VERSION)-raspbian-arm7.zip README.md LICENSE INSTALL.md bin/*
-	rm -fR dist/bin
-
-dist/linux-arm64:
-	mkdir -p dist/bin
-	env GOOS=linux GOARCH=arm64 go build -o dist/bin/shorthand cmd/shorthand/shorthand.go
-	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-arm64.zip README.md LICENSE INSTALL.md bin/*
-	rm -fR dist/bin
-
-distrubute_docs:
-	mkdir -p dist
-	cp -v README.md dist/
-	cp -v LICENSE dist/
-	cp -v INSTALL.md dist/
-
-release: distrubute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7 dist/linux-arm64
-
-website:
-	./mk_website.py
-
-publish:
-	./mk_website.py
-	./publish.bash
+.FORCE:
