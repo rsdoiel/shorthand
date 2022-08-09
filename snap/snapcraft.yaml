@@ -12,6 +12,14 @@ description: |
 grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
 
+apps:
+  shorthand:
+    command: bin/shorthand
+    plugs:
+      - home
+      - desktop
+      - removable-media
+
 parts:
   shorthand:
     # See 'snapcraft plugins'
@@ -21,12 +29,4 @@ parts:
       - "CGO_ENABLED" : "1"
     source-type: git
     source: https://github.com/rsdoiel/shorthand
-
-apps:
-  shorthand:
-    command: bin/shorthand
-    plugs:
-      - home
-      - desktop
-      - removable-media
 
