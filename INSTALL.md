@@ -7,13 +7,24 @@
 You can find compiled version in the 
 [releases](https://github.com/rsdoiel/shorthand/releases/latest) 
 
+## Quick install with curl
+
+The following curl command can be used to run the installer on most
+POSIX systems. Programs are installed into `$HOME/bin`. `$HOME/bin` will
+need to be in your path. From a shell (or terminal session) run the
+following.
+
+~~~
+curl https://rsdoiel.github.io/stngo/installer.sh | sh
+~~~
+
 ## Compiled version
 
 This is generalized instructions for a release. 
 
-Compiled versions are available for Mac OS X (amd64 processor, macosx-amd64), 
-Linux (amd64 process, linux-amd64), Windows (amd64 processor, windows-amd64), 
-Rapsberry Pi (arm7 processor, raspbian-arm7) and Pine64 (arm64 processor, linux-arm64)
+Compiled versions are available for Mac OS X (Intel processor, macOS-x86_64), 
+Linux (Intel process, linux-x86_64), Windows (Intel processor, Windows-x86_64), 
+Rapsberry Pi (arm7 processor, RaspberryPiOS-arm7) and Pine64 (arm64 processor, Linux-aarch64)
 
 
 VERSION_NUMBER is a [symantic version number](http://semver.org/) (e.g. v0.1.2)
@@ -26,11 +37,11 @@ For all the released version go to the project page on Github and click latest r
 
 | Platform    | Zip Filename                           |
 |-------------|----------------------------------------|
-| Windows     | shorthand-VERSION_NUMBER-windows-amd64.zip |
-| Mac OS X    | shorthand-VERSION_NUMBER-macosx-amd64.zip  |
-| Linux/Intel | shorthand-VERSION_NUMBER-linux-amd64.zip   |
-| Raspbery Pi | shorthand-VERSION_NUMBER-raspbian-arm7.zip |
-| Pine64      | shorthand-VERSION_NUMBER-linux-arm64.zip   |
+| Windows     | shorthand-VERSION_NUMBER-Windows-x86_64.zip |
+| Mac OS X    | shorthand-VERSION_NUMBER-macOS-x86_64.zip  |
+| Linux/Intel | shorthand-VERSION_NUMBER-Linux-x86_64.zip   |
+| Raspbery Pi | shorthand-VERSION_NUMBER-RaspberryPiOS-arm7.zip |
+| Pine64      | shorthand-VERSION_NUMBER-Linux-aarch64.zip   |
 
 
 ## The basic recipe
@@ -50,7 +61,7 @@ downloading the zip file in to your "Downloads" folder.
 
 ```shell
     cd 
-    unzip Downloads/shorthand-*-macosx-amd64.zip bin/*
+    unzip Downloads/shorthand-*-macOS-x86_64.zip bin/*
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
@@ -62,7 +73,7 @@ Windows 10 after downloading the zip file.
 
 ```shell
     cd 
-    unzip Downloads/shorthand-*-windows-amd64.zip bin/*
+    unzip Downloads/shorthand-*-Windows-x86_64.zip bin/*
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
@@ -75,7 +86,7 @@ downloading the zip file.
 
 ```shell
     cd
-    unzip Downloads/shorthand-*-linux-amd64.zip bin/*
+    unzip Downloads/shorthand-*-Linux-x86_64.zip bin/*
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
@@ -96,7 +107,7 @@ downloading the zip file.
 
 ```shell
     cd 
-    unzip Downloads/shorthand-*-raspbian-arm7.zip bin/*
+    unzip Downloads/shorthand-*-RaspberryPiOS-arm7.zip bin/*
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
