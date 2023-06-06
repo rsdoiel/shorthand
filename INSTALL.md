@@ -15,7 +15,7 @@ need to be in your path. From a shell (or terminal session) run the
 following.
 
 ~~~
-curl https://rsdoiel.github.io/stngo/installer.sh | sh
+curl https://rsdoiel.github.io/shorthand/installer.sh | sh
 ~~~
 
 ## Compiled version
