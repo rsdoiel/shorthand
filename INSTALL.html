@@ -29,26 +29,16 @@
 
 <h1 id="shorthand---installation">Shorthand - installation</h1>
 <h1 id="installation">Installation</h1>
-<p><em>shorthand</em> is a command line program run from a shell like
-Bash.<br />
-You can find compiled version in the <a
-href="https://github.com/rsdoiel/shorthand/releases/latest">releases</a></p>
+<p><em>shorthand</em> is a command line program run from a shell like Bash.<br />
+You can find compiled version in the <a href="https://github.com/rsdoiel/shorthand/releases/latest">releases</a></p>
 <h2 id="quick-install-with-curl">Quick install with curl</h2>
-<p>The following curl command can be used to run the installer on most
-POSIX systems. Programs are installed into <code>$HOME/bin</code>.
-<code>$HOME/bin</code> will need to be in your path. From a shell (or
-terminal session) run the following.</p>
+<p>The following curl command can be used to run the installer on most POSIX systems. Programs are installed into <code>$HOME/bin</code>. <code>$HOME/bin</code> will need to be in your path. From a shell (or terminal session) run the following.</p>
 <pre><code>curl https://rsdoiel.github.io/shorthand/installer.sh | sh</code></pre>
 <h2 id="compiled-version">Compiled version</h2>
 <p>This is generalized instructions for a release.</p>
-<p>Compiled versions are available for Mac OS X (Intel processor,
-macOS-x86_64), Linux (Intel process, linux-x86_64), Windows (Intel
-processor, Windows-x86_64), Rapsberry Pi (arm7 processor,
-RaspberryPiOS-arm7) and Pine64 (arm64 processor, Linux-aarch64)</p>
-<p>VERSION_NUMBER is a <a href="http://semver.org/">symantic version
-number</a> (e.g. v0.1.2)</p>
-<p>For all the released version go to the project page on Github and
-click latest release</p>
+<p>Compiled versions are available for Mac OS X (Intel processor, macOS-x86_64), Linux (Intel process, linux-x86_64), Windows (Intel processor, Windows-x86_64), Rapsberry Pi (arm7 processor, RaspberryPiOS-arm7) and Pine64 (arm64 processor, Linux-aarch64)</p>
+<p>VERSION_NUMBER is a <a href="http://semver.org/">symantic version number</a> (e.g. v0.1.2)</p>
+<p>For all the released version go to the project page on Github and click latest release</p>
 <blockquote>
 <p>https://github.com/rsdoiel/shorthand/releases/latest</p>
 </blockquote>
@@ -85,36 +75,31 @@ click latest release</p>
 <h2 id="the-basic-recipe">The basic recipe</h2>
 <ol type="1">
 <li>Download the zip file using your web browser</li>
-<li>Change to your HOME directory in your shell, command shell or
-terminal application</li>
+<li>Change to your HOME directory in your shell, command shell or terminal application</li>
 <li>Unzip the files in the bin folder of the zip archive</li>
 <li>Make sure the bin folder location is in our path</li>
 <li>Test</li>
 </ol>
 <h3 id="mac-os-x">Mac OS X</h3>
-<p>Here’s an example of the commands run in the Terminal App after
-downloading the zip file in to your “Downloads” folder.</p>
+<p>Here’s an example of the commands run in the Terminal App after downloading the zip file in to your “Downloads” folder.</p>
 <pre class="shell"><code>    cd 
     unzip Downloads/shorthand-*-macOS-x86_64.zip bin/*
     export PATH=&quot;$HOME/bin:$PATH&quot;
     shorthand -version</code></pre>
 <h3 id="windows">Windows</h3>
-<p>Here’s an example of the commands run in from the Bash shell on
-Windows 10 after downloading the zip file.</p>
+<p>Here’s an example of the commands run in from the Bash shell on Windows 10 after downloading the zip file.</p>
 <pre class="shell"><code>    cd 
     unzip Downloads/shorthand-*-Windows-x86_64.zip bin/*
     export PATH=&quot;$HOME/bin:$PATH&quot;
     shorthand -version</code></pre>
 <h3 id="linux">Linux</h3>
-<p>Here’s an example of the commands run in from the Bash shell after
-downloading the zip file.</p>
+<p>Here’s an example of the commands run in from the Bash shell after downloading the zip file.</p>
 <pre class="shell"><code>    cd
     unzip Downloads/shorthand-*-Linux-x86_64.zip bin/*
     export PATH=&quot;$HOME/bin:$PATH&quot;
     shorthand -version</code></pre>
 <h3 id="raspberry-pi">Raspberry Pi</h3>
-<p>Released version is for a Raspberry Pi 2 or later use (i.e. requires
-ARM 7 support).</p>
+<p>Released version is for a Raspberry Pi 2 or later use (i.e. requires ARM 7 support).</p>
 <ol type="1">
 <li>Download the zip file</li>
 <li>Change to your HOME directory</li>
@@ -122,16 +107,13 @@ ARM 7 support).</p>
 <li>Make sure the new location is in our path</li>
 <li>Test</li>
 </ol>
-<p>Here’s an example of the commands run in from the Bash shell after
-downloading the zip file.</p>
+<p>Here’s an example of the commands run in from the Bash shell after downloading the zip file.</p>
 <pre class="shell"><code>    cd 
     unzip Downloads/shorthand-*-RaspberryPiOS-arm7.zip bin/*
     export PATH=&quot;$HOME/bin:$PATH&quot;
     shorthand -version</code></pre>
 <h2 id="compiling-from-source">Compiling from source</h2>
-<p><em>shorthand</em> is “go gettable”. Use the “go get” command to
-download the dependant packages as well as <em>shorthand</em>’s source
-code.</p>
+<p><em>shorthand</em> is “go gettable”. Use the “go get” command to download the dependant packages as well as <em>shorthand</em>’s source code.</p>
 <pre class="shell"><code>    go get -u github.com/rsdoiel/shorthand/...</code></pre>
 <p>Or clone the repository and then compile</p>
 <pre class="shell"><code>    cd
