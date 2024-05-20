@@ -165,4 +165,4 @@ Then we can run the following command to pipe it through Pandoc.
 
     pandoc -s -t html post.md > post.html
 
-shorthand 0.2.1
+shorthand 0.2.2

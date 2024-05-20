@@ -5,8 +5,9 @@
     "name": "shorthand",
     "codeRepository": "https://github.com/rsdoiel/shorthand",
     "issueTracker": "https://github.com/rsdoiel/shorthand/issues",
-    "license": "https://rsdoiel.github.io/shorthand/license.html",
-    "version": "0.2.1",
+    "license": "https://spdx.org/licenses/AGPL-3.0-or-later", 
+	"releaseNotes": "License update to AGPL 3 or later",
+    "version": "0.2.2",
     "author": [
         {
             "@type": "Person",

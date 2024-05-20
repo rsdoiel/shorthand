@@ -11,8 +11,8 @@ authors:
     orcid: "https://orcid.org/0000-0003-0900-6903"
 
 repository-code: "https://github.com/rsdoiel/shorthand"
-version: 0.2.1
-license-url: "https://rsdoiel.github.io/shorthand/license.html"
+version: 0.2.2
+license-url: "https://spdx.org/licenses/AGPL-3.0-or-later"
 keywords: [ "text markup", "text expansion", "text macros" ]
 
 ---
@@ -20,7 +20,7 @@ keywords: [ "text markup", "text expansion", "text macros" ]
 About this software
 ===================
 
-## shorthand 0.2.1
+## shorthand 0.2.2
 
 ### Authors
 
@@ -34,7 +34,7 @@ About this software
 shorthand is a Go package for doing simple text replacement and
 expansion. It works as a naive macro language.
 
-- License: <https://rsdoiel.github.io/shorthand/license.html>
+- License: <https://spdx.org/licenses/AGPL-3.0-or-later>
 - GitHub: <https://github.com/rsdoiel/shorthand>
 - Issues: <https://github.com/rsdoiel/shorthand/issues>
 
