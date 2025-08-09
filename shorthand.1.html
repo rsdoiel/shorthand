@@ -73,143 +73,143 @@ statement is not written to stdout output.</p>
 <col style="width: 49%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>operator</th>
 <th>meaning</th>
 <th>example</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>:set:</td>
 <td>Assign String</td>
 <td>:set: {{name}} Freda</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:import-text:</td>
 <td>Assign the contents of a file</td>
 <td>:import-text: {{content}} myfile.txt</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:import-shorthand:</td>
 <td>Get assignments from a file</td>
 <td>:import-shorthand: _ myfile.shorthand</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:expand:</td>
 <td>Assign an expansion</td>
 <td>:expand: {{reportTitle}} Report: <span class="citation"
 data-cites="title">@title</span> for <span class="citation"
 data-cites="date">@date</span></td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:expand-expansion:</td>
 <td>Assign expanded expansion</td>
 <td>:expand-expansion: {{reportHeading}} <span class="citation"
 data-cites="reportTitle">@reportTitle</span></td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:import:</td>
 <td>Include a file, procesisng the shorthand</td>
 <td>:import: {{nav}} mynav.shorthand</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:bash:</td>
 <td>Assign Shell output</td>
 <td>:bash: {{date}} date +%Y-%m-%%d</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:expand-and-bash:</td>
 <td>Assign Expand then gete Shell output</td>
 <td>:expand-and-bash: {{entry}} cat header.txt <span class="citation"
 data-cites="filename">@filename</span> footer.txt</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:export:</td>
 <td>Output a label’s value to a file</td>
 <td>:export: {{content}} content.txt</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:export-all:</td>
 <td>Output all assigned Expansions</td>
 <td>:export-all: _ contents.txt</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:export-shorthand:</td>
 <td>Output Assignment</td>
 <td>:export-shorthand: {{content}} content.shorthand</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:export-all-shorthand:</td>
 <td>Output all shorthand assignments</td>
 <td>:export-all-shorthand: _ contents.shorthand</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>:exit:</td>
 <td>Exit the shorthand repl</td>
 <td>:exit:</td>
 </tr>
-<tr class="even">
+<tr>
 <td>—————————-</td>
 <td>——————————————</td>
 <td>———————————————————————</td>
