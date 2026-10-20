@@ -1,306 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="language" content="EN">
-  <title>R. S. Doiel, Software Engineer/Analyst - shorthand.1</title>
-
-  <link rel="stylesheet" type="text/css"  href="/printfonts/print.css" media="print" />
-  <link rel="stylesheet" type="text/css"  href="/webfonts/fonts.css" media="screen" />
-  <link rel="stylesheet" type="text/css"  href="/css/site.css" media="screen" />
-  <link title="RSS feed for rsdoiel's blog" rel="alternate" type="application/rss+xml" href="https://rsdoiel.github.io/rss.xml" />
-  <link title="markdown source for page" rel="alternative" type="application/markdown" href="shorthand.1.md">
+    <title>shorthand</title>
+    <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
+<a href="#main-content" class="visually-hidden">skip to main content</a>
 <nav>
 <ul>
-<li><a href="/">Home</a></li>
-<li><a href="index.html">README</a></li>
-<li><a href="user-manual.html">User Manual</a></li>
-<li><a href="LICENSE">LICENSE</a></li>
-<li><a href="INSTALL.html">INSTALL</a></li>
-<li><a href="https://github.com/rsdoiel/shorthand">GitHub</a></li>
-<li><a href="about.html">About</a></li>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="LICENSE">LICENSE</a></li>
+    <li><a href="INSTALL.html">INSTALL</a></li>
+    <li><a href="user-manual.html">User Manual</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="https://github.com/rsdoiel/shorthand">GitHub</a></li>
 </ul>
 </nav>
-
-<section>
-<!--  <h1>shorthand.1</h1> -->
-
-<p>USAGE: shorthand [OPTIONS] [SHORTHAND_FILES]</p>
-<p>SYNOPSIS</p>
-<p>shorthand a simple label expander</p>
-<p>DESCRIPTION</p>
-<p>shorthand is a command line utility to expand labels based on their
-assigned definitions. The render output is the transformed text and
-without the shorthand definitions themselves. shorthand reads from
-standard input and writes to standard output.</p>
-<p>OPTIONS</p>
-<pre><code>-examples            display examples
--generate-markdown   output documentation in Markdown
--h, -help            display help
--i, -input           input filename
--l, -license         display license
--n, -no-prompt       Turn off the prompt for interactive processing
--o, -output          output filename
--p, -prompt          Output a prompt for interactive processing
--quiet               suppress error messages
--v, -version         diplsay version</code></pre>
-<p>EXAMPLES</p>
-<p>ASSIGNMENTS AND EXPANSIONS</p>
-<p>Shorthand is a simple label expansion utility. It is based on a
-simple key value substitution. It supports this following types of
-definitions</p>
-<ul>
-<li>Assign a string to a LABEL</li>
-<li>Assign the contents of a file to a LABEL</li>
-<li>Assign the output of a Bash shell expression to a LABEL</li>
-<li>Assign the output of a shorthand expansion to a LABEL</li>
-<li>Read a file of shorthand assignments and assign any expansions to
-the LABEL</li>
-<li>Output a LABEL value to a file</li>
-<li>Output all LABEL values to a file</li>
-<li>Output a LABEL assignment statement to a file</li>
-<li>Output all assignment statements to a file</li>
-</ul>
-<p><em>shorthand</em> replaces the LABEL with the value assigned to it
-whereever it is encountered in the text being passed. The assignment
-statement is not written to stdout output.</p>
-<table>
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 30%" />
-<col style="width: 49%" />
-</colgroup>
-<thead>
-<tr>
-<th>operator</th>
-<th>meaning</th>
-<th>example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>:set:</td>
-<td>Assign String</td>
-<td>:set: {{name}} Freda</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:import-text:</td>
-<td>Assign the contents of a file</td>
-<td>:import-text: {{content}} myfile.txt</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:import-shorthand:</td>
-<td>Get assignments from a file</td>
-<td>:import-shorthand: _ myfile.shorthand</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:expand:</td>
-<td>Assign an expansion</td>
-<td>:expand: {{reportTitle}} Report: <span class="citation"
-data-cites="title">@title</span> for <span class="citation"
-data-cites="date">@date</span></td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:expand-expansion:</td>
-<td>Assign expanded expansion</td>
-<td>:expand-expansion: {{reportHeading}} <span class="citation"
-data-cites="reportTitle">@reportTitle</span></td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:import:</td>
-<td>Include a file, procesisng the shorthand</td>
-<td>:import: {{nav}} mynav.shorthand</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:bash:</td>
-<td>Assign Shell output</td>
-<td>:bash: {{date}} date +%Y-%m-%%d</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:expand-and-bash:</td>
-<td>Assign Expand then gete Shell output</td>
-<td>:expand-and-bash: {{entry}} cat header.txt <span class="citation"
-data-cites="filename">@filename</span> footer.txt</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:export:</td>
-<td>Output a label’s value to a file</td>
-<td>:export: {{content}} content.txt</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:export-all:</td>
-<td>Output all assigned Expansions</td>
-<td>:export-all: _ contents.txt</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:export-shorthand:</td>
-<td>Output Assignment</td>
-<td>:export-shorthand: {{content}} content.shorthand</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:export-all-shorthand:</td>
-<td>Output all shorthand assignments</td>
-<td>:export-all-shorthand: _ contents.shorthand</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-<tr>
-<td>:exit:</td>
-<td>Exit the shorthand repl</td>
-<td>:exit:</td>
-</tr>
-<tr>
-<td>—————————-</td>
-<td>——————————————</td>
-<td>———————————————————————</td>
-</tr>
-</tbody>
-</table>
-<p>Notes: Using an underscore as a LABEL means the label will be
-ignored. There are no guarantees of order when writing values or
-assignment statements to a file.</p>
-<p>The spaces following surrounding “:set:”, “:import-text:”, “:bash:”,
-“:expand:”, “:export:”, etc. are required.</p>
-<p>EXAMPLE</p>
-<p>In this example a file containing the text of pre-amble is assigned
-to the label <span class="citation"
-data-cites="PREAMBLE">@PREAMBLE</span>, the time 3:30 is assigned to the
-label {{NOW}}.</p>
-<pre><code>:import-text: {{PREAMBLE}} /home/me/preamble.text
-:set: {{NOW}} 3:30
-
-At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.</code></pre>
-<p>If the file preamble.txt contained the phrase “Hello World”
-(including the quotes but without any carriage return or line feed) the
-output after processing the shorthand would look like -</p>
-<pre><code>At 3:30 I will be reading the &quot;Hello World&quot; until everyone falls asleep.</code></pre>
-<p>Notice the lines containing the assignments are not included in the
-output and that no carriage returns or line feeds are added the the
-substituted labels.</p>
-<ul>
-<li>Assign shorthand expansions to a LABEL
-<ul>
-<li>:expand: LABEL SHORTHAND_TO_BE_EXPANDED</li>
-<li>:expand: <span class="citation"
-data-cites="content">@content</span>@ <span class="citation"
-data-cites="report_name">@report_name</span>@ <span class="citation"
-data-cites="report_date">@report_date</span>@
-<ul>
-<li>this would concatenate report name and date</li>
-</ul></li>
-</ul></li>
-</ul>
-<p>PROCESSING MARKDOWN PAGES</p>
-<p><em>shorthand</em> is a label expander or light weight macro expande.
-It can be combined with programs like <em>pandoc</em> as a
-pre-processor.</p>
-<p>In this example we’ll build a HTML page with shorthand labels from a
-couple markdown documents. Then we will use the render HTML as a
-template for a blog page entry.</p>
-<p>Our markdown file serving as a template will be call
-“post-template.md”. It should contain the outline of the structure of
-the page plus some shorthand labels we’ll expand later.</p>
-<pre><code># @blogTitle
-
-## @pageTitle
-
-### @dateString
-
-@contentBlocks</code></pre>
-<p>For the purposes of this exercise we’ll use <em>shorthand</em> as a
-repl and just enter the assignments sequencly. Also rather than use the
-output of shorthand directly we’ll build up the content for the page in
-a label and use shorthand itself to write the final page out.</p>
-<p>The steps we’ll follow will be to</p>
-<ol type="1">
-<li>Read in our markdown file page.md and turn it into an HTML with
-embedded shorthand labels</li>
-<li>Assign some values to the labels</li>
-<li>Expand the labels in the HTML and assign to a new label</li>
-<li>Write the new label out to are page call “page.html”</li>
-</ol>
-<p>Start the repl with this version of the shorthand command:</p>
-<pre><code>shorthand -p &quot;? &quot;</code></pre>
-<p>The <em>-p</em> option tells <em>shorthand</em> to use the value “?”
-as the prompt. When <em>shorthand</em> starts it will display “?” to
-indicate it is ready for an assignment or expansion.</p>
-<p>The following assumes you are in the <em>shorthand</em> repl.</p>
-<p>Load the mardkown file and transform it into HTML with embedded
-shorthand labels</p>
-<pre><code>:import: @pageTemplate post-template.md
-:bash: @dateString date
-:set: @blogTitle My Blog
-:set: @pageTitle A Post
-:import: @contentBlock a-post.md
-:export: @output post.md
-:exit:</code></pre>
-<p>Then we can run the following command to pipe it through Pandoc.</p>
-<pre><code>pandoc -s -t html post.md &gt; post.html</code></pre>
-<p>shorthand 0.2.2</p>
+<section id="main-content">
+<h1 id="name">NAME</h1>
+<p>shorthand — a simple label expander</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p>shorthand <a href="#options">OPTIONS</a> [SHORTHAND_FILES]</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>shorthand expands labels in text using the definitions assigned to
+them. It reads each file named on the command line in turn, or standard
+input when there is none, and writes the text with the labels replaced.
+The lines that make the definitions are not written. It works as a naive
+macro language, for the jobs a template language is too much for:
+abbreviations in Markdown, a timestamp in a timesheet, pages built from
+several documents. Run shorthand -examples for the operators.</p>
+<p>Without a file, shorthand is an interactive interpreter when standard
+input is a terminal: it prompts for each line, and “:help:” lists the
+operators. Use “:exit:” to leave. A line that contains “:exit:” ends the
+input in a file too.</p>
+<p>The definitions and the labels live for one run, so the files given
+together share them. The first line below defines {{who}}, so the second
+prints “Hello Freda”:</p>
+<pre><code>:set: {{who}} Freda
+Hello {{who}}</code></pre>
+<h1 id="options">OPTIONS</h1>
+<dl>
+<dt>-h, -help</dt>
+<dd>
+display this help page
+</dd>
+<dt>-l, -license</dt>
+<dd>
+display the license
+</dd>
+<dt>-v, -version</dt>
+<dd>
+display the program name, version and release hash
+</dd>
+<dt>-examples</dt>
+<dd>
+display the operators with examples
+</dd>
+<dt>-i FILENAME, -input FILENAME</dt>
+<dd>
+read FILENAME before any files named on the command line
+</dd>
+<dt>-o FILENAME, -output FILENAME</dt>
+<dd>
+write to FILENAME rather than standard output
+</dd>
+<dt>-p PROMPT, -prompt PROMPT</dt>
+<dd>
+the prompt of the interactive interpreter (default “=&gt;”)
+</dd>
+<dt>-n, -no-prompt</dt>
+<dd>
+turn the prompt off
+</dd>
+<dt>-quiet</dt>
+<dd>
+do not report a file that cannot be opened
+</dd>
+</dl>
+<h1 id="exit-status">EXIT STATUS</h1>
+<dl>
+<dt>0</dt>
+<dd>
+success
+</dd>
+<dt>2</dt>
+<dd>
+bad command line
+</dd>
+<dt>65</dt>
+<dd>
+a line could not be evaluated, such as an unsupported operator or a file
+an operator could not read. It is reported with its line number, the
+rest of the input is still processed, and the exit status is 65
+</dd>
+<dt>66</dt>
+<dd>
+an input file cannot be opened. The other files are still processed
+</dd>
+<dt>73</dt>
+<dd>
+the output file cannot be created
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<p>Expand a timesheet that starts with a definition of <span
+class="citation" data-cites="now">@now</span>:</p>
+<pre class="shell"><code>shorthand Time_Sheet.txt | stnparse</code></pre>
+<p>Build a page from a template, writing it to a file:</p>
+<pre class="shell"><code>shorthand -o index.html build.shorthand</code></pre>
+<p>Expand text on standard input, with no prompt:</p>
+<pre class="shell"><code>echo &quot;Today is @today&quot; | shorthand -n definitions.shorthand -</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p>pandoc(1), stnparse(1)</p>
 </section>
-
 <footer>
+<p>shorthand</p>
 </footer>
-
 </body>
 </html>

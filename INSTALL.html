@@ -1,32 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="language" content="EN">
-  <title>R. S. Doiel, Software Engineer/Analyst - INSTALL</title>
-
-  <link rel="stylesheet" type="text/css"  href="/printfonts/print.css" media="print" />
-  <link rel="stylesheet" type="text/css"  href="/webfonts/fonts.css" media="screen" />
-  <link rel="stylesheet" type="text/css"  href="/css/site.css" media="screen" />
-  <link title="RSS feed for rsdoiel's blog" rel="alternate" type="application/rss+xml" href="https://rsdoiel.github.io/rss.xml" />
-  <link title="markdown source for page" rel="alternative" type="application/markdown" href="INSTALL.md">
+    <title>shorthand</title>
+    <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
+<a href="#main-content" class="visually-hidden">skip to main content</a>
 <nav>
 <ul>
-<li><a href="/">Home</a></li>
-<li><a href="index.html">README</a></li>
-<li><a href="user-manual.html">User Manual</a></li>
-<li><a href="LICENSE">LICENSE</a></li>
-<li><a href="INSTALL.html">INSTALL</a></li>
-<li><a href="https://github.com/rsdoiel/shorthand">GitHub</a></li>
-<li><a href="about.html">About</a></li>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="LICENSE">LICENSE</a></li>
+    <li><a href="INSTALL.html">INSTALL</a></li>
+    <li><a href="user-manual.html">User Manual</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="https://github.com/rsdoiel/shorthand">GitHub</a></li>
 </ul>
 </nav>
-
-<section>
-<!--  <h1>INSTALL</h1> -->
-
+<section id="main-content">
 <h1 id="shorthand---installation">Shorthand - installation</h1>
 <h1 id="installation">Installation</h1>
 <p><em>shorthand</em> is a command line program run from a shell like
@@ -39,14 +29,24 @@ POSIX systems. Programs are installed into <code>$HOME/bin</code>.
 <code>$HOME/bin</code> will need to be in your path. From a shell (or
 terminal session) run the following.</p>
 <pre><code>curl https://rsdoiel.github.io/shorthand/installer.sh | sh</code></pre>
+<h3 id="if-you-are-running-macos-or-windows">If you are running macOS or
+Windows</h3>
+<p>You may get security warnings, because the programs are not signed.
+See the notes for the system you are using.</p>
+<ul>
+<li><a href="INSTALL_NOTES_macOS.html">INSTALL_NOTES_macOS.md</a></li>
+<li><a
+href="INSTALL_NOTES_Windows.html">INSTALL_NOTES_Windows.md</a></li>
+</ul>
 <h2 id="compiled-version">Compiled version</h2>
 <p>This is generalized instructions for a release.</p>
-<p>Compiled versions are available for Mac OS X (Intel processor,
-macOS-x86_64), Linux (Intel process, linux-x86_64), Windows (Intel
-processor, Windows-x86_64), Rapsberry Pi (arm7 processor,
-RaspberryPiOS-arm7) and Pine64 (arm64 processor, Linux-aarch64)</p>
+<p>Compiled versions are available for macOS (Intel, macOS-x86_64, and
+Apple silicon, macOS-arm64), Linux (Intel, Linux-x86_64, and 64 bit ARM
+such as a Raspberry Pi 4 or 5 or a Pine64, Linux-aarch64), Raspberry Pi
+OS 32 bit (Linux-armv7l) and Windows (Intel, Windows-x86_64, and ARM,
+Windows-arm64).</p>
 <p>VERSION_NUMBER is a <a href="http://semver.org/">symantic version
-number</a> (e.g. v0.1.2)</p>
+number</a> (e.g. v0.3.0)</p>
 <p>For all the released version go to the project page on Github and
 click latest release</p>
 <blockquote>
@@ -54,31 +54,39 @@ click latest release</p>
 </blockquote>
 <table>
 <thead>
-<tr>
-<th>Platform</th>
-<th>Zip Filename</th>
+<tr class="header">
+<th scope="col">Platform</th>
+<th scope="col">Zip Filename</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>Windows</td>
 <td>shorthand-VERSION_NUMBER-Windows-x86_64.zip</td>
 </tr>
-<tr>
-<td>Mac OS X</td>
+<tr class="even">
+<td>Windows on ARM</td>
+<td>shorthand-VERSION_NUMBER-Windows-arm64.zip</td>
+</tr>
+<tr class="odd">
+<td>macOS Intel</td>
 <td>shorthand-VERSION_NUMBER-macOS-x86_64.zip</td>
 </tr>
-<tr>
-<td>Linux/Intel</td>
+<tr class="even">
+<td>macOS Apple silicon</td>
+<td>shorthand-VERSION_NUMBER-macOS-arm64.zip</td>
+</tr>
+<tr class="odd">
+<td>Linux Intel</td>
 <td>shorthand-VERSION_NUMBER-Linux-x86_64.zip</td>
 </tr>
-<tr>
-<td>Raspbery Pi</td>
-<td>shorthand-VERSION_NUMBER-RaspberryPiOS-arm7.zip</td>
-</tr>
-<tr>
-<td>Pine64</td>
+<tr class="even">
+<td>Linux 64 bit ARM</td>
 <td>shorthand-VERSION_NUMBER-Linux-aarch64.zip</td>
+</tr>
+<tr class="odd">
+<td>Raspberry Pi OS 32 bit</td>
+<td>shorthand-VERSION_NUMBER-Linux-armv7l.zip</td>
 </tr>
 </tbody>
 </table>
@@ -95,7 +103,7 @@ terminal application</li>
 <p>Here’s an example of the commands run in the Terminal App after
 downloading the zip file in to your “Downloads” folder.</p>
 <pre class="shell"><code>    cd 
-    unzip Downloads/shorthand-*-macOS-x86_64.zip bin/*
+    unzip Downloads/shorthand-*-macOS-arm64.zip bin/*   # or macOS-x86_64 on an Intel Mac
     export PATH=&quot;$HOME/bin:$PATH&quot;
     shorthand -version</code></pre>
 <h3 id="windows">Windows</h3>
@@ -113,8 +121,9 @@ downloading the zip file.</p>
     export PATH=&quot;$HOME/bin:$PATH&quot;
     shorthand -version</code></pre>
 <h3 id="raspberry-pi">Raspberry Pi</h3>
-<p>Released version is for a Raspberry Pi 2 or later use (i.e. requires
-ARM 7 support).</p>
+<p>The 32 bit Raspberry Pi OS version is for a Raspberry Pi 2 or later
+(i.e. requires ARM 7 support). On a 64 bit Raspberry Pi OS use the
+Linux-aarch64 zip file.</p>
 <ol type="1">
 <li>Download the zip file</li>
 <li>Change to your HOME directory</li>
@@ -125,25 +134,25 @@ ARM 7 support).</p>
 <p>Here’s an example of the commands run in from the Bash shell after
 downloading the zip file.</p>
 <pre class="shell"><code>    cd 
-    unzip Downloads/shorthand-*-RaspberryPiOS-arm7.zip bin/*
+    unzip Downloads/shorthand-*-Linux-armv7l.zip bin/*
     export PATH=&quot;$HOME/bin:$PATH&quot;
     shorthand -version</code></pre>
 <h2 id="compiling-from-source">Compiling from source</h2>
-<p><em>shorthand</em> is “go gettable”. Use the “go get” command to
-download the dependant packages as well as <em>shorthand</em>’s source
-code.</p>
-<pre class="shell"><code>    go get -u github.com/rsdoiel/shorthand/...</code></pre>
-<p>Or clone the repository and then compile</p>
-<pre class="shell"><code>    cd
-    git clone https://github.com/rsdoiel/shorthand src/github.com/rsdoiel/shorthand
-    cd src/github.com/rsdoiel/shorthand
+<p><em>shorthand</em> needs Go 1.26.4 or later and has no other
+dependencies. To install the latest release into
+<code>$HOME/go/bin</code></p>
+<pre class="shell"><code>    go install github.com/rsdoiel/shorthand/cmd/shorthand@latest</code></pre>
+<p>or clone the repository and use Make, which also builds the man page.
+The Makefile uses CMTools, Pandoc and GNU Make, which are only needed to
+regenerate <code>version.go</code>, the man page and the website.</p>
+<pre class="shell"><code>    git clone https://github.com/rsdoiel/shorthand
+    cd shorthand
     make
     make test
     make install</code></pre>
 </section>
-
 <footer>
+<p>shorthand</p>
 </footer>
-
 </body>
 </html>
