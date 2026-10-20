@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>shorthand</title>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<a href="#main-content" class="visually-hidden">skip to main content</a>
+<nav>
+<ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="LICENSE">LICENSE</a></li>
+    <li><a href="INSTALL.html">INSTALL</a></li>
+    <li><a href="user-manual.html">User Manual</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="https://github.com/rsdoiel/shorthand">GitHub</a></li>
+</ul>
+</nav>
+<section id="main-content">
+<h1 id="shorthand-syntax">shorthand syntax</h1>
+<p><em>shorthand</em> is a simple label expander. A line is either a
+definition, which assigns a value to a label, or text. The text is
+written with every defined label replaced by its value, and the
+definition lines are not written.</p>
+<p>A line is split on spaces into an operator, a label and the rest, the
+source:</p>
+<pre class="text"><code>:set: {{name}} Freda</code></pre>
+<p>A label is any text that does not contain an operator. Curly
+brackets, dollar signs and at signs are common; what matters is that it
+does not appear in your text by accident. The spaces around the operator
+and the label are required. Using an underscore as the label means the
+label is ignored, which is how an operator is used only for what it
+does, as with <code>:import-shorthand:</code>.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th scope="col">operator</th>
+<th scope="col">meaning</th>
+<th scope="col">example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>:set:</code></td>
+<td>assign a string</td>
+<td><code>:set: {{name}} Freda</code></td>
+</tr>
+<tr class="even">
+<td><code>:import-text:</code></td>
+<td>assign the contents of a file</td>
+<td><code>:import-text: {{content}} myfile.txt</code></td>
+</tr>
+<tr class="odd">
+<td><code>:import-shorthand:</code></td>
+<td>read definitions from a file</td>
+<td><code>:import-shorthand: _ myfile.shorthand</code></td>
+</tr>
+<tr class="even">
+<td><code>:expand:</code></td>
+<td>assign an expansion</td>
+<td><code>:expand: {{reportTitle}} Report: @title for @date</code></td>
+</tr>
+<tr class="odd">
+<td><code>:expand-expansion:</code></td>
+<td>assign an expansion of an expansion</td>
+<td><code>:expand-expansion: {{reportHeading}} @reportTitle</code></td>
+</tr>
+<tr class="even">
+<td><code>:import:</code></td>
+<td>include a file, processing its shorthand</td>
+<td><code>:import: {{nav}} mynav.shorthand</code></td>
+</tr>
+<tr class="odd">
+<td><code>:bash:</code></td>
+<td>assign the output of a Bash command</td>
+<td><code>:bash: {{date}} date +%Y-%m-%d</code></td>
+</tr>
+<tr class="even">
+<td><code>:expand-and-bash:</code></td>
+<td>expand, then assign the output of a Bash command</td>
+<td><code>:expand-and-bash: {{entry}} cat header.txt @filename footer.txt</code></td>
+</tr>
+<tr class="odd">
+<td><code>:export:</code></td>
+<td>write a label’s value to a file</td>
+<td><code>:export: {{content}} content.txt</code></td>
+</tr>
+<tr class="even">
+<td><code>:export-all:</code></td>
+<td>write every label’s value to a file</td>
+<td><code>:export-all: _ contents.txt</code></td>
+</tr>
+<tr class="odd">
+<td><code>:export-shorthand:</code></td>
+<td>write a label’s definition to a file</td>
+<td><code>:export-shorthand: {{content}} content.shorthand</code></td>
+</tr>
+<tr class="even">
+<td><code>:export-all-shorthand:</code></td>
+<td>write every definition to a file</td>
+<td><code>:export-all-shorthand: _ contents.shorthand</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>:export-all:</code> and <code>:export-all-shorthand:</code>
+write in no particular order.</p>
+<h1 id="how-labels-are-replaced">How labels are replaced</h1>
+<p>Labels are replaced in one pass over the text, and the answer never
+depends on the order they were defined in.</p>
+<ul>
+<li>Where two labels match at the same place the longer one wins. With
+<code>@a</code> and <code>@ab</code> defined, <code>@ab</code> is the
+value of <code>@ab</code>, and <code>@abc</code> is the value of
+<code>@ab</code> followed by <code>c</code>.</li>
+<li>A value is not expanded again. If <code>@b</code> was set to
+<code>@a</code>, then <code>@b</code> expands to the text
+<code>@a</code>. Use <code>:expand:</code> to expand the labels in a
+source when it is assigned, or <code>:expand-expansion:</code> to expand
+them twice, when you want a label in a value expanded too.</li>
+<li>The labels <code>_</code> and an empty label are never replaced, so
+using <code>_</code> for an operator that only does something, like
+<code>:import-shorthand:</code>, leaves the underscores in the rest of
+your text alone.</li>
+</ul>
+<p><code>:exit:</code> ends the input, and so does <code>:quit:</code>.
+A line that contains either one ends it, wherever the word is in the
+line. When <em>shorthand</em> is run with no file at a terminal,
+<code>:help:</code> lists the operators.</p>
+<p>A definition applies to the lines after it, and to the files after it
+on the same command line. Defining a label again replaces its value from
+then on.</p>
+<h1 id="example">Example</h1>
+<p>In this example the contents of a file are assigned to
+<code>{{PREAMBLE}}</code> and the time 3:30 to <code>{{NOW}}</code>:</p>
+<pre class="text"><code>:import-text: {{PREAMBLE}} /home/me/preamble.txt
+:set: {{NOW}} 3:30
+At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.</code></pre>
+<p>If <em>preamble.txt</em> held <code>"Hello World"</code>, with no
+newline after it, the output is</p>
+<pre class="text"><code>At 3:30 I will be reading the &quot;Hello World&quot; until everyone falls asleep.</code></pre>
+<p>The lines with the definitions are not in the output, and no line
+ends are added to the substituted labels.</p>
+<h1 id="a-timesheet">A timesheet</h1>
+<p><em>shorthand</em> is used to put the present time into a timesheet
+for the <a href="https://github.com/rsdoiel/stngo">stngo</a> tools. The
+timesheet starts with</p>
+<pre class="text"><code>:bash: @now echo -n $(date +%I:%M)</code></pre>
+<p>and an entry that is still going on is written
+<code>11:45 - @now; Acme; Widgets</code>.
+<code>shorthand Time_Sheet.txt | stnparse</code> then reads it as ending
+at the present time.</p>
+<h1 id="calling-it-from-go">Calling it from Go</h1>
+<p>The package is <code>github.com/rsdoiel/shorthand</code>.
+<code>New</code> returns a <code>VirtualMachine</code>,
+<code>Eval</code> and <code>Apply</code> expand text,
+<code>RegisterOp</code> adds an operator, and <code>Out</code> and
+<code>Err</code> say where <code>Run</code> writes.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>vm <span class="op">:=</span> shorthand<span class="op">.</span>New<span class="op">()</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>out<span class="op">,</span> err <span class="op">:=</span> vm<span class="op">.</span>Apply<span class="op">([]</span><span class="dt">byte</span><span class="op">(</span><span class="st">&quot;:set: @who Freda</span><span class="ch">\n</span><span class="st">Hello @who</span><span class="ch">\n</span><span class="st">&quot;</span><span class="op">))</span></span></code></pre></div>
+</section>
+<footer>
+<p>shorthand</p>
+</footer>
+</body>
+</html>
