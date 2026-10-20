@@ -1,7 +1,5 @@
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/shorthand)
-
 
 # shorthand
 
@@ -13,11 +11,11 @@ Example use cases:
 + build html templates from markdown files
 + compose pages from multiple markdown files
 
-The supported command line options can be listed using the _--help_
-options.
+The supported command line options can be listed using the _-help_
+option.
 
 ```shell
-    shorthand --help
+    shorthand -help
 ```
 Source code can be found at [github.com/rsdoiel/shorthand](https://github.com/rsdoiel/shorthand)
 
@@ -42,17 +40,21 @@ If the content of the markdown file _testdata/report.md_ was
 
 ```
 
-From the command line you can do something like this
+Put the definitions in a file of their own, _now.shorthand_
 
-```shell
-    shorthand -e ':bash: @now date' \
-        -e ":import: @report testdata/report.md" \
-        -e "@report" \
-        -e ':exit:' | pandoc -s > testdata/report.html
+```text
+    :bash: @now date
 ```
 
-What this command does is launch the _shorthand_ interpreter and it
-replaces all occurrences of "@now" in the markdown document with the
+and give it to _shorthand_ before the document, then render the result
+with _pandoc_
+
+```shell
+    shorthand now.shorthand testdata/report.md | pandoc -s > testdata/report.html
+```
+
+What this command does is read the definitions, then the document, and
+replace all occurrences of "@now" in the document with the
 output from the Unix program _date_. 
 
 The output (before piping to Pandoc) would look something like
@@ -71,11 +73,11 @@ Notice that both "@now" are replace with the same date information.
 
 ### embedding shorthand definitions
 
-You could also embed the shorthand definitions command straight in the
+You could also embed the shorthand definitions straight in the
 markdown itself. with something like
 
 ```markdown
-    @now :bash: date
+    :bash: @now date
 
     Report Date: @now
 
@@ -96,13 +98,14 @@ That makes the command line a little shorter
 
 ## Installation
 
-_shorthand_ can be installed with the *go get* command.
+_shorthand_ can be installed with the *go install* command.
 
 ```
-    go get github.com/rsdoiel/shorthand/...
+    go install github.com/rsdoiel/shorthand/cmd/shorthand@latest
 ```
 
 ## Documentation
 
-- [shorthand](shorthand.html)
-- [shorthand syntax](shorthand-syntax)
+- [shorthand command](shorthand.1.html)
+- [shorthand syntax](shorthand-syntax.html)
+- [shorthand tutorial](shorthand-tutorial.html)

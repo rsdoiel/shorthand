@@ -22,26 +22,25 @@ curl https://rsdoiel.github.io/shorthand/installer.sh | sh
 
 This is generalized instructions for a release. 
 
-Compiled versions are available for Mac OS X (Intel processor, macOS-x86_64), 
-Linux (Intel process, linux-x86_64), Windows (Intel processor, Windows-x86_64), 
-Rapsberry Pi (arm7 processor, RaspberryPiOS-arm7) and Pine64 (arm64 processor, Linux-aarch64)
+Compiled versions are available for macOS (Intel, macOS-x86_64, and Apple silicon, macOS-arm64),
+Linux (Intel, Linux-x86_64, and 64 bit ARM such as a Raspberry Pi 4 or 5 or a Pine64, Linux-aarch64),
+Raspberry Pi OS 32 bit (Linux-armv7l) and Windows (Intel, Windows-x86_64, and ARM, Windows-arm64).
 
-
-VERSION_NUMBER is a [symantic version number](http://semver.org/) (e.g. v0.1.2)
-
+VERSION_NUMBER is a [symantic version number](http://semver.org/) (e.g. v0.3.0)
 
 For all the released version go to the project page on Github and click latest release
 
 >    https://github.com/rsdoiel/shorthand/releases/latest
 
-
-| Platform    | Zip Filename                           |
-|-------------|----------------------------------------|
-| Windows     | shorthand-VERSION_NUMBER-Windows-x86_64.zip |
-| Mac OS X    | shorthand-VERSION_NUMBER-macOS-x86_64.zip  |
-| Linux/Intel | shorthand-VERSION_NUMBER-Linux-x86_64.zip   |
-| Raspbery Pi | shorthand-VERSION_NUMBER-RaspberryPiOS-arm7.zip |
-| Pine64      | shorthand-VERSION_NUMBER-Linux-aarch64.zip   |
+| Platform             | Zip Filename                                  |
+|----------------------|-----------------------------------------------|
+| Windows              | shorthand-VERSION_NUMBER-Windows-x86_64.zip   |
+| Windows on ARM       | shorthand-VERSION_NUMBER-Windows-arm64.zip    |
+| macOS Intel          | shorthand-VERSION_NUMBER-macOS-x86_64.zip     |
+| macOS Apple silicon  | shorthand-VERSION_NUMBER-macOS-arm64.zip      |
+| Linux Intel          | shorthand-VERSION_NUMBER-Linux-x86_64.zip     |
+| Linux 64 bit ARM     | shorthand-VERSION_NUMBER-Linux-aarch64.zip    |
+| Raspberry Pi OS 32 bit | shorthand-VERSION_NUMBER-Linux-armv7l.zip   |
 
 
 ## The basic recipe
@@ -61,7 +60,7 @@ downloading the zip file in to your "Downloads" folder.
 
 ```shell
     cd 
-    unzip Downloads/shorthand-*-macOS-x86_64.zip bin/*
+    unzip Downloads/shorthand-*-macOS-arm64.zip bin/*   # or macOS-x86_64 on an Intel Mac
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
@@ -94,7 +93,7 @@ downloading the zip file.
 
 ### Raspberry Pi
 
-Released version is for a Raspberry Pi 2 or later use (i.e. requires ARM 7 support).
+The 32 bit Raspberry Pi OS version is for a Raspberry Pi 2 or later (i.e. requires ARM 7 support). On a 64 bit Raspberry Pi OS use the Linux-aarch64 zip file.
 
 1. Download the zip file
 2. Change to your HOME directory
@@ -107,7 +106,7 @@ downloading the zip file.
 
 ```shell
     cd 
-    unzip Downloads/shorthand-*-RaspberryPiOS-arm7.zip bin/*
+    unzip Downloads/shorthand-*-Linux-armv7l.zip bin/*
     export PATH="$HOME/bin:$PATH"
     shorthand -version
 ```
@@ -115,21 +114,19 @@ downloading the zip file.
 
 ## Compiling from source
 
-_shorthand_ is "go gettable".  Use the "go get" command to download the dependant packages
-as well as _shorthand_'s source code.
+_shorthand_ needs Go 1.26.4 or later and has no other dependencies. To install the latest release into `$HOME/go/bin`
 
 ```shell
-    go get -u github.com/rsdoiel/shorthand/...
+    go install github.com/rsdoiel/shorthand/cmd/shorthand@latest
 ```
 
-Or clone the repository and then compile
+or clone the repository and use Make, which also builds the man page. The Makefile uses CMTools,
+Pandoc and GNU Make, which are only needed to regenerate `version.go`, the man page and the website.
 
 ```shell
-    cd
-    git clone https://github.com/rsdoiel/shorthand src/github.com/rsdoiel/shorthand
-    cd src/github.com/rsdoiel/shorthand
+    git clone https://github.com/rsdoiel/shorthand
+    cd shorthand
     make
     make test
     make install
 ```
-

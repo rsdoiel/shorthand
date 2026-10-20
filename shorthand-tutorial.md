@@ -27,16 +27,21 @@ If the content of the markdown file _template/report.md_ was
 
 ```
 
-From the command line you can do something like this
+Put the definitions in a file, _now.shorthand_
 
-```shell
-    shorthand -e ':bash: @now@ date' \
-        -e ":import: @report@ template/report.md" \
-        -e "@report@" \
-        -e ':exit:' | pandoc -s > reports/report-time.html
+```text
+    :bash: @now@ date
+    :import: @report@ template/report.md
+    @report@
 ```
 
-What this command does is launch the _shorthand_ interpreter and it
+and run it through _shorthand_
+
+```shell
+    shorthand now.shorthand | pandoc -s > reports/report-time.html
+```
+
+What this command does is read the definitions and it
 replaces all occurrences of "@now@" in the markdown document with the
 output from the Unix program _date_. 
 
@@ -54,9 +59,8 @@ The output (before piping to Pandoc) would look something like
 
 Notice that both "@now@" are replace with the same date information.
 
-In the end of the command line example we also have an `@report@`.
-First it is defined as an "import" and then it is rendered before
-exiting the interpreter. The "import" reads the template, evaluates
+In the end of the definitions file we also have an `@report@`.
+First it is defined as an "import" and then it is rendered. The "import" reads the template, evaluates
 the template rendering the result at the second `@report@`. This result
 is what is passed via a pipe to Pandoc to generate the HTML page
 _reports/report-time.html_

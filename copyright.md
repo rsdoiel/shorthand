@@ -1,3 +1,3 @@
-copyright (c) 2019 all rights reserved.
-Released under the BSD 2-Clause license
-See: http://opensource.org/licenses/BSD-2-Clause
+Copyright (C) 2015-2026 R. S. Doiel
+
+Released under the GNU Affero General Public License, version 3 or (at your option) any later version. See [LICENSE](LICENSE).

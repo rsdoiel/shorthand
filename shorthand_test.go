@@ -1,24 +1,23 @@
-//
+// Copyright (C) 2015-2026 R. S. Doiel
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// See the LICENSE file.
+
 // Package shorthand provides shorthand definition and expansion.
 //
 // shorthand.go - A simple definition and expansion notation to use
 // as shorthand when a template language is too much.
 //
 // @author R. S. Doiel, <rsdoiel@gmail.com>
-// copyright (c) 2019 all rights reserved.
-// Released under the BSD 2-Clause license
-// See: http://opensource.org/licenses/BSD-2-Clause
 //
 // shorthand_test.go - tests for short package for handling shorthand
 // definition and expansion.
-//
 package shorthand
 
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -415,7 +414,7 @@ func TestEval(t *testing.T) {
 		s, err := vm.Eval(src, i)
 		sm := vm.Symbols.GetSymbol(eSM.Label)
 		if notOk(err == nil) {
-			fmt.Sprintf("err should be nill: %s", err)
+			t.Errorf("err should be nil: %s", err)
 		}
 		if eSM.Label == "" && eSM.Op == "" {
 			if notOk(s != "") {
@@ -575,7 +574,7 @@ func TestExpand(t *testing.T) {
 	vm.Eval(":set: @now 9:00", 2)
 	result := vm.Expand(text)
 	if result != expected {
-		t.Fatalf("Expected:\n\n" + expected + "\n\nReceived:\n\n" + result)
+		t.Fatalf("Expected:\n\n%s\n\nReceived:\n\n%s", expected, result)
 	}
 }
 
@@ -589,7 +588,7 @@ func TestInclude(t *testing.T) {
 		t.Errorf("vm.Symbols.labels should be zero too")
 	}
 
-	buf, err := ioutil.ReadFile("testdata/testme.md")
+	buf, err := os.ReadFile("testdata/testme.md")
 	if notOk(err == nil) {
 		t.Errorf("Should be able to read testdata/testme.md: %s", err)
 	}
@@ -767,7 +766,7 @@ func TestExpandingSourcesToFile(t *testing.T) {
 	}
 
 	for fname, expectedText := range testFiles {
-		buf, err := ioutil.ReadFile(fname)
+		buf, err := os.ReadFile(fname)
 		if notOk(err == nil) {
 			t.Errorf("%s error: %s", fname, err)
 		}
@@ -809,7 +808,7 @@ func TestExportAssignments(t *testing.T) {
 	}
 
 	for fname, text := range testFiles {
-		buf, err := ioutil.ReadFile(fname)
+		buf, err := os.ReadFile(fname)
 		if notOk(err == nil) {
 			t.Errorf("Should beable to read %q", fname)
 		}
@@ -841,4 +840,158 @@ func TestRun(t *testing.T) {
 		t.Errorf("Exited int wrong : %d", cnt)
 	}
 	fmt.Println("Success.")
+}
+
+/** TestRunWritesToTheMachinesWriters checks that Run writes the expansion to
+ * vm.Out and the errors to vm.Err, so a caller can send them anywhere. Run
+ * used to write to os.Stdout, which is why the command's -o option did nothing.
+ *
+ * Example:
+ *   go test -run TestRunWritesToTheMachinesWriters
+ */
+func TestRunWritesToTheMachinesWriters(t *testing.T) {
+	vm := New()
+	var out, errOut strings.Builder
+	vm.Out, vm.Err = &out, &errOut
+	src := ":set: @who Freda\nHello @who\n:import-text: @x /no/such/file\nAgain @who\n"
+	lines := vm.Run(bufio.NewReader(strings.NewReader(src)))
+	if lines != 4 {
+		t.Errorf("Run processed %d lines, want 4", lines)
+	}
+	if want := "Hello Freda\nAgain Freda\n"; out.String() != want {
+		t.Errorf("Out = %q, want %q", out.String(), want)
+	}
+	if !strings.Contains(errOut.String(), "ERROR (3)") || !strings.Contains(errOut.String(), "/no/such/file") {
+		t.Errorf("Err = %q, want the error for line 3", errOut.String())
+	}
+	if vm.ErrorCount() != 1 {
+		t.Errorf("ErrorCount = %d, want 1", vm.ErrorCount())
+	}
+}
+
+func TestRunPromptGoesToOut(t *testing.T) {
+	vm := New()
+	var out strings.Builder
+	vm.Out = &out
+	vm.SetPrompt("=> ")
+	vm.Run(bufio.NewReader(strings.NewReader("hello\n")))
+	if got := out.String(); got != "=> hello\n=> " {
+		t.Errorf("Out = %q", got)
+	}
+}
+
+func TestRunStopsAtExit(t *testing.T) {
+	vm := New()
+	var out strings.Builder
+	vm.Out = &out
+	vm.Run(bufio.NewReader(strings.NewReader("one\n:exit:\ntwo\n")))
+	if out.String() != "one\n" {
+		t.Errorf("Out = %q, want only the line before :exit:", out.String())
+	}
+}
+
+func TestApplyExpandsBytesAndStopsAtExit(t *testing.T) {
+	vm := New()
+	out, err := vm.Apply([]byte(":set: @who Freda\nHello @who\n:exit:\nnot reached"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := "\nHello Freda"; string(out) != want {
+		t.Errorf("Apply = %q, want %q", out, want)
+	}
+	if _, err := vm.Apply([]byte(":import-text: @x /no/such/file")); err == nil || !strings.Contains(err.Error(), "line (0)") {
+		t.Errorf("Apply should report the line that failed, got %v", err)
+	}
+}
+
+func TestParseShortForms(t *testing.T) {
+	vm := New()
+	cases := map[string]SourceMap{
+		":set:":              {Op: ":set:", LineNo: 3},
+		":set: @who":         {Op: ":set:", Label: "@who", LineNo: 3},
+		":set: @who a b  c ": {Op: ":set:", Label: "@who", Source: "a b  c", LineNo: 3},
+		"plain text":         {Source: "plain text", LineNo: 3},
+	}
+	for src, want := range cases {
+		if got := vm.Parse(src, 3); got != want {
+			t.Errorf("Parse(%q) = %+v, want %+v", src, got, want)
+		}
+	}
+}
+
+func TestRegisterOpRefusesADuplicate(t *testing.T) {
+	vm := New()
+	if err := vm.RegisterOp(":set:", AssignString, "again"); err == nil {
+		t.Error("registering :set: twice should fail")
+	}
+	upper := func(vm *VirtualMachine, sm SourceMap) (SourceMap, error) {
+		sm.Expanded = strings.ToUpper(sm.Source)
+		return sm, nil
+	}
+	if err := vm.RegisterOp(":upper:", upper, "Assign upper case text"); err != nil {
+		t.Fatal(err)
+	}
+	vm.Eval(":upper: @loud quiet words", 1)
+	if got := vm.Expand("@loud"); got != "QUIET WORDS" {
+		t.Errorf("a registered operator should work, got %q", got)
+	}
+}
+
+func TestEvalSymbolUnsupportedOperator(t *testing.T) {
+	vm := New()
+	err := vm.EvalSymbol(SourceMap{Label: "@x", Op: ":nope:", Source: "y", LineNo: 7})
+	if err == nil || !strings.Contains(err.Error(), "ERROR (7)") {
+		t.Errorf("got %v", err)
+	}
+}
+
+func TestZeroValueMachineWritesToTheOSStreams(t *testing.T) {
+	vm := &VirtualMachine{}
+	if vm.out() != os.Stdout || vm.err() != os.Stderr {
+		t.Error("a machine with no writers should use os.Stdout and os.Stderr")
+	}
+	if New().ErrorCount() != 0 {
+		t.Error("a new machine has no errors")
+	}
+}
+
+func TestFmtHelpReplacesTheTokens(t *testing.T) {
+	got := FmtHelp("{app_name} {version} {release_date} {release_hash}", "x", "1.2.3", "2026-01-02", "abc")
+	if got != "x 1.2.3 2026-01-02 abc" {
+		t.Errorf("FmtHelp = %q", got)
+	}
+}
+
+// The operator tables in the docs must name the operators the code has, and
+// all of them. They had drifted: shorthand-syntax.md listed :markdown:,
+// :export-label: and others that do not exist.
+func TestDocsListExactlyTheRegisteredOperators(t *testing.T) {
+	registered := map[string]bool{}
+	for _, op := range New().Ops {
+		registered[op] = true
+	}
+	re := regexp.MustCompile(`:[a-z]+(?:-[a-z]+)*:`)
+	docs := map[string]string{"shorthand-syntax.md": "", "HowItWorks": HowItWorks}
+	if src, err := os.ReadFile("shorthand-syntax.md"); err == nil {
+		docs["shorthand-syntax.md"] = string(src)
+	} else {
+		t.Fatalf("shorthand-syntax.md: %v", err)
+	}
+	for name, text := range docs {
+		named := map[string]bool{}
+		for _, op := range re.FindAllString(text, -1) {
+			if op == ":exit:" || op == ":quit:" || op == ":help:" {
+				continue
+			}
+			named[op] = true
+			if !registered[op] {
+				t.Errorf("%s names %s, which is not an operator", name, op)
+			}
+		}
+		for op := range registered {
+			if !named[op] {
+				t.Errorf("%s does not mention %s", name, op)
+			}
+		}
+	}
 }

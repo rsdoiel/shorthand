@@ -1,24 +1,29 @@
-//
+// Copyright (C) 2015-2026 R. S. Doiel
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// See the LICENSE file.
+
 // Package shorthand provides shorthand definition and expansion.
 //
 // shorthand.go - A simple definition and expansion notation to use
 // as shorthand when a template language is too much.
 //
 // @author R. S. Doiel, <rsdoiel@gmail.com>
-// copyright (c) 2019 all rights reserved.
-// Released under the BSD 2-Clause license
-// See: http://opensource.org/licenses/BSD-2-Clause
-//
 package shorthand
 
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
 
-// HowItWorks is a help text describing shorthand.
+/** HowItWorks is the help text describing the operators of shorthand, shown by
+ * shorthand -examples.
+ *
+ * Example:
+ *   fmt.Print(shorthand.HowItWorks)
+ */
 var (
 	HowItWorks = `
 
@@ -161,7 +166,18 @@ Then we can run the following command to pipe it through Pandoc.
 `
 )
 
-// SourceMap holds the source and value of an assignment
+/** SourceMap holds the source and value of an assignment.
+ *
+ * Parameters:
+ *   Label (string) — the symbol to replace
+ *   Op (string) — the kind of assignment, empty if the line is not one
+ *   Source (string) — the argument to the right of Op
+ *   Expanded (string) — the value worked out from Label, Op and Source
+ *   LineNo (int) — the line the assignment came from
+ *
+ * Example:
+ *   sm := shorthand.SourceMap{Label: "@who", Op: ":set:", Source: "Freda"}
+ */
 type SourceMap struct {
 	Label    string // Label is the symbol to be replace based on Op and Source
 	Op       string // Op is the type of assignment being made (if is an empty string if not an assignment)
@@ -170,13 +186,29 @@ type SourceMap struct {
 	LineNo   int
 }
 
-// SymbolTable holds the exressions, values and other errata of parsing assignments making expansions
+/** SymbolTable holds the assignments made so far, and which one each label
+ * currently points at.
+ *
+ * Example:
+ *   table := new(shorthand.SymbolTable)
+ *   table.SetSymbol(shorthand.SourceMap{Label: "@who", Expanded: "Freda"})
+ */
 type SymbolTable struct {
 	entries []SourceMap
 	labels  map[string]int
 }
 
-// GetSymbol finds the symbol entry and returns the SourceMap
+/** GetSymbol finds a label's current definition.
+ *
+ * Parameters:
+ *   sym (string) — the label
+ *
+ * Returns:
+ *   SourceMap — the definition, or one with LineNo -1 if the label is not defined
+ *
+ * Example:
+ *   sm := table.GetSymbol("@who")
+ */
 func (st *SymbolTable) GetSymbol(sym string) SourceMap {
 	i, ok := st.labels[sym]
 	if ok == true {
@@ -185,7 +217,14 @@ func (st *SymbolTable) GetSymbol(sym string) SourceMap {
 	return SourceMap{Label: "", Op: "", Source: "", Expanded: "", LineNo: -1}
 }
 
-// GetSymbols returns a list of all symbols defined by labels as an array of SourceMaps
+/** GetSymbols lists the current definition of every label, in no particular order.
+ *
+ * Returns:
+ *   []SourceMap — one entry for each label
+ *
+ * Example:
+ *   for _, sm := range table.GetSymbols() { fmt.Println(sm.Label) }
+ */
 func (st *SymbolTable) GetSymbols() []SourceMap {
 	var symbols []SourceMap
 
@@ -195,7 +234,17 @@ func (st *SymbolTable) GetSymbols() []SourceMap {
 	return symbols
 }
 
-// SetSymbol adds a SourceMap to entries and points the labels at the most recent definition.
+/** SetSymbol adds a definition and points its label at it, replacing an earlier one.
+ *
+ * Parameters:
+ *   sm (SourceMap) — the definition
+ *
+ * Returns:
+ *   int — the position of the definition in the table
+ *
+ * Example:
+ *   table.SetSymbol(shorthand.SourceMap{Label: "@who", Expanded: "Freda"})
+ */
 func (st *SymbolTable) SetSymbol(sm SourceMap) int {
 	st.entries = append(st.entries, sm)
 	if st.labels == nil {
@@ -206,22 +255,44 @@ func (st *SymbolTable) SetSymbol(sm SourceMap) int {
 	return st.labels[sm.Label]
 }
 
-// OperatorMap is a map of operator testings and their related functions
+/** OperatorMap maps an operator such as :set: to the function that carries it out.
+ *
+ * Example:
+ *   var ops shorthand.OperatorMap = vm.Operators
+ */
 type OperatorMap map[string]func(*VirtualMachine, SourceMap) (SourceMap, error)
 
-// VirtualMachine defines the structure which holds symbols, operator map,
-// ops and current prompt setting for a shorthand instance.
+/** VirtualMachine holds the symbols, the operators and the prompt of one shorthand
+ * session. Out and Err are where Run writes; they default to os.Stdout and os.Stderr.
+ *
+ * Example:
+ *   vm := shorthand.New()
+ *   vm.Out = &buffer
+ */
 type VirtualMachine struct {
 	prompt    string
+	errors    int
+	Out       io.Writer // where Run writes expansions and the prompt, os.Stdout if nil
+	Err       io.Writer // where Run writes errors, os.Stderr if nil
 	Symbols   *SymbolTable
 	Operators OperatorMap
 	Ops       []string
 	Help      map[string]string
 }
 
-// New returns a VirtualMachine struct and registers all Operators
+/** New returns a VirtualMachine with the built-in operators registered, writing to
+ * os.Stdout and os.Stderr.
+ *
+ * Returns:
+ *   *VirtualMachine — a machine with no definitions
+ *
+ * Example:
+ *   vm := shorthand.New()
+ */
 func New() *VirtualMachine {
 	vm := new(VirtualMachine)
+	vm.Out = os.Stdout
+	vm.Err = os.Stderr
 	vm.Symbols = new(SymbolTable)
 	vm.Operators = make(OperatorMap)
 	vm.Help = make(map[string]string)
@@ -247,12 +318,61 @@ func New() *VirtualMachine {
 	return vm
 }
 
-// SetPrompt sets the string value of the prompt for a VirtualMachine instance
+// out is where Run writes expansions and the prompt.
+func (vm *VirtualMachine) out() io.Writer {
+	if vm.Out == nil {
+		return os.Stdout
+	}
+	return vm.Out
+}
+
+// err is where Run writes errors.
+func (vm *VirtualMachine) err() io.Writer {
+	if vm.Err == nil {
+		return os.Stderr
+	}
+	return vm.Err
+}
+
+/** ErrorCount returns how many lines Run has failed to evaluate, so a caller
+ * can exit non-zero after it has processed everything.
+ *
+ * Returns:
+ *   int — the number of errors reported by Run so far
+ *
+ * Example:
+ *   vm.Run(reader)
+ *   if vm.ErrorCount() > 0 { os.Exit(65) }
+ */
+func (vm *VirtualMachine) ErrorCount() int {
+	return vm.errors
+}
+
+/** SetPrompt sets the prompt Run writes before reading each line. Empty is no prompt.
+ *
+ * Parameters:
+ *   s (string) — the prompt
+ *
+ * Example:
+ *   vm.SetPrompt("=> ")
+ */
 func (vm *VirtualMachine) SetPrompt(s string) {
 	vm.prompt = s
 }
 
-// RegisterOp associate a operation and function
+/** RegisterOp adds an operator.
+ *
+ * Parameters:
+ *   op (string) — the operator, e.g. :set:
+ *   callback (func(*VirtualMachine, SourceMap) (SourceMap, error)) — what carries it out
+ *   help (string) — one line for the :help: listing
+ *
+ * Returns:
+ *   error — if the operator is already registered
+ *
+ * Example:
+ *   err := vm.RegisterOp(":upper:", upper, "Assign upper case text")
+ */
 func (vm *VirtualMachine) RegisterOp(op string, callback func(*VirtualMachine, SourceMap) (SourceMap, error), help string) error {
 	_, ok := vm.Operators[op]
 	if ok == true {
@@ -264,10 +384,19 @@ func (vm *VirtualMachine) RegisterOp(op string, callback func(*VirtualMachine, S
 	return nil
 }
 
-// Parse a string, return a source map. Takes advantage of the internal ops list.
-// If no valid op is found then return a source map with Label and Op set to an empty string
-// while Source is set the the string that was parsed.  Expanded should always be an empty string
-// at the parse stage.
+/** Parse splits a line into a SourceMap using the registered operators. A line with no
+ * operator comes back with Label and Op empty and Source set to the line.
+ *
+ * Parameters:
+ *   s (string) — the line
+ *   lineNo (int) — its line number
+ *
+ * Returns:
+ *   SourceMap — the parsed line, Expanded empty
+ *
+ * Example:
+ *   sm := vm.Parse(":set: @who Freda", 1) // Op ":set:", Label "@who"
+ */
 func (vm *VirtualMachine) Parse(s string, lineNo int) SourceMap {
 	for _, op := range vm.Ops {
 		if strings.Contains(s, op) {
@@ -285,7 +414,18 @@ func (vm *VirtualMachine) Parse(s string, lineNo int) SourceMap {
 	return SourceMap{Label: "", Op: "", Source: s, LineNo: lineNo, Expanded: ""}
 }
 
-// Expand takes some text and expands all labels to their values
+/** Expand replaces every defined label in text with its value.
+ *
+ * Parameters:
+ *   text (string) — the text to expand
+ *
+ * Returns:
+ *   string — the expanded text
+ *
+ * Example:
+ *   vm.Eval(":set: @who Freda", 1)
+ *   vm.Expand("Hello @who") // "Hello Freda"
+ */
 func (vm *VirtualMachine) Expand(text string) string {
 	// labels hash should also point at the last known state of
 	// the label
@@ -300,18 +440,40 @@ func (vm *VirtualMachine) Expand(text string) string {
 	return result
 }
 
-// Eval stores a shorthand assignment or expands and writes the content to stdout
-// Returns the expanded  and any error
+/** Eval carries out an assignment line, or expands any other line.
+ *
+ * Parameters:
+ *   s (string) — the line
+ *   lineNo (int) — its line number
+ *
+ * Returns:
+ *   string — the expanded text, empty for an assignment
+ *   error — why the assignment failed
+ *
+ * Example:
+ *   text, err := vm.Eval("Hello @who", 2)
+ */
 func (vm *VirtualMachine) Eval(s string, lineNo int) (string, error) {
 	sm := vm.Parse(s, lineNo)
 	// If not an assignment Expand and return the expansion
 	if sm.Label == "" && sm.Op == "" {
-		return fmt.Sprintf("%s", vm.Expand(s)), nil
+		return vm.Expand(s), nil
 	}
 	return "", vm.EvalSymbol(sm)
 }
 
-// EvalSymbol accepts a symbol (i.e. SourceMap), applies a callback and updates the symbol table
+/** EvalSymbol applies the operator of a SourceMap you built yourself and records
+ * the result, like Eval without the parse step.
+ *
+ * Parameters:
+ *   sm (SourceMap) — the assignment
+ *
+ * Returns:
+ *   error — if the operator is not supported or fails
+ *
+ * Example:
+ *   err := vm.EvalSymbol(shorthand.SourceMap{Label: "@who", Op: ":set:", Source: "Freda"})
+ */
 func (vm *VirtualMachine) EvalSymbol(sm SourceMap) error {
 	callback, ok := vm.Operators[sm.Op]
 	if ok == false {
@@ -328,8 +490,19 @@ func (vm *VirtualMachine) EvalSymbol(sm SourceMap) error {
 	return nil
 }
 
-// Apply takes a byte array, and processes it returning a byte array. It is
-// like Run but for embedded uses of Shorthand.
+/** Apply processes a byte slice like Run does a reader, for embedded use. It stops at
+ * a line with :exit: or :quit: in it.
+ *
+ * Parameters:
+ *   src ([]byte) — the shorthand text
+ *
+ * Returns:
+ *   []byte — the expanded text
+ *   error — the first line that failed
+ *
+ * Example:
+ *   out, err := vm.Apply([]byte(":set: @who Freda\nHello @who\n"))
+ */
 func (vm *VirtualMachine) Apply(src []byte) ([]byte, error) {
 	vm.SetPrompt("")
 
@@ -347,14 +520,23 @@ func (vm *VirtualMachine) Apply(src []byte) ([]byte, error) {
 	return []byte(strings.Join(out, "\n")), nil
 }
 
-// Run takes a reader (e.g. os.Stdin), and two writers (e.g. os.Stdout and os.Stderr)
-// It reads until EOF, :exit:, or :quit: operation is encountered
-// returns the number of lines processed.
+/** Run reads until end of input or a line with :exit: or :quit: in it, writing
+ * expansions and the prompt to vm.Out and errors to vm.Err.
+ *
+ * Parameters:
+ *   in (*bufio.Reader) — where to read from
+ *
+ * Returns:
+ *   int — the number of lines read
+ *
+ * Example:
+ *   lines := vm.Run(bufio.NewReader(os.Stdin))
+ */
 func (vm *VirtualMachine) Run(in *bufio.Reader) int {
 	lineNo := 0
 	for {
 		if vm.prompt != "" {
-			fmt.Fprint(os.Stdout, vm.prompt)
+			fmt.Fprint(vm.out(), vm.prompt)
 		}
 		src, rErr := in.ReadString('\n')
 		if rErr != nil {
@@ -366,10 +548,11 @@ func (vm *VirtualMachine) Run(in *bufio.Reader) int {
 		}
 		out, err := vm.Eval(src, lineNo)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "ERROR (%d): %s\n", lineNo, err)
+			vm.errors++
+			fmt.Fprintf(vm.err(), "ERROR (%d): %s\n", lineNo, err)
 		}
 		if out != "" {
-			fmt.Fprint(os.Stdout, out)
+			fmt.Fprint(vm.out(), out)
 		}
 	}
 	return lineNo

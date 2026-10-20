@@ -1,23 +1,34 @@
+
+# generated with CMTools 0.0.1 844c936
+
 #
 # Makefile for running pandoc on all Markdown docs ending in .md
 #
-PROJECT = shorthand
+PROJECT = shorthandgo
 
-MD_PAGES = $(shell ls -1 *.md | grep -v 'nav.md')
+PANDOC = $(shell which pandoc)
 
-HTML_PAGES = $(shell ls -1 *.md | grep -v 'nav.md' | sed -E 's/.md/.html/g')
+# Internal notes, not website pages. Kept out of the build so they stay unpublished.
+NO_PUBLISH = TODO.md nav.md
+
+MD_PAGES = $(filter-out $(NO_PUBLISH),$(shell ls -1 *.md))
+
+HTML_PAGES = $(patsubst %.md,%.html,$(MD_PAGES))
 
 build: $(HTML_PAGES) $(MD_PAGES) pagefind
 
 $(HTML_PAGES): $(MD_PAGES) .FORCE
-	pandoc --metadata title=$(basename $@) -s --to html5 $(basename $@).md -o $(basename $@).html --lua-filter=links-to-html.lua --template=page.tmpl
-	@if [ "$(basename $@)" = "README" ]; then mv README.html index.html; git add index.html; else git add "$(basename $@).html"; fi
+	if [ -f $(PANDOC) ]; then $(PANDOC) --metadata title=$(basename $@) -s --to html5 $(basename $@).md -o $(basename $@).html \
+		--lua-filter=links-to-html.lua \
+		--lua-filter=add-col-scope.lua \
+	    --template=page.tmpl; fi
+	@if [ $@ = "README.html" ]; then mv README.html index.html; fi
 
 pagefind: .FORCE
 	pagefind --verbose --exclude-selectors="nav,header,footer" --site .
 	git add pagefind
 
 clean:
-	@if [ -f index.html ]; then rm *.html; fi
+	@rm *.html
 
 .FORCE:

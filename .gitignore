@@ -30,3 +30,9 @@ dist/*
 *~
 *.swp
 *.zip
+man
+testout
+release_notes.tmp
+*.db
+.env
+*.log

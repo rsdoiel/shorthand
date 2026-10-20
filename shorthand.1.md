@@ -1,168 +1,107 @@
+%shorthand(1) user manual | version 0.3.0 324a0ab
+% R. S. Doiel
+% 2026-10-20
 
-USAGE: shorthand [OPTIONS] [SHORTHAND_FILES]
+# NAME
 
-SYNOPSIS
+shorthand — a simple label expander
 
-shorthand a simple label expander
+# SYNOPSIS
 
-DESCRIPTION
+shorthand [OPTIONS] [SHORTHAND_FILES]
 
-shorthand is a command line utility to expand labels 
-based on their assigned definitions. The render output is the 
-transformed text and without the shorthand definitions themselves. 
-shorthand reads from standard input and writes to standard output.
+# DESCRIPTION
 
-OPTIONS
+shorthand expands labels in text using the definitions assigned to them. It
+reads each file named on the command line in turn, or standard input when there
+is none, and writes the text with the labels replaced. The lines that make the
+definitions are not written. It works as a naive macro language, for the jobs a
+template language is too much for: abbreviations in Markdown, a timestamp in a
+timesheet, pages built from several documents. Run shorthand -examples for the
+operators.
 
-    -examples            display examples
-    -generate-markdown   output documentation in Markdown
-    -h, -help            display help
-    -i, -input           input filename
-    -l, -license         display license
-    -n, -no-prompt       Turn off the prompt for interactive processing
-    -o, -output          output filename
-    -p, -prompt          Output a prompt for interactive processing
-    -quiet               suppress error messages
-    -v, -version         diplsay version
+Without a file, shorthand is an interactive interpreter when standard input is
+a terminal: it prompts for each line, and ":help:" lists the operators. Use
+":exit:" to leave. A line that contains ":exit:" ends the input in a file too.
 
+The definitions and the labels live for one run, so the files given together
+share them. The first line below defines {{who}}, so the second prints
+"Hello Freda":
 
-EXAMPLES
+~~~
+:set: {{who}} Freda
+Hello {{who}}
+~~~
 
-ASSIGNMENTS AND EXPANSIONS
+# OPTIONS
 
-Shorthand is a simple label expansion utility. It is based on a simple key value substitution.  It supports this following types of definitions
+-h, -help
+: display this help page
 
-+ Assign a string to a LABEL
-+ Assign the contents of a file to a LABEL
-+ Assign the output of a Bash shell expression to a LABEL
-+ Assign the output of a shorthand expansion to a LABEL
-+ Read a file of shorthand assignments and assign any expansions to the LABEL
-+ Output a LABEL value to a file
-+ Output all LABEL values to a file
-+ Output a LABEL assignment statement to a file
-+ Output all assignment statements to a file
+-l, -license
+: display the license
 
-*shorthand* replaces the LABEL with the value assigned to it whereever it is encountered in the text being passed. The assignment statement is 
-not written to stdout output.
+-v, -version
+: display the program name, version and release hash
 
-operator                    | meaning                                  | example
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :set:                      | Assign String                            | :set: {{name}} Freda
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-text:              | Assign the contents of a file            | :import-text: {{content}} myfile.txt
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import-shorthand:         | Get assignments from a file              | :import-shorthand: _ myfile.shorthand
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand:                   | Assign an expansion                      | :expand: {{reportTitle}} Report: @title for @date
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand-expansion:         | Assign expanded expansion                | :expand-expansion: {{reportHeading}} @reportTitle
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :import:                   | Include a file, procesisng the shorthand | :import: {{nav}} mynav.shorthand
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :bash:                     | Assign Shell output                      | :bash: {{date}} date +%Y-%m-%%d
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :expand-and-bash:          | Assign Expand then gete Shell output     | :expand-and-bash: {{entry}} cat header.txt @filename footer.txt
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export:                   | Output a label's value to a file         | :export: {{content}} content.txt
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-all:               | Output all assigned Expansions           | :export-all: _ contents.txt
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-shorthand:             | Output Assignment                        | :export-shorthand: {{content}} content.shorthand
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :export-all-shorthand:        | Output all shorthand assignments      | :export-all-shorthand: _ contents.shorthand
-----------------------------|------------------------------------------|---------------------------------------------------------------------
- :exit:                     | Exit the shorthand repl                  | :exit:
-----------------------------|------------------------------------------|---------------------------------------------------------------------
+-examples
+: display the operators with examples
 
+-i FILENAME, -input FILENAME
+: read FILENAME before any files named on the command line
 
+-o FILENAME, -output FILENAME
+: write to FILENAME rather than standard output
 
-Notes: Using an underscore as a LABEL means the label will be ignored. There are no guarantees of order when writing values or assignment 
-statements to a file.
+-p PROMPT, -prompt PROMPT
+: the prompt of the interactive interpreter (default "=> ")
 
-The spaces following surrounding ":set:", ":import-text:", ":bash:", ":expand:", ":export:", etc. are required.
+-n, -no-prompt
+: turn the prompt off
 
+-quiet
+: do not report a file that cannot be opened
 
-EXAMPLE
+# EXIT STATUS
 
-In this example a file containing the text of pre-amble is assigned to the label @PREAMBLE, the time 3:30 is assigned to the label {{NOW}}.
+0
+: success
 
-    :import-text: {{PREAMBLE}} /home/me/preamble.text
-	:set: {{NOW}} 3:30
+2
+: bad command line
 
-    At {{NOW}} I will be reading the {{PREAMBLE}} until everyone falls asleep.
+65
+: a line could not be evaluated, such as an unsupported operator or a file
+  an operator could not read. It is reported with its line number, the rest of
+  the input is still processed, and the exit status is 65
 
+66
+: an input file cannot be opened. The other files are still processed
 
-If the file preamble.txt contained the phrase "Hello World" (including the quotes but without any carriage return or line feed) the output 
-after processing the shorthand would look like - 
+73
+: the output file cannot be created
 
-    At 3:30 I will be reading the "Hello World" until everyone falls asleep.
+# EXAMPLES
 
-Notice the lines containing the assignments are not included in the output and that no carriage returns or line feeds are added the the 
-substituted labels.
+Expand a timesheet that starts with a definition of @now:
 
-+ Assign shorthand expansions to a LABEL
-    + :expand: LABEL SHORTHAND_TO_BE_EXPANDED
-	+ :expand: @content@ @report_name@ @report_date@
-        + this would concatenate report name and date
+~~~shell
+shorthand Time_Sheet.txt | stnparse
+~~~
 
+Build a page from a template, writing it to a file:
 
-PROCESSING MARKDOWN PAGES
+~~~shell
+shorthand -o index.html build.shorthand
+~~~
 
-_shorthand_ is a label expander or light weight macro expande. It
-can be combined with programs like *pandoc* as a pre-processor.
+Expand text on standard input, with no prompt:
 
-In this example we'll build a HTML page with shorthand labels from 
-a couple markdown documents. Then we will use the render HTML as a 
-template for a blog page entry.
+~~~shell
+echo "Today is @today" | shorthand -n definitions.shorthand -
+~~~
 
-Our markdown file serving as a template will be call 
-"post-template.md".  It should contain the outline of the 
-structure of the page plus some shorthand labels we'll expand 
-later.
+# SEE ALSO
 
+pandoc(1), stnparse(1)
 
-    # @blogTitle
-
-    ## @pageTitle
-
-    ### @dateString
-
-    @contentBlocks
-
-
-For the purposes of this exercise we'll use _shorthand_ as a repl 
-and just enter the assignments sequencly.  Also rather than use 
-the output of shorthand directly we'll build up the content for the 
-page in a label and use shorthand itself to write the final page out.
-
-The steps we'll follow will be to 
-
-1. Read in our markdown file page.md and turn it into an HTML with embedded shorthand labels
-2. Assign some values to the labels
-3. Expand the labels in the HTML and assign to a new label
-4. Write the new label out to are page call "page.html"
-
-Start the repl with this version of the shorthand command:
-
-    shorthand -p "? "
-
-The _-p_ option tells _shorthand_ to use the value "? " as the prompt. When _shorthand_ starts it will display "? " to indicate it is 
-ready for an assignment or expansion.
-
-The following assumes you are in the _shorthand_ repl.
-
-Load the mardkown file and transform it into HTML with embedded shorthand labels
-
-	:import: @pageTemplate post-template.md
-	:bash: @dateString date
-	:set: @blogTitle My Blog
-	:set: @pageTitle A Post
-	:import: @contentBlock a-post.md
-	:export: @output post.md
-	:exit:
-
-Then we can run the following command to pipe it through Pandoc.
-
-    pandoc -s -t html post.md > post.html
-
-shorthand 0.2.2

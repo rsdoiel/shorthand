@@ -1,30 +1,44 @@
 {
-    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-    "@type": "SoftwareSourceCode",
-    "description": "shorthand is a Go package for doing simple text replacement and expansion. It works as a naive macro language.",
-    "name": "shorthand",
-    "codeRepository": "https://github.com/rsdoiel/shorthand",
-    "issueTracker": "https://github.com/rsdoiel/shorthand/issues",
-    "license": "https://spdx.org/licenses/AGPL-3.0-or-later", 
-	"releaseNotes": "License update to AGPL 3 or later",
-    "version": "0.2.2",
-    "author": [
-        {
-            "@type": "Person",
-            "givenName": "Robert",
-            "familyName": "Doiel",
-            "email": "rsdoiel@gmail.com",
-            "@id": "https://orcid.org/0000-0003-0900-6903"
-        }
-    ],
-    "developmentStatus": "active",
-    "keywords": [
-        "text markup",
-        "text expansion",
-        "text macros"
-    ],
-    "maintainer": "https://orcid.org/0000-0003-0900-6903",
-    "programmingLanguage": [
-        "Go"
-    ]
+  "@context": "https://w3id.org/codemeta/3.0",
+  "type": "SoftwareSourceCode",
+  "codeRepository": "https://github.com/rsdoiel/shorthand",
+  "author": [
+    {
+      "id": "https://orcid.org/0000-0003-0900-6903",
+      "type": "Person",
+      "givenName": "R. S.",
+      "familyName": "Doiel",
+      "email": "rsdoiel@gmail.com"
+    }
+  ],
+  "dateCreated": "2015-08-29",
+  "dateModified": "2026-10-20",
+  "datePublished": "2026-10-20",
+  "description": "shorthand is a Go package and command line tool for doing simple text replacement and expansion. It works as a naive macro language.",
+  "keywords": [
+    "text markup",
+    "text expansion",
+    "text macros"
+  ],
+  "name": "shorthand",
+  "license": "https://www.gnu.org/licenses/agpl-3.0.txt",
+  "programmingLanguage": [
+    "Go >= 1.26.4"
+  ],
+  "softwareRequirements": [
+    "Go >= 1.26.4",
+    "bash (runtime, for the :bash: operators)"
+  ],
+  "softwareSuggestions": [
+    "CMTools >= 0.0.45b",
+    "Pandoc >= 3.9",
+    "GNU Make >= 3"
+  ],
+  "version": "0.3.0",
+  "developmentStatus": "active",
+  "issueTracker": "https://github.com/rsdoiel/shorthand/issues",
+  "downloadUrl": "https://github.com/rsdoiel/shorthand/releases",
+  "releaseNotes": "Maintenance release that brings shorthand up to current workspace practice. The command line no longer uses the third party `caltechlibrary/cli` module (v0.0.16, v0.0.18 was available) and is built on the standard `flag` package, so the module has no dependencies; it requires Go 1.26.4. The options `-h`, `-l`, `-v`, `-i`, `-o`, `-p`, `-n` and `-quiet` keep their long spellings, and `-generate-markdown`, a feature of the dropped module, is gone; the Markdown man page comes from `-help`. The command exits with the workspace codes: 2 for a bad command line, 65 when a line cannot be evaluated, 66 when an input file cannot be opened (it used to exit 0 after reporting it), 73 when the output file cannot be created. A file argument of `-` is standard input. With piped input the prompt and welcome text are no longer mixed into the output; they appear when standard input is a terminal or `-p` is given. Fixed: `-o` did nothing, because `Run` wrote to `os.Stdout` directly. `VirtualMachine` now has `Out` and `Err` writers (default `os.Stdout` and `os.Stderr`) and an `ErrorCount()`, so a program embedding it can send the output anywhere. Documentation: the README and tutorial no longer show a `-e` option the command has not had, `shorthand-syntax.md` now lists exactly the operators the code has (a test keeps it so), the stale copies of the help under `docs/` are gone, and the source headers and `copyright.md` say AGPL-3.0-or-later instead of BSD. Snap packaging is dropped; use the curl installer. The command line code moved to `internal/cli` with the help text as the constant `HelpText` in `helptext.go`, and test coverage went from 76% to 92% for the package and 100% for `internal/cli`. Output on the author's decade of timesheets is unchanged.",
+  "copyrightYear": 2015,
+  "copyrightHolder": "R. S. Doiel"
 }
