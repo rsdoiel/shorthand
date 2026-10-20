@@ -18,6 +18,13 @@ following.
 curl https://rsdoiel.github.io/shorthand/installer.sh | sh
 ~~~
 
+### If you are running macOS or Windows
+
+You may get security warnings, because the programs are not signed. See the notes for the system you are using.
+
+- [INSTALL_NOTES_macOS.md](INSTALL_NOTES_macOS.md)
+- [INSTALL_NOTES_Windows.md](INSTALL_NOTES_Windows.md)
+
 ## Compiled version
 
 This is generalized instructions for a release. 
