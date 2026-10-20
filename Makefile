@@ -14,11 +14,11 @@ RELEASE_DATE = $(shell date +%Y-%m-%d)
 
 RELEASE_HASH=$(shell git log --pretty=format:'%h' -n 1)
 
-MAN_PAGES_1 = $(shell ls -1 *.1.md | sed -E 's/.1.md/.1/g')
+MAN_PAGES_1 = $(shell ls -1 *.1.md 2>/dev/null | sed -E 's/.1.md/.1/g')
 
-MAN_PAGES_3 = $(shell ls -1 *.3.md | sed -E 's/.3.md/.3/g')
+MAN_PAGES_3 = $(shell ls -1 *.3.md 2>/dev/null | sed -E 's/.3.md/.3/g')
 
-MAN_PAGES_7 = $(shell ls -1 *.7.md | sed -E 's/.7.md/.7/g')
+MAN_PAGES_7 = $(shell ls -1 *.7.md 2>/dev/null | sed -E 's/.7.md/.7/g')
 
 HTML_PAGES = $(shell find . -type f -not -path './bin/*' -not -path './.git/*' | grep -E '\.html$$')
 
@@ -26,7 +26,7 @@ DOCS = $(shell ls -1 *.?.md)
 
 # version.go is left out: it has a rule (cmt, under generate), and listing it
 # here would make every build run cmt through that rule.
-PACKAGE = $(filter-out version.go,$(shell find . -name '*.go' -not -name '*_test.go' -not -path './cmd/*' | sed 's#^\./##'))
+PACKAGE = $(filter-out version.go,$(shell find . -name '*.go' -not -name '*_test.go' -not -path './cmd/*' | sed 's|^\./||'))
 
 VERSION = $(shell grep '"version":' codemeta.json | cut -d\"  -f 4)
 
