@@ -420,8 +420,12 @@ func TestEval(t *testing.T) {
 			if notOk(s != "") {
 				t.Errorf("not an assignment so should be non-empty: %q", s)
 			}
-			if notOk(s == vm.Expand(s)) {
-				t.Errorf("expected %q, got %q", vm.Expand(s), s)
+			// Eval of text is Expand of that text. (It used to compare with
+			// Expand(s), which only held because the old Expand sometimes
+			// expanded a value that holds another label, depending on the
+			// order of the labels.)
+			if notOk(s == vm.Expand(src)) {
+				t.Errorf("expected %q, got %q", vm.Expand(src), s)
 			}
 		} else {
 			if notOk(eSM.LineNo == sm.LineNo) {
@@ -993,5 +997,87 @@ func TestDocsListExactlyTheRegisteredOperators(t *testing.T) {
 				t.Errorf("%s does not mention %s", name, op)
 			}
 		}
+	}
+}
+
+/** TestExpandOverlappingLabels checks that where two labels match at the same
+ * place the longer one wins, every time. Expand used to walk the labels in map
+ * order, so with @a and @ab defined "@ab" was "two" in one run in seven.
+ *
+ * Example:
+ *   go test -run TestExpandOverlappingLabels
+ */
+func TestExpandOverlappingLabels(t *testing.T) {
+	for i := 0; i < 300; i++ {
+		vm := New()
+		vm.Eval(":set: @a one", 1)
+		vm.Eval(":set: @ab two", 2)
+		vm.Eval(":set: @abc three", 3)
+		for text, want := range map[string]string{
+			"@a":           "one",
+			"@ab":          "two",
+			"@abc":         "three",
+			"@abcd":        "threed",
+			"@ax @ab @a.":  "onex two one.",
+			"no labels":    "no labels",
+			"@@ab@a@abc@b": "@two" + "one" + "three" + "@b",
+		} {
+			if got := vm.Expand(text); got != want {
+				t.Fatalf("run %d: Expand(%q) = %q, want %q", i, text, got, want)
+			}
+		}
+	}
+}
+
+// A value is not expanded again: that is what :expand-expansion: is for, so
+// Expand has the same answer whatever order the labels were defined in.
+func TestExpandIsOneLevel(t *testing.T) {
+	for i := 0; i < 300; i++ {
+		vm := New()
+		vm.Eval(":set: @a one", 1)
+		vm.Eval(":set: @b @a", 2)
+		if got := vm.Expand("@a @b"); got != "one @a" {
+			t.Fatalf("run %d: Expand = %q, want %q", i, got, "one @a")
+		}
+		vm.Eval(":expand-expansion: @c @b", 3)
+		if got := vm.Expand("@c"); got != "one" {
+			t.Fatalf("run %d: :expand-expansion: gave %q, want %q", i, got, "one")
+		}
+		vm.Eval(":expand: @d x @b y", 4)
+		if got := vm.Expand("@d"); got != "x @a y" {
+			t.Fatalf("run %d: :expand: gave %q, want %q", i, got, "x @a y")
+		}
+	}
+}
+
+// The underscore label is ignored, as the docs say, and a definition with no
+// label does not touch the text. Both used to be replaced everywhere.
+func TestUnderscoreAndEmptyLabelsAreIgnored(t *testing.T) {
+	vm := New()
+	vm.Eval(":set: _ ignored", 1)
+	vm.EvalSymbol(SourceMap{Op: ":help:", Source: "no label", Expanded: "XX", LineNo: 2})
+	vm.Eval(":set: @x hello", 3)
+	if got := vm.Expand("snake_case abc @x"); got != "snake_case abc hello" {
+		t.Errorf("Expand = %q", got)
+	}
+}
+
+// A label defined again, or a new one, is seen by the next Expand.
+func TestExpandSeesRedefinitions(t *testing.T) {
+	vm := New()
+	if got := vm.Expand("@a"); got != "@a" {
+		t.Errorf("before any definition: %q", got)
+	}
+	vm.Eval(":set: @a one", 1)
+	if got := vm.Expand("@a"); got != "one" {
+		t.Errorf("after the first definition: %q", got)
+	}
+	vm.Eval(":set: @a two", 2)
+	if got := vm.Expand("@a"); got != "two" {
+		t.Errorf("after redefining: %q", got)
+	}
+	vm.Eval(":set: @ab three", 3)
+	if got := vm.Expand("@a @ab"); got != "two three" {
+		t.Errorf("after a longer label: %q", got)
 	}
 }

@@ -38,6 +38,22 @@ operator | meaning | example
 
 `:export-all:` and `:export-all-shorthand:` write in no particular order.
 
+# How labels are replaced
+
+Labels are replaced in one pass over the text, and the answer never depends on
+the order they were defined in.
+
+- Where two labels match at the same place the longer one wins. With `@a` and
+  `@ab` defined, `@ab` is the value of `@ab`, and `@abc` is the value of `@ab`
+  followed by `c`.
+- A value is not expanded again. If `@b` was set to `@a`, then `@b` expands to
+  the text `@a`. Use `:expand:` to expand the labels in a source when it is
+  assigned, or `:expand-expansion:` to expand them twice, when you want a label
+  in a value expanded too.
+- The labels `_` and an empty label are never replaced, so using `_` for an
+  operator that only does something, like `:import-shorthand:`, leaves the
+  underscores in the rest of your text alone.
+
 `:exit:` ends the input, and so does `:quit:`. A line that contains either one
 ends it, wherever the word is in the line. When *shorthand* is run with no file
 at a terminal, `:help:` lists the operators.

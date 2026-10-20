@@ -1,4 +1,4 @@
-%shorthand(1) user manual | version 0.3.0 324a0ab
+%shorthand(1) user manual | version 0.3.0 67d8213
 % R. S. Doiel
 % 2026-10-20
 

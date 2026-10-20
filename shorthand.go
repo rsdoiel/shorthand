@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -196,6 +197,9 @@ type SourceMap struct {
 type SymbolTable struct {
 	entries []SourceMap
 	labels  map[string]int
+	version int               // changes whenever a definition is added, to know when a cache is stale
+	cache   *strings.Replacer // the replacer for Expand, valid while cacheVersion == version
+	cacheAt int
 }
 
 /** GetSymbol finds a label's current definition.
@@ -247,6 +251,7 @@ func (st *SymbolTable) GetSymbols() []SourceMap {
  */
 func (st *SymbolTable) SetSymbol(sm SourceMap) int {
 	st.entries = append(st.entries, sm)
+	st.version++
 	if st.labels == nil {
 		st.labels = make(map[string]int)
 	}
@@ -414,7 +419,12 @@ func (vm *VirtualMachine) Parse(s string, lineNo int) SourceMap {
 	return SourceMap{Label: "", Op: "", Source: s, LineNo: lineNo, Expanded: ""}
 }
 
-/** Expand replaces every defined label in text with its value.
+/** Expand replaces every defined label in text with its value. It is one pass
+ * over the text: where two labels match at the same place the longer one wins
+ * (with @a and @ab defined, "@ab" is the value of @ab), and a value is not
+ * expanded again, so the answer does not depend on the order the labels were
+ * defined in. Use the :expand-expansion: operator to expand twice. The labels
+ * "_" and "" are never replaced.
  *
  * Parameters:
  *   text (string) — the text to expand
@@ -427,17 +437,29 @@ func (vm *VirtualMachine) Parse(s string, lineNo int) SourceMap {
  *   vm.Expand("Hello @who") // "Hello Freda"
  */
 func (vm *VirtualMachine) Expand(text string) string {
-	// labels hash should also point at the last known state of
-	// the label
-	result := text
-	symbols := vm.Symbols.GetSymbols()
-	for _, sm := range symbols {
-		if strings.Contains(text, sm.Label) {
-			tmp := strings.Replace(result, sm.Label, sm.Expanded, -1)
-			result = tmp
+	st := vm.Symbols
+	if st.cache == nil || st.cacheAt != st.version {
+		var labels []SourceMap
+		for _, sm := range st.GetSymbols() {
+			if sm.Label != "" && sm.Label != "_" {
+				labels = append(labels, sm)
+			}
 		}
+		// A Replacer makes one pass and tries the pairs in the order given, so
+		// the longest labels first (then by name, so the order is always the same).
+		sort.Slice(labels, func(a, b int) bool {
+			if len(labels[a].Label) != len(labels[b].Label) {
+				return len(labels[a].Label) > len(labels[b].Label)
+			}
+			return labels[a].Label < labels[b].Label
+		})
+		pairs := make([]string, 0, 2*len(labels))
+		for _, sm := range labels {
+			pairs = append(pairs, sm.Label, sm.Expanded)
+		}
+		st.cache, st.cacheAt = strings.NewReplacer(pairs...), st.version
 	}
-	return result
+	return st.cache.Replace(text)
 }
 
 /** Eval carries out an assignment line, or expands any other line.
