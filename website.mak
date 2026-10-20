@@ -15,7 +15,7 @@ MD_PAGES = $(filter-out $(NO_PUBLISH),$(shell ls -1 *.md))
 
 HTML_PAGES = $(patsubst %.md,%.html,$(MD_PAGES))
 
-build: $(HTML_PAGES) $(MD_PAGES) pagefind
+build: $(HTML_PAGES) $(MD_PAGES)
 
 $(HTML_PAGES): $(MD_PAGES) .FORCE
 	if [ -f $(PANDOC) ]; then $(PANDOC) --metadata title=$(basename $@) -s --to html5 $(basename $@).md -o $(basename $@).html \
@@ -23,10 +23,6 @@ $(HTML_PAGES): $(MD_PAGES) .FORCE
 		--lua-filter=add-col-scope.lua \
 	    --template=page.tmpl; fi
 	@if [ $@ = "README.html" ]; then mv README.html index.html; fi
-
-pagefind: .FORCE
-	pagefind --verbose --exclude-selectors="nav,header,footer" --site .
-	git add pagefind
 
 clean:
 	@rm *.html
